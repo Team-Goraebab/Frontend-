@@ -12,8 +12,8 @@ const config: Config = {
         primary: '#4C48FF',
         secondary: '#FF4853',
         accent: '#ffad1f',
+        success: '#25BD6B',
         danger: '#e0245e',
-        header_bg: '#E3E6EA',
         grey_0: '#F4F4F4',
         grey_1: '#E3E6EA',
         grey_2: '#D2D2D2',
@@ -26,19 +26,21 @@ const config: Config = {
         red_2: '#FF4853',
         yellow_1: '#f6e3d1',
         yellow_2: '#FFA048',
+        green_1: '#d1f6e2',
+        green_2: '#25BD6B',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-      // screens: {
-      //   sm: 640px 이상
-      //   md: 768px 이상
-      //   lg: 1024px 이상
-      //   xl: 1280px 이상
-      //   2xl: 1536px 이상
-      //   },
+      screens: {
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
+      },
     },
   },
   plugins: [],
