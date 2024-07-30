@@ -1,15 +1,9 @@
 export const IMAGE_CARD_DATA = [
   {
-    id: 'sha-image',
-    size: '124.2MB',
+    id: 'suyoooi-123123container',
+    size: '1.2MB',
     tags: 'httpd/latest',
-    status: 'primary',
-  },
-  {
-    id: 'sha-24546wdjnas930m-gkdlxkduwldk',
-    size: '35.2MB',
-    tags: 'httpd/latest',
-    status: 'secondary',
+    status: 'success',
   },
   {
     id: 'suyoooi-24546wdjnas930m',
@@ -24,8 +18,8 @@ export const IMAGE_CARD_DATA = [
     status: 'secondary',
   },
   {
-    id: 'suyoooi-123123container',
-    size: '1.2MB',
+    id: 'sha-image',
+    size: '124.2MB',
     tags: 'httpd/latest',
     status: 'primary',
   },
@@ -66,7 +60,7 @@ export const VOLUME_CARD_DATA = [
     id: 'volume',
     size: '124.2MB',
     tags: 'httpd/latest',
-    status: 'primary',
+    status: 'success',
   },
   {
     id: 'sha-24546network930m-network',
