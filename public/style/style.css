@@ -1,0 +1,51 @@
+main,
+main * {
+  cursor: default;
+}
+main.hand-mode,
+main.hand-mode * {
+  cursor: grab;
+}
+main.hand-mode.grabbing,
+main.hand-mode.grabbing * {
+  cursor: grabbing;
+}
+
+/* scrollbar custom */
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 12px; /* 스크롤바의 너비 */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤바 트랙 색상 */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤바 색상 */
+  border-radius: 10px; /* 스크롤바 둥글기 */
+  border: 3px solid #f1f1f1; /* 스크롤바와 트랙 간의 공간 */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 스크롤바에 마우스를 올렸을 때 색상 */
+}
+
+/* scrollbar 숨기기 */
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+/* card 말줄임표 */
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
