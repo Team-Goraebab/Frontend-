@@ -134,8 +134,7 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
       if (activeTab === 'local' && file) {
         onSave(id, name, tag, file, size, 'local');
       } else if (activeTab === 'docker') {
-        // Docker Hub 이미지 데이터 전달
-        const dockerImageInfo = {}; // Docker Hub에서 선택한 이미지 정보
+        const dockerImageInfo = {};
         onSave(id, name, tag, null, size, 'dockerHub', dockerImageInfo);
       }
       onClose();
@@ -266,7 +265,7 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
         <div className="flex justify-end mt-2">
           <button
             onClick={handleSave}
-            className="p-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:outline-none"
+            className="px-4 py-2 mt-2 bg-blue-500 font-pretendard text-white rounded shadow hover:bg-blue-600 focus:outline-none"
           >
             저장하기
           </button>

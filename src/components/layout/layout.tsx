@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PanButtons } from '@/components';
+import { PanButtons, Sidebar } from '@/components';
 import {
   IMAGE_CARD_DATA,
   CONTAINER_CARD_DATA,
@@ -48,6 +48,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <main className={`relative ${isHandMode ? 'hand-mode' : ''}`}>
               {children}
             </main>
+            <Sidebar progress={30} />
             <PanButtons />
             <AddHostButton />
             <DeleteBlueprintButton />

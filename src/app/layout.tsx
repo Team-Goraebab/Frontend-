@@ -27,7 +27,6 @@ export default function RootLayout({ children, }: Readonly<{
     <html lang="ko" className={pretendard.variable}>
       <body>
           <Header />
-          <Sidebar progress={30} />
           <Layout>{children}</Layout>
       </body>
     </html>

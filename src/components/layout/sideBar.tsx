@@ -93,10 +93,10 @@ const Sidebar = ({ progress }: SidebarProps) => {
 
   return (
     <div className="fixed left-0 w-[300px] flex flex-col bg-white border-r-2 border-grey_2 z-40 top-[56px] bottom-0">
-      <div className="flex-grow overflow-y-auto scrollbar-hide pl-4 pr-4 pt-4">
+      <div className="flex-grow overflow-y-auto scrollbar-hide pl-4 pr-4 pt-4 pb-4">
         {renderDataList()}
       </div>
-      <div className="p-4 border-t border-grey_2">
+      <div className="px-4 border-t border-grey_2">
         {currentComponent ? (
           React.createElement(currentComponent.addButton, {
             onCreate: handleCreate,
@@ -104,9 +104,9 @@ const Sidebar = ({ progress }: SidebarProps) => {
         ) : (
           <LargeButton title={'추가하기'} onClick={() => {}} />
         )}
-        <div className="mt-4">
-          <DaemonConnectBar />
-        </div>
+      </div>
+      <div className="w-full">
+        <DaemonConnectBar />
       </div>
     </div>
   );
