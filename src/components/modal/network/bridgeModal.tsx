@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';

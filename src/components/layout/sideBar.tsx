@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, Dispatch, SetStateAction } from 'react';
-import { Button } from '@/components';
 import AddBridgeButton from '../button/addBridgeButton';
 import NetworkCard from '../card/networkCard';
 import VolumeCard from '../card/volumeCard';
@@ -76,7 +75,6 @@ const Sidebar = ({ progress }: SidebarProps) => {
   const renderNoDataMessage = (message: string) => (
     <div className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
       <AiOutlineInfoCircle className="text-blue_6 text-2xl mb-2" />
-      {/* Add an icon */}
       <p className="font-pretendard font-medium text-blue_6">{message}</p>
     </div>
   );
@@ -94,22 +92,21 @@ const Sidebar = ({ progress }: SidebarProps) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2">
-      <div className="flex flex-col flex-grow pl-4 pr-4 pt-20 overflow-y-auto scrollbar-hide">
-        <div className="flex-grow">{renderDataList()}</div>
-        <div className="flex-shrink-0">
-          {/* <ProgressBar progress={progress} /> */}
-          {currentComponent ? (
-            React.createElement(currentComponent.addButton, {
-              onCreate: handleCreate,
-            })
-          ) : (
-            <LargeButton title={'추가하기'} onClick={() => {}} />
-          )}
-        </div>
+    <div className="fixed left-0 w-[300px] flex flex-col bg-white border-r-2 border-grey_2 z-40 top-[56px] bottom-0">
+      <div className="flex-grow overflow-y-auto scrollbar-hide pl-4 pr-4 pt-4">
+        {renderDataList()}
       </div>
-      <div className="">
-        <DaemonConnectBar />
+      <div className="p-4 border-t border-grey_2">
+        {currentComponent ? (
+          React.createElement(currentComponent.addButton, {
+            onCreate: handleCreate,
+          })
+        ) : (
+          <LargeButton title={'추가하기'} onClick={() => {}} />
+        )}
+        <div className="mt-4">
+          <DaemonConnectBar />
+        </div>
       </div>
     </div>
   );

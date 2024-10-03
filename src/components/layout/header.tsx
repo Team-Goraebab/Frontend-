@@ -33,7 +33,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed w-full p-4 bg-grey_1 shadow z-10">
+    <header className="fixed w-full p-4 bg-grey_1 z-30">
       <div className="container mx-auto flex justify-center items-center relative">
         <nav className="flex space-x-6 relative" ref={navRef}>
           {MENU_ITEMS.map((item) => (

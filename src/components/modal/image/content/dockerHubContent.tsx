@@ -1,3 +1,5 @@
+'use client';
+
 import { getDockerHubImages } from '@/services/api';
 import React, { useState } from 'react';
 import { FaStar, FaDownload, FaCheckCircle } from 'react-icons/fa';

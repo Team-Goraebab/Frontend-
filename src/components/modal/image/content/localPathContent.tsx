@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect } from 'react';
 import { FaFolderOpen } from 'react-icons/fa';
 
@@ -12,7 +14,7 @@ interface LocalPathContentProps {
  * @param onFileChange 선택한 파일 변경 핸들러
  * @param file 선택한 파일
  * @param onClose 로컬 이미지 컨텐츠 닫기 핸들러
- * @returns 
+ * @returns
  */
 const LocalPathContent = ({
   onFileChange,
