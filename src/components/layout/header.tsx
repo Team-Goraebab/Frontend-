@@ -40,7 +40,7 @@ const Header = () => {
             <div
               key={item.id}
               onClick={() => handleNavigation(item.path, item.id)}
-              className={`flex flex-col items-center cursor-pointer ${
+              className={`flex flex-col items-center cursor-pointer font-pretendard ${
                 activeId === item.id ? 'text-blue_6' : 'text-gray-600'
               }`}
               data-tooltip-id="my-tooltip"

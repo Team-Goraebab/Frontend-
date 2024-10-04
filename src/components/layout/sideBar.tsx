@@ -52,51 +52,63 @@ const Sidebar = ({ progress }: SidebarProps) => {
       addButton: AddContainerButton,
       cardComponent: ContainerCard,
       noDataMessage: '컨테이너를 추가하세요',
+      icon: '🐳',
     },
     2: {
       addButton: AddImageButton,
       cardComponent: ImageCard,
       noDataMessage: '이미지를 추가하세요',
+      icon: '🖼️',
     },
     3: {
       addButton: AddBridgeButton,
       cardComponent: NetworkCard,
       noDataMessage: '네트워크 데이터를 추가하세요',
+      icon: '🌐',
     },
     4: {
       addButton: AddVolumeButton,
       cardComponent: VolumeCard,
       noDataMessage: '볼륨 데이터를 추가하세요',
+      icon: '💾',
     },
   };
 
   const currentComponent = componentMap[activeId as 1 | 2 | 3 | 4];
 
-  const renderNoDataMessage = (message: string) => (
-    <div className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
-      <AiOutlineInfoCircle className="text-blue_6 text-2xl mb-2" />
-      <p className="font-pretendard font-medium text-blue_6">{message}</p>
+  const renderNoDataMessage = (message: string, icon: string) => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-blue-50 rounded-lg">
+      <div className="text-4xl mb-4">{icon}</div>
+      <p className="font-pretendard font-medium text-blue-600 text-md">{message}</p>
     </div>
   );
 
   const renderDataList = () => {
     if (!currentComponent) return null;
 
-    const { cardComponent: CardComponent, noDataMessage } = currentComponent;
+    const { cardComponent: CardComponent, noDataMessage, icon } = currentComponent;
     const data =
       activeId === 2 ? images : dataHandlers[activeId as 1 | 2 | 3 | 4]?.data;
 
     return data && data.length > 0
-      ? data.map((item, index) => <CardComponent key={index} data={item} />)
-      : renderNoDataMessage(noDataMessage);
+      ? (
+        <div className="space-y-4">
+          {data.map((item, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <CardComponent data={item} />
+            </div>
+          ))}
+        </div>
+      )
+      : renderNoDataMessage(noDataMessage, icon);
   };
 
   return (
-    <div className="fixed left-0 w-[300px] flex flex-col bg-white border-r-2 border-grey_2 z-40 top-[56px] bottom-0">
-      <div className="flex-grow overflow-y-auto scrollbar-hide pl-4 pr-4 pt-4 pb-4">
+    <div className="fixed left-0 w-[300px] flex flex-col bg-gray-50 border-r border-gray-200 shadow-md z-40 top-[56px] bottom-0">
+      <div className="flex-grow overflow-y-auto scrollbar-hide p-4 font-pretendard">
         {renderDataList()}
       </div>
-      <div className="px-4 border-t border-grey_2">
+      <div className="p-4 bg-white border-t border-b border-gray-200">
         {currentComponent ? (
           React.createElement(currentComponent.addButton, {
             onCreate: handleCreate,

@@ -99,7 +99,7 @@ const HostModal = ({ onClose, onSave, availableNetworks }: HostModalProps) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-20" />
+      <div className="absolute inset-0 bg-black opacity-50" />
       <div className="relative bg-white p-6 rounded-md shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Create New Host</h2>
         <input
@@ -140,22 +140,6 @@ const HostModal = ({ onClose, onSave, availableNetworks }: HostModalProps) => {
             Remote
           </label>
         </div>
-        {/* 
-        <div className="mb-4">
-          <h3 className="text-md font-semibold mb-2">Select Network:</h3>
-          <select
-            value={networkName}
-            onChange={(e) => handleNetworkChange(e.target.value)}
-            className="p-2 border border-gray-300 rounded w-full"
-          >
-            {availableNetworks.map((net) => (
-              <option key={net.name} value={net.name}>
-                {net.name} (IP: {net.ip})
-              </option>
-            ))}
-          </select>
-        </div> */}
-
         <div className="mb-4">
           <h3 className="text-md font-semibold mb-2">Select Color Theme:</h3>
           <div className="flex space-x-2">

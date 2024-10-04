@@ -44,7 +44,6 @@ const AddVolumeButton = ({ onCreate }: AddVolumeButtonProps) => {
     onCreate(newVolumeData);
     // store에 볼륨 데이터 저장
     addVolume(newVolumeData);
-    console.log('new volume ::', newVolumeData);
 
     showSnackbar(
       enqueueSnackbar,

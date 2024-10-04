@@ -16,9 +16,6 @@ interface BtnProps {
 const Button = ({ title, color, onClick }: BtnProps) => {
   return (
     <button
-      // className={`px-4 py-2 text-white rounded-md ${
-      //   color ? `bg-grey_3 hover:bg-grey_4` : 'bg-blue_4 hover:bg-blue_5'
-      // }`}
       className={`px-4 py-1.5 rounded-md border ${
         color === 'grey'
           ? `text-grey_3 border-grey_3 hover:text-white hover:bg-grey_3`
