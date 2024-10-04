@@ -20,8 +20,8 @@ const LargeButton = ({ title, onClick }: BtnProps) => {
       className={`
         p-2 w-full text-blue-500 rounded-lg font-bold 
         border border-blue-500 font-pretendard
-        transition-all duration-200 ease-in-out
-        active:transform active:scale-95
+        transition-all duration-100 ease-in-out
+        active:transform active:scale-90
         focus:outline-none
       `}
     >

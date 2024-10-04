@@ -2,12 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  FaFolderOpen,
-  FaDocker,
-  FaTag,
-  FaFileSignature,
-  FaTrash,
-} from 'react-icons/fa';
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  Box,
+  Paper
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { FolderOpen, Label, Description, Delete, Hub } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { v4 as uuidv4 } from 'uuid';
 import { showSnackbar } from '@/utils/toastUtils';
@@ -27,19 +35,25 @@ interface ModalProps {
   ) => void;
 }
 
-/**
- * 이미지 모달
- * @param isOpen 이미지 모달 열림 유무
- * @param onClose 이미지 모달 닫기 핸들러
- * @param onSave 이미지 모달 저장 핸들러
- * @returns
- */
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
 const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
-  const [activeTab, setActiveTab] = useState('local');
+  const [activeTab, setActiveTab] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState<string>('');
   const [tag, setTag] = useState<string>('');
   const [size, setSize] = useState<string>('');
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -48,23 +62,18 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
       setName('');
       setTag('');
       setSize('');
+      setActiveTab(0);
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0] || null;
     handleFileSelection(selectedFile);
   };
 
   const handleFileSelection = (file: File | null) => {
     if (file) {
       const validExtensions = ['.tar', '.tar.gz', '.tar.bz2', '.tar.xz'];
-      const fileExtension = file.name
-        .slice(file.name.lastIndexOf('.'))
-        .toLowerCase();
-
       const isValidExtension = validExtensions.some((ext) =>
         file.name.toLowerCase().endsWith(ext)
       );
@@ -76,8 +85,6 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
           'error',
           '#FF4853'
         );
-        setFile(null);
-        setSize('');
         return;
       }
 
@@ -89,8 +96,6 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
           'error',
           '#FF4853'
         );
-        setFile(null);
-        setSize('');
       } else {
         setFile(file);
         setSize(fileSizeMB);
@@ -106,15 +111,9 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
     setSize('');
   };
 
-  // 유효성 검사
   const validateInputs = () => {
-    if (!file && activeTab === 'local') {
-      showSnackbar(
-        enqueueSnackbar,
-        '이미지를 선택해주세요.',
-        'error',
-        '#FF4853'
-      );
+    if (!file && activeTab === 0) {
+      showSnackbar(enqueueSnackbar, '이미지를 선택해주세요.', 'error', '#FF4853');
       return false;
     }
     if (!name) {
@@ -131,9 +130,9 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
   const handleSave = () => {
     if (validateInputs()) {
       const id = uuidv4();
-      if (activeTab === 'local' && file) {
+      if (activeTab === 0 && file) {
         onSave(id, name, tag, file, size, 'local');
-      } else if (activeTab === 'docker') {
+      } else if (activeTab === 1) {
         const dockerImageInfo = {};
         onSave(id, name, tag, null, size, 'dockerHub', dockerImageInfo);
       }
@@ -141,137 +140,144 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
     }
   };
 
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    if (file && newValue === 1) {
+      setIsWarningModalOpen(true);
+    } else {
+      setActiveTab(newValue);
+    }
+  };
+
+  const handleWarningConfirm = () => {
+    setFile(null);
+    setSize('');
+    setActiveTab(1);
+    setIsWarningModalOpen(false);
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'local':
+      case 0:
         return (
-          <div
-            onDrop={(e) => {
-              e.preventDefault();
-              const droppedFile = e.dataTransfer.files[0];
-              handleFileSelection(droppedFile);
-            }}
-            onDragOver={(e) => e.preventDefault()}
-            className="flex flex-col justify-start w-full h-full border-2 border-dashed border-gray-300 rounded-md p-4 cursor-pointer"
-          >
+          <>
             {file ? (
-              <div className="mt-4 p-4 bg-gray-100 rounded w-full relative">
-                <p className="font-pretendard font-bold text-blue-500">
+              <Paper elevation={3} sx={{ p: 2, width: '100%', position: 'relative' }}>
+                <Typography variant="subtitle1" color="primary" fontWeight="bold">
                   {file.name}
-                </p>
-                <p className="font-pretendard font-light text-gray-500 text-sm">
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
                   {size} MB
-                </p>
-                <button
+                </Typography>
+                <Button
+                  startIcon={<Delete />}
                   onClick={handleDeleteFile}
-                  className="absolute flex flex-row gap-2 items-center px-4 top-5 right-4 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
+                  color="error"
+                  variant="contained"
+                  size="small"
+                  sx={{ position: 'absolute', top: 8, right: 8 }}
                 >
-                  <FaTrash />
                   삭제
-                </button>
-              </div>
-            ) : (
-              <label className="flex flex-col items-center justify-center w-full h-full text-gray-400 cursor-pointer">
-                <FaFolderOpen size={40} className="mb-2" />
-                <span>여기에 파일을 드롭하거나 클릭하여 선택하세요</span>
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  accept=".tar,.tar.gz,.tar.bz2,.tar.xz"
-                  className="hidden"
-                />
-              </label>
-            )}
-          </div>
-        );
-      case 'docker':
+                </Button>
+              </Paper>
+            ) : (<Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '200px',
+                border: '2px dashed',
+                borderColor: 'primary.main',
+                borderRadius: 2,
+                p: 2,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                },
+              }}
+              component="label"
+            >
+              <FolderOpen sx={{ fontSize: 48, mb: 2, color: 'primary.main' }} />
+              <Typography>파일을 드래그하거나 클릭하여 선택하세요</Typography>
+              <VisuallyHiddenInput
+                type="file"
+                onChange={handleFileChange}
+                accept=".tar,.tar.gz,.tar.bz2,.tar.xz"
+              />
+            </Box>
+        )}
+            </>);
+      case 1:
         return <DockerHubContent />;
       default:
         return null;
     }
   };
 
-  const handleCloseBtn = () => {
-    onClose();
-    setActiveTab('local');
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="relative bg-white p-6 rounded-lg w-full max-w-4xl mx-4 md:mx-0 h-full md:h-4/5 flex flex-col shadow-lg overflow-hidden">
-        <button
-          onClick={handleCloseBtn}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl focus:outline-none"
-        >
-          &times;
-        </button>
-        <h2 className="text-lg md:text-xl lg:text-2xl font-bold mb-4 text-center">
-          <span className="text-blue-500 font-pretendard font-bold">
-            이미지
-          </span>
-          <span className="text-black font-pretendard font-bold">
-            를 불러올 방식을 선택하세요.
-          </span>
-        </h2>
-        <div className="flex justify-center mb-4">
-          <button
-            onClick={() => setActiveTab('local')}
-            className={`flex items-center px-4 py-2 mr-2 ${
-              activeTab === 'local'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-black hover:bg-gray-300'
-            } rounded shadow`}
-          >
-            <FaFolderOpen className="mr-2" />
-            Local Path
-          </button>
-          <button
-            onClick={() => setActiveTab('docker')}
-            className={`flex items-center px-4 py-2 ${
-              activeTab === 'docker'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-black hover:bg-gray-300'
-            } rounded shadow`}
-          >
-            <FaDocker className="mr-2" />
-            Docker Hub
-          </button>
-        </div>
-        <div className="flex-grow flex items-center justify-center overflow-auto">
+    <>
+      <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <Typography variant="h5" align="center">
+            <Box component="span" color="primary.main" fontWeight="bold">이미지</Box>
+            <Box component="span" color="text.primary">를 불러올 방식을 선택하세요.</Box>
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Tabs value={activeTab} onChange={handleTabChange} centered sx={{ mb: 2 }}>
+            <Tab icon={<FolderOpen />} label="Local Path" />
+            <Tab icon={<Hub />} label="Docker Hub" />
+          </Tabs>
           {renderTabContent()}
-        </div>
-        <div className="mt-2 space-y-2">
-          <div className="relative">
-            <FaFileSignature className="absolute top-3 left-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="이름"
+          <Box sx={{ mt: 4 }}>
+            <TextField
+              fullWidth
+              label="이름"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full pl-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              InputProps={{
+                startAdornment: <Description sx={{ color: 'action.active', mr: 1 }} />,
+              }}
+              sx={{ mb: 2 }}
             />
-          </div>
-          <div className="relative">
-            <FaTag className="absolute top-3 left-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="태그 (쉼표로 구분)"
+            <TextField
+              fullWidth
+              label="태그 (쉼표로 구분)"
               value={tag}
               onChange={(e) => setTag(e.target.value)}
-              className="w-full pl-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              InputProps={{
+                startAdornment: <Label sx={{ color: 'action.active', mr: 1 }} />,
+              }}
             />
-          </div>
-        </div>
-        <div className="flex justify-end mt-2">
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 mt-2 bg-blue-500 font-pretendard text-white rounded shadow hover:bg-blue-600 focus:outline-none"
-          >
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary">
+            취소
+          </Button>
+          <Button onClick={handleSave} color="primary" variant="contained">
             저장하기
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isWarningModalOpen} onClose={() => setIsWarningModalOpen(false)}>
+        <DialogTitle>경고</DialogTitle>
+        <DialogContent>
+          <Typography>
+            로컬 파일이 이미 존재합니다. Docker Hub로 전환하면 현재 선택된 파일이 삭제됩니다. 계속하시겠습니까?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsWarningModalOpen(false)} color="primary">
+            취소
+          </Button>
+          <Button onClick={handleWarningConfirm} color="primary" variant="contained">
+            확인
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

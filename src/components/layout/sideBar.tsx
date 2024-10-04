@@ -12,7 +12,6 @@ import ImageCard from '../card/imageCard';
 import ContainerCard from '../card/containerCard';
 import { useImageStore } from '@/store/imageStore';
 import DaemonConnectBar from '../bar/daemonConnectBar';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
 import LargeButton from '../button/largeButton';
 
 interface SidebarProps {
@@ -108,7 +107,7 @@ const Sidebar = ({ progress }: SidebarProps) => {
       <div className="flex-grow overflow-y-auto scrollbar-hide p-4 font-pretendard">
         {renderDataList()}
       </div>
-      <div className="p-4 bg-white border-t border-b border-gray-200">
+      <div className="p-4 bg-white border-t border-gray-200">
         {currentComponent ? (
           React.createElement(currentComponent.addButton, {
             onCreate: handleCreate,
@@ -117,7 +116,7 @@ const Sidebar = ({ progress }: SidebarProps) => {
           <LargeButton title={'추가하기'} onClick={() => {}} />
         )}
       </div>
-      <div className="w-full">
+      <div className="w-full h-auto">
         <DaemonConnectBar />
       </div>
     </div>

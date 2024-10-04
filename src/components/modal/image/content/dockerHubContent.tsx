@@ -52,7 +52,7 @@ const DockerHubContent = () => {
       {loading && (
         <p className="mt-4 font-pretendard font-light">이미지 검색 중...</p>
       )}
-      <div className="mt-4 w-full h-64 overflow-y-auto scrollbar-hide">
+      <div className="mt-4 w-full h-48 overflow-y-auto scrollbar-hide">
         {images.length > 0
           ? images.map((image) => (
               <div
