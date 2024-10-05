@@ -20,6 +20,7 @@ import { useSnackbar } from 'notistack';
 import { v4 as uuidv4 } from 'uuid';
 import { showSnackbar } from '@/utils/toastUtils';
 import { DockerHubContent } from '@/components';
+import ModalButton from '@/components/button/ModalButton';
 
 interface ModalProps {
   isOpen: boolean;
@@ -174,7 +175,7 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
                   color="error"
                   variant="contained"
                   size="small"
-                  sx={{ position: 'absolute', top: 8, right: 8 }}
+                  sx={{ position: 'absolute', top: 25, right: 25 }}
                 >
                   삭제
                 </Button>
@@ -255,20 +256,18 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
           <Button onClick={onClose} color="primary">
             취소
           </Button>
-          <Button onClick={handleSave} variant="contained">
-            저장하기
-          </Button>
+          <ModalButton onClick={handleSave}>저장하기</ModalButton>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isWarningModalOpen} onClose={() => setIsWarningModalOpen(false)}>
+      <Dialog open={isWarningModalOpen} onClose={() => setIsWarningModalOpen(false)} sx={{ p:2 }}>
         <DialogTitle>경고</DialogTitle>
         <DialogContent>
           <Typography>
             로컬 파일이 이미 존재합니다. Docker Hub로 전환하면 현재 선택된 파일이 삭제됩니다. 계속하시겠습니까?
           </Typography>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p:2 }}>
           <Button onClick={() => setIsWarningModalOpen(false)} color="primary">
             취소
           </Button>
@@ -277,6 +276,7 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
           </Button>
         </DialogActions>
       </Dialog>
+
     </>
   );
 };
