@@ -219,14 +219,14 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
       <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
         <DialogTitle>
           <Typography variant="h5" align="center">
-            <Box component="span" color="primary.main" fontWeight="bold">이미지</Box>
-            <Box component="span" color="text.primary">를 불러올 방식을 선택하세요.</Box>
+            <Box component="span" fontWeight="bold" className="text-blue_6 font-pretendard">이미지</Box>
+            <Box component="span" className="font-pretendard">를 불러올 방식을 선택하세요.</Box>
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Tabs value={activeTab} onChange={handleTabChange} centered sx={{ mb: 2 }}>
-            <Tab icon={<FolderOpen />} label="Local Path" />
-            <Tab icon={<Hub />} label="Docker Hub" />
+            <Tab icon={<FolderOpen className="text-blue_6" />} label="Local Path" className="text-blue_6" />
+            <Tab icon={<Hub className="text-blue_6" />} label="Docker Hub" className="text-blue_6" />
           </Tabs>
           {renderTabContent()}
           <Box sx={{ mt: 4 }}>
@@ -251,11 +251,11 @@ const ImageModal = ({ isOpen, onClose, onSave }: ModalProps) => {
             />
           </Box>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p: 4 }}>
           <Button onClick={onClose} color="primary">
             취소
           </Button>
-          <Button onClick={handleSave} color="primary" variant="contained">
+          <Button onClick={handleSave} variant="contained">
             저장하기
           </Button>
         </DialogActions>
