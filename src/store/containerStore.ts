@@ -5,7 +5,7 @@ interface ContainerStore {
   containers: Container[];
   addContainer: (container: Container) => void;
   assignImageToContainer: (containerId: string, image: Image) => void;
-  assignVolumeToContainer: (containerId: string, volume: Volume) => void;
+  // assignVolumeToContainer: (containerId: string, volume: Volume) => void;
   assignNetworkToContainer: (containerId: string, networkId: string) => void;
 }
 
@@ -21,12 +21,12 @@ export const useContainerStore = create<ContainerStore>((set) => ({
         container.id === containerId ? { ...container, image } : container
       ),
     })),
-  assignVolumeToContainer: (containerId, volume) =>
-    set((state) => ({
-      containers: state.containers.map((container) =>
-        container.id === containerId ? { ...container, volume } : container
-      ),
-    })),
+  // assignVolumeToContainer: (containerId, volume) =>
+  //   set((state) => ({
+  //     containers: state.containers.map((container) =>
+  //       container.id === containerId ? { ...container, volume } : container
+  //     ),
+  //   })),
   assignNetworkToContainer: (containerId, networkId) =>
     set((state) => ({
       containers: state.containers.map((container) =>
