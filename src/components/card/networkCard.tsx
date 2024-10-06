@@ -8,6 +8,7 @@ import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { formatDateTime } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
+import NetworkDetailModal from '../modal/network/networkDetailModal';
 
 interface NetworkProps {
   Id: string;
@@ -33,6 +34,8 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -167,7 +170,9 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     try {
       const networkDetail = await fetchNetworkDetail(data.Id);
       console.log('네트워크 상세 정보:', networkDetail);
+      setDetailData(networkDetail);
       setShowOptions(false);
+      setIsModalOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -231,6 +236,11 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         question={`네트워크 [${data.Name}]을 삭제하시겠습니까?`}
+      />
+      <NetworkDetailModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={detailData}
       />
     </div>
   );

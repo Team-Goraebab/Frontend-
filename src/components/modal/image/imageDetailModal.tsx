@@ -35,27 +35,22 @@ const ImageDetailModal = ({ open, onClose, data }: ImageDetailModalProps) => {
     >
       {/* Fixed Header */}
       <div className="p-5 font-pretendard border-b border-grey_1 bg-white">
-        <h2 className="text-lg font-bold">{`Image Details - ${name}`}</h2>
-
-        {/* General Information */}
-        <div className="flex justify-between mt-3">
-          <p>
+        <h2 className="text-lg font-bold">{`${name} : ${tag}`}</h2>
+        <div className="grid grid-cols-2 gap-4 mt-3">
+          <div>
             <strong>Repository:</strong> {name}
-          </p>
-          <p>
+          </div>
+          <div>
             <strong>Tag:</strong> {tag}
-          </p>
-        </div>
-        <div className="flex justify-between mt-2">
-          <p>
+          </div>
+          <div>
             <strong>Size:</strong> {(data.Size / (1024 * 1024)).toFixed(2)} MB
-          </p>
-          <p>
+          </div>
+          <div>
             <strong>Created:</strong> {formatDateTime(data.Created)}
-          </p>
+          </div>
         </div>
       </div>
-
       {/* Scrollable Content */}
       <DialogContent className="overflow-y-auto flex-grow bg-grey_0">
         {/* Layers Section */}
