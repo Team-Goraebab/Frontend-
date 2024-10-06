@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const dockerClient = createDockerClient();
 
   try {
-    const response = await dockerClient.get(`/volumes/${name}/json`);
+    const response = await dockerClient.get(`/volumes/${name}`);
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     console.error('Error fetching volume detail:', error);

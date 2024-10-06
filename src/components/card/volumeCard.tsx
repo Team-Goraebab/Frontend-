@@ -5,6 +5,7 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { formatDateTime } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
+import VolumeDetailModal from '../modal/volume/volumeDetailModal';
 
 interface VolumeProps {
   id: string;
@@ -36,6 +37,8 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -126,7 +129,9 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
     try {
       const volumeDetail = await fetchVolumeDetail(data.Name);
       console.log('볼륨 상세 정보:', volumeDetail);
+      setDetailData(volumeDetail);
       setShowOptions(false);
+      setIsModalOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -190,6 +195,11 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         question={`볼륨 [${data.Name}]을 삭제하시겠습니까?`}
+      />
+      <VolumeDetailModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={detailData}
       />
     </div>
   );
