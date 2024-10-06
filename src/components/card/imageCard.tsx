@@ -39,7 +39,7 @@ const ImageCard = ({ data }: CardDataProps) => {
     // { label: 'ID', value: data.Id },
     // { label: 'NAME', value: data.Labels?.['com.docker.compose.project'] },
     { label: 'SIZE', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB' },
-    { label: 'TAGS', value: data.RepoTags.join(', ') },
+    { label: 'TAGS', value: data.RepoTags.join(', ') || '<none>' },
     { label: 'CREATED', value: new Date(data.Created * 1000).toLocaleString() },
   ];
 

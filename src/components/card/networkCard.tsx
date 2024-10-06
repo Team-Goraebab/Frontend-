@@ -6,10 +6,12 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
+import { formatDateTime } from '@/utils/formatTimestamp';
 
 interface NetworkProps {
   Id: string;
   Name: string;
+  Created: string;
   Driver: string;
   Containers: { [key: string]: { Name: string; IPv4Address: string } };
   IPAM?: { Config?: { Subnet: string; Gateway: string }[] };
@@ -46,16 +48,17 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const gateway = data.IPAM?.Config?.[0]?.Gateway || 'No Gateway';
 
   const networkItems = [
-    { label: 'Name', value: data.Name },
-    { label: 'Driver', value: data.Driver },
-    { label: 'Subnet', value: subnet },
-    { label: 'Gateway', value: gateway },
+    { label: 'NAME', value: data.Name },
+    { label: 'CREATED', value: formatDateTime(data.Created) },
+    { label: 'DRIVER', value: data.Driver },
+    { label: 'SUBNET', value: subnet },
+    { label: 'GATEWAY', value: gateway },
     {
-      label: 'Containers',
+      label: 'CONTINAERS',
       value:
         connectedContainers.length > 0
           ? connectedContainers.join(', ')
-          : 'No connected containers',
+          : 'No connected',
     },
   ];
 
@@ -188,14 +191,14 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           )}
         </div>
         {networkItems.map((item, index) => (
-          <div key={index} className="flex items-center mt-[5px] space-x-3">
+          <div key={index} className="flex items-center mt-[5px] space-x-3.5">
             <span
-              className="text-xs py-1.5 w-[70px] rounded-md font-bold text-center"
+              className="text-xs py-1 w-[75px] rounded-md font-bold text-center"
               style={{ backgroundColor: bg1, color: bg2 }}
             >
               {item.label}
             </span>
-            <span className="font-semibold text-xs truncate max-w-[150px]">
+            <span className="font-semibold text-xs truncate max-w-[130px]">
               {item.value}
             </span>
           </div>

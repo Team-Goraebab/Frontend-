@@ -3,10 +3,12 @@ import { Modal, OptionModal } from '@/components';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
+import { formatDateTime } from '@/utils/formatTimestamp';
 
 interface VolumeProps {
   id: string;
   Name: string;
+  CreatedAt: string;
   Driver: string;
   Mountpoint: string;
   Scope: string;
@@ -35,6 +37,20 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const volumeItems = [
+    { label: 'NAME', value: data.Name },
+    { label: 'CREATED', value: formatDateTime(data.CreatedAt) },
+    { label: 'MOUNT POINT', value: data.Mountpoint },
+    { label: 'CAPACITY', value: data.Scope },
+    {
+      label: 'CONTAINERS',
+      value:
+        (data.connectedContainers || [])
+          .map((container) => `${container.name} (${container.ip})`)
+          .join(', ') || 'No connected',
+    },
+  ];
 
   const handleOptionClick = () => {
     setShowOptions(!showOptions);
@@ -98,27 +114,11 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
         setShowOptions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [cardRef]);
-
-  const volumeItems = [
-    { label: 'Name', value: data.Name },
-    { label: 'Driver', value: data.Driver },
-    { label: 'Mount Point', value: data.Mountpoint },
-    { label: 'Capacity', value: data.Scope },
-    {
-      label: 'Containers',
-      value:
-        (data.connectedContainers || [])
-          .map((container) => `${container.name} (${container.ip})`)
-          .join(', ') || 'No connected containers',
-    },
-  ];
 
   return (
     <div
@@ -148,14 +148,14 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
           )}
         </div>
         {volumeItems.map((item, index) => (
-          <div key={index} className="flex items-center mt-[5px] space-x-3">
+          <div key={index} className="flex items-center mt-[5px] space-x-3.5">
             <span
-              className="text-xs py-1.5 w-[70px] rounded-md font-bold text-center"
+              className="text-xs py-1 w-[75px] rounded-md font-bold text-center"
               style={{ backgroundColor: bg1, color: bg2 }}
             >
               {item.label}
             </span>
-            <span className="font-semibold text-xs truncate max-w-[150px]">
+            <span className="font-semibold text-xs truncate max-w-[130px]">
               {item.value}
             </span>
           </div>

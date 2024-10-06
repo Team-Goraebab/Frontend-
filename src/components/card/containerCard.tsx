@@ -33,7 +33,8 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const addContainerToHost = useStore((state) => state.addContainerToHost);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const { bg1, bg2 } = getStatusColors(data.status || 'primary');
+  const { bg1, bg2 } = getStatusColors(data.State);
+
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
@@ -41,20 +42,16 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { assignImageToContainer, assignNetworkToContainer } =
     useContainerStore();
 
-  // 컨테이너 이름은 'Names' 배열에서 추출합니다.
   const containerName = data.Names ? data.Names[0] : 'N/A';
-
-  // 이미지 정보는 'RepoTags' 또는 'Image' 필드에서 추출
   const imageName = data.Image || 'N/A';
-  const imageID = data.ImageID || 'N/A'; // 필요시 추가 가능
 
   const items = [
     // { label: 'ID', value: data.Id },
     { label: 'NAME', value: containerName },
+    { label: 'CREATED', value: formatTimestamp(data.Created) || 'N/A' },
     { label: 'IMAGE', value: imageName },
     { label: 'NETWORK', value: data?.HostConfig?.NetworkMode || 'N/A' },
     { label: 'STATUS', value: data.Status || 'N/A' },
-    { label: 'CREATED', value: formatTimestamp(data.Created) || 'N/A' },
   ];
 
   const handleOptionClick = () => {
@@ -235,7 +232,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         {/* 볼륨 드롭다운 */}
         <div className="flex items-center mt-2">
           <p
-            className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center mb-2 flex-shrink-0"
+            className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center flex-shrink-0"
             style={{ backgroundColor: bg1, color: bg2 }}
           >
             VOLUME
@@ -244,7 +241,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             onClick={toggleVolumeDropdown}
             className="flex w-full text-xs font-semibold text-left text-grey_6"
           >
-            <div className="flex w-full items-center justify-between pb-2">
+            <div className="flex w-full items-center justify-between pb-2 pl-1">
               {isVolumeOpen ? 'Hide Volumes' : 'Show Volumes'}
               {isVolumeOpen ? <AiOutlineUp /> : <AiOutlineDown />}
             </div>
@@ -282,7 +279,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
-        question={`컨테이너 [${data.Names[0]}]을 삭제하시겠습니까?`}
+        question={`컨테이너를 삭제하시겠습니까?`}
       />
     </div>
   );

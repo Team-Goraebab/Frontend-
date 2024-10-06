@@ -24,37 +24,35 @@ type DataHandlerType = {
   setData: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
+// activeId와 API 경로를 미리 매핑한 객체
+const apiMap: Record<number, { url: string; dataKey?: string }> = {
+  1: { url: '/api/container/list' },
+  2: { url: '/api/image/list' },
+  3: { url: '/api/network/list' },
+  4: { url: '/api/volume/list', dataKey: 'Volumes' },
+};
+
+// 데이터를 로드하는 함수
+const loadData = async (
+  apiUrl: string,
+  setData: React.Dispatch<React.SetStateAction<any[]>>,
+  dataKey?: string
+) => {
+  try {
+    const data = await fetchData(apiUrl);
+    setData(dataKey ? data?.[dataKey] || [] : data || []);
+    console.log(`${dataKey || '데이터'} 정보 :::`, data);
+  } catch (error) {
+    console.error(`${dataKey || '데이터'} 로드 중 에러 발생:`, error);
+  }
+};
+
 const Sidebar = ({ progress }: SidebarProps) => {
   const { activeId } = useMenuStore();
   const [networkData, setNetworkData] = useState<any[]>([]);
   const [volumeData, setVolumeData] = useState<any[]>([]);
   const [containerData, setContainerData] = useState<any[]>([]);
   const [imageData, setImageData] = useState<any[]>([]);
-
-  // API에서 데이터를 로드하는 함수들
-  const loadVolumeData = async () => {
-    const data = await fetchData('/api/volume/list');
-    setVolumeData(data?.Volumes || []);
-    console.log('볼륨 정보 :::', data);
-  };
-
-  const loadNetworkData = async () => {
-    const data = await fetchData('/api/network/list');
-    setNetworkData(data || []);
-    console.log('네트워크 정보 :::', data);
-  };
-
-  const loadContainerData = async () => {
-    const data = await fetchData('/api/container/list');
-    setContainerData(data || []);
-    console.log('컨테이너 정보 :::', data);
-  };
-
-  const loadImageData = async () => {
-    const data = await fetchData('/api/image/list');
-    setImageData(data || []);
-    console.log('이미지 정보 :::', data);
-  };
 
   // 데이터를 관리하는 핸들러 매핑
   const dataHandlers: Record<1 | 2 | 3 | 4, DataHandlerType> = {
@@ -64,10 +62,24 @@ const Sidebar = ({ progress }: SidebarProps) => {
     4: { data: volumeData, setData: setVolumeData },
   };
 
-  const handleCreate = (newItem: any) => {
-    if (dataHandlers[activeId as 1 | 2 | 3 | 4]) {
-      const { setData } = dataHandlers[activeId as 1 | 2 | 3 | 4];
-      setData((prevData) => [...prevData, newItem]);
+  const handleCreate = async (newItem: any) => {
+    try {
+      const { url, dataKey } = apiMap[activeId] || {};
+      if (!url) return;
+
+      // 새로운 데이터를 로드하여 업데이트
+      await loadData(
+        url,
+        dataHandlers[activeId as 1 | 2 | 3 | 4].setData,
+        dataKey
+      );
+
+      // 3초 지연 후 다시 데이터 로드
+      setTimeout(() => {
+        loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
+      }, 2000);
+    } catch (error) {
+      console.error('데이터 로드 중 에러 발생:', error);
     }
   };
 
@@ -105,15 +117,9 @@ const Sidebar = ({ progress }: SidebarProps) => {
   );
 
   const handleDeleteSuccess = () => {
-    if (activeId === 1) {
-      loadContainerData();
-    } else if (activeId === 2) {
-      loadImageData();
-    } else if (activeId === 3) {
-      loadNetworkData();
-    } else if (activeId === 4) {
-      loadVolumeData();
-    }
+    const { url, dataKey } = apiMap[activeId] || {};
+    if (!url) return;
+    loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
   };
 
   // 데이터를 렌더링하는 함수
@@ -136,15 +142,9 @@ const Sidebar = ({ progress }: SidebarProps) => {
 
   // activeId 변경 시 데이터 로드
   useEffect(() => {
-    if (activeId === 1) {
-      loadContainerData();
-    } else if (activeId === 2) {
-      loadImageData();
-    } else if (activeId === 3) {
-      loadNetworkData();
-    } else if (activeId === 4) {
-      loadVolumeData();
-    }
+    const { url, dataKey } = apiMap[activeId] || {};
+    if (!url) return;
+    loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
   }, [activeId]);
 
   return (

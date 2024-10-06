@@ -31,11 +31,7 @@ const AddContainerButton = ({ onCreate }: AddContainerButtonProps) => {
           'success',
           '#4C48FF'
         );
-
-        // 컨테이너 생성 후 약간의 지연을 두고 리스트를 다시 불러오기
-        setTimeout(() => {
-          onCreate(result);
-        }, 5000); // 5초 후 리스트 갱신
+        onCreate(result);
       } else {
         showSnackbar(
           enqueueSnackbar,
