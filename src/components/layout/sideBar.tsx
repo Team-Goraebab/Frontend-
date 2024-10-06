@@ -35,21 +35,25 @@ const Sidebar = ({ progress }: SidebarProps) => {
   const loadVolumeData = async () => {
     const data = await fetchData('/api/volume/list');
     setVolumeData(data?.Volumes || []);
+    console.log('볼륨 정보 :::', data);
   };
 
   const loadNetworkData = async () => {
     const data = await fetchData('/api/network/list');
     setNetworkData(data || []);
+    console.log('네트워크 정보 :::', data);
   };
 
   const loadContainerData = async () => {
     const data = await fetchData('/api/container/list');
     setContainerData(data || []);
+    console.log('컨테이너 정보 :::', data);
   };
 
   const loadImageData = async () => {
     const data = await fetchData('/api/image/list');
     setImageData(data || []);
+    console.log('이미지 정보 :::', data);
   };
 
   // 데이터를 관리하는 핸들러 매핑
@@ -100,6 +104,18 @@ const Sidebar = ({ progress }: SidebarProps) => {
     </div>
   );
 
+  const handleDeleteSuccess = () => {
+    if (activeId === 1) {
+      loadContainerData();
+    } else if (activeId === 2) {
+      loadImageData();
+    } else if (activeId === 3) {
+      loadNetworkData();
+    } else if (activeId === 4) {
+      loadVolumeData();
+    }
+  };
+
   // 데이터를 렌더링하는 함수
   const renderDataList = () => {
     if (!currentComponent) return null;
@@ -108,7 +124,13 @@ const Sidebar = ({ progress }: SidebarProps) => {
     const data = dataHandlers[activeId as 1 | 2 | 3 | 4]?.data;
 
     return data && data.length > 0
-      ? data.map((item, index) => <CardComponent key={index} data={item} />)
+      ? data.map((item, index) => (
+          <CardComponent
+            key={index}
+            data={item}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        ))
       : renderNoDataMessage(noDataMessage);
   };
 

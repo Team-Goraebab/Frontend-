@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, OptionModal } from '@/components';
 import { getStatusColors } from '@/utils/statusColorsUtils';
@@ -21,17 +19,18 @@ interface VolumeProps {
 
 interface VolumeCardProps {
   data: VolumeProps;
+  onDeleteSuccess: () => void;
 }
 
 /**
- *
  * @param data 볼륨 데이터
- * @returns
+ * @returns 볼륨 카드 UI
  */
-const VolumeCard = ({ data }: VolumeCardProps) => {
+const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleOptionClick = () => {
@@ -43,9 +42,29 @@ const VolumeCard = ({ data }: VolumeCardProps) => {
     setShowOptions(false);
   };
 
-  const handleConfirmDelete = () => {
-    console.log('볼륨 삭제가 확인되었습니다.');
-    setShowModal(false);
+  const handleConfirmDelete = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/volume/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: data.Name }),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        console.log('볼륨 삭제 완료:', result.message);
+        onDeleteSuccess();
+      } else {
+        console.error('볼륨 삭제 실패:', result.error);
+      }
+    } catch (error) {
+      console.error('볼륨 삭제 요청 중 에러:', error);
+    } finally {
+      setLoading(false);
+      setShowModal(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -101,8 +120,8 @@ const VolumeCard = ({ data }: VolumeCardProps) => {
             <div className="absolute top-4 left-16">
               <OptionModal
                 onTopHandler={() => console.log('정보 가져오기 클릭됨')}
-                onMiddleHandler={() => console.log('기타 작업')}
                 onBottomHandler={handleDelete}
+                btnVisible={false}
               />
             </div>
           )}
@@ -125,6 +144,7 @@ const VolumeCard = ({ data }: VolumeCardProps) => {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+        question={`볼륨 [${data.Name}]을 삭제하시겠습니까?`}
       />
     </div>
   );
