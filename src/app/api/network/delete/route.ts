@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDockerClient } from '../../\baxiosInstance';
+import { createDockerClient } from '../../axiosInstance';
 
 export async function DELETE(req: NextRequest) {
   const { id } = await req.json(); // 삭제할 네트워크 ID
