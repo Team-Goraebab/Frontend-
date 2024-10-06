@@ -135,7 +135,7 @@ const ContainerDetailModal = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button title="Close" onClick={onClose} />
+        <Button title="Close" onClick={onClose} color="grey" />
       </DialogActions>
     </Dialog>
   );

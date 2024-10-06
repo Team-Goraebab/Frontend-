@@ -10,10 +10,11 @@ import { useContainerStore } from '@/store/containerStore';
 import { useStore } from '@/store/cardStore';
 import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
-import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai';
+import { AiOutlineUp, AiOutlineDown, AiOutlineFileText } from 'react-icons/ai';
 import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import ContainerDetailModal from '../modal/container/containerDetailModal';
+import LogModal from '../modal/container/logModal';
 
 interface CardDataProps {
   data: any;
@@ -42,6 +43,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<boolean>(false);
+  const [isLogModalOpen, setIsLogModalOpen] = useState<boolean>(false);
   const { assignImageToContainer, assignNetworkToContainer } =
     useContainerStore();
 
@@ -58,6 +60,10 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
 
   const handleOptionClick = () => {
     setShowOptions(!showOptions);
+  };
+
+  const handleLogsClick = () => {
+    setIsLogModalOpen(true);
   };
 
   const handleRun = () => {
@@ -213,10 +219,15 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         style={{ backgroundColor: bg2 }}
       />
       <div className="ml-4 flex flex-col w-full">
-        {/* Option 버튼 */}
         <div className="flex justify-between text-grey_4 text-sm mb-3 relative">
-          <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
-            {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
+          <span className={'flex font-pretendard font-bold text-grey_6 pt-2'}>
+            {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}{' '}
+            <AiOutlineFileText
+              className="cursor-pointer text-blue_500 ml-2"
+              size={18}
+              onClick={handleLogsClick}
+              title="View Logs"
+            />
           </span>
           <span
             className="font-semibold text-xs cursor-pointer"
@@ -276,7 +287,6 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
                   key={index}
                   className="flex flex-col mb-2 p-1 border rounded w-full"
                 >
-                  {/* <p className="text-xs font-semibold">{mount.Name || 'N/A'}</p> */}
                   {mount.Driver && (
                     <p className="text-xs">Driver: {mount.Driver}</p>
                   )}
@@ -302,6 +312,12 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         data={detailData}
+      />
+      <LogModal
+        open={isLogModalOpen}
+        onClose={() => setIsLogModalOpen(false)}
+        containerId={data.Id}
+        containerName={containerName}
       />
     </div>
   );
