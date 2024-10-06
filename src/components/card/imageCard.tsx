@@ -8,6 +8,7 @@ import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
+import ImageDetailModal from '../modal/image/imageDetailModal';
 
 interface CardProps {
   Id: string;
@@ -35,6 +36,8 @@ const ImageCard = ({ data }: CardDataProps) => {
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const repoTag =
@@ -91,7 +94,9 @@ const ImageCard = ({ data }: CardDataProps) => {
     try {
       const imageDetail = await fetchImageDetail(data.RepoTags[0]);
       console.log('이미지 상세 정보:', imageDetail);
+      setDetailData(imageDetail);
       setShowOptions(false);
+      setIsModalOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -158,6 +163,11 @@ const ImageCard = ({ data }: CardDataProps) => {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+      />
+      <ImageDetailModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={detailData}
       />
     </div>
   );
