@@ -13,6 +13,7 @@ import { getStatusColors } from '@/utils/statusColorsUtils';
 import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai';
 import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
+import ContainerDetailModal from '../modal/container/containerDetailModal';
 
 interface CardDataProps {
   data: any;
@@ -39,7 +40,8 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
-  const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<boolean>(false);
   const { assignImageToContainer, assignNetworkToContainer } =
     useContainerStore();
 
@@ -181,7 +183,9 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     try {
       const containerDetail = await fetchContainerDetail(data.Id);
       console.log('컨테이너 상세 정보:', containerDetail);
+      setDetailData(containerDetail);
       setShowOptions(false);
+      setIsModalOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -288,13 +292,16 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           </div>
         )}
       </div>
-
-      {/* 삭제 모달 */}
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         question={`컨테이너를 삭제하시겠습니까?`}
+      />
+      <ContainerDetailModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={detailData}
       />
     </div>
   );
