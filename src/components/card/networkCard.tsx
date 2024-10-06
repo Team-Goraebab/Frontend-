@@ -12,32 +12,32 @@ interface NetworkProps {
   Name: string;
   Driver: string;
   Containers: { [key: string]: { Name: string; IPv4Address: string } };
-  Scope: string;
   IPAM?: { Config?: { Subnet: string; Gateway: string }[] };
 }
 
 interface CardDataProps {
   data: NetworkProps;
+  onDeleteSuccess: () => void;
 }
 
 /**
  * @param data 네트워크 데이터
  * @returns 네트워크 카드 컴포넌트
  */
-const NetworkCard = ({ data }: CardDataProps) => {
+const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { selectedHostId } = selectedHostStore();
-
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const addConnectedBridgeId = selectedHostStore(
     (state) => state.addConnectedBridgeId
   );
 
-  const connectedContainers = Object.values(data.Containers).map(
+  const connectedContainers = Object.values(data.Containers || {}).map(
     (container) => `${container.Name} (${container.IPv4Address})`
   );
 
@@ -47,7 +47,6 @@ const NetworkCard = ({ data }: CardDataProps) => {
 
   const networkItems = [
     { label: 'Name', value: data.Name },
-    { label: 'Scope', value: data.Scope },
     { label: 'Driver', value: data.Driver },
     { label: 'Subnet', value: subnet },
     { label: 'Gateway', value: gateway },
@@ -69,9 +68,29 @@ const NetworkCard = ({ data }: CardDataProps) => {
     setShowOptions(false);
   };
 
-  const handleConfirmDelete = () => {
-    console.log('삭제가 확인되었습니다.');
-    setShowModal(false);
+  const handleConfirmDelete = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/network/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: data.Id }),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        console.log('네트워크 삭제 완료:', result.message);
+        onDeleteSuccess();
+      } else {
+        console.error('네트워크 삭제 실패:', result.error);
+      }
+    } catch (error) {
+      console.error('네트워크 삭제 요청 중 에러:', error);
+    } finally {
+      setLoading(false);
+      setShowModal(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -168,6 +187,7 @@ const NetworkCard = ({ data }: CardDataProps) => {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+        question={`네트워크 [${data.Name}]을 삭제하시겠습니까?`}
       />
     </div>
   );

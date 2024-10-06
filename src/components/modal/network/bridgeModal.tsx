@@ -16,9 +16,31 @@ interface BridgeModalProps {
 }
 
 /**
- *
- * @param onClose 브릿지 모달 닫기 핸들러
- * @param onCreate 브릿지 모달 생성 핸들러
+ * IP 주소 형식 검사 함수
+ * @param ip IP 주소 문자열
+ * @returns 유효한 IP 형식이면 true, 그렇지 않으면 false
+ */
+const isValidIPAddress = (ip: string): boolean => {
+  const ipPattern =
+    /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+  return ipPattern.test(ip);
+};
+
+/**
+ * CIDR 서브넷 형식 검사 함수
+ * @param subnet CIDR 형식의 문자열
+ * @returns 유효한 CIDR 형식이면 true, 그렇지 않으면 false
+ */
+const isValidCIDR = (subnet: string): boolean => {
+  const cidrPattern =
+    /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}\/([0-9]|[1-2][0-9]|3[0-2])$/;
+  return cidrPattern.test(subnet);
+};
+
+/**
+ * BridgeModal 컴포넌트
+ * @param onClose 모달 닫기 핸들러
+ * @param onCreate 브리지 생성 핸들러
  * @returns
  */
 const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
@@ -29,7 +51,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleCreate = () => {
-    if (!name) {
+    if (!name.trim()) {
       showSnackbar(
         enqueueSnackbar,
         '브리지 이름을 입력해주세요.',
@@ -39,20 +61,20 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
       return;
     }
 
-    if (!subnet) {
+    if (!isValidCIDR(subnet)) {
       showSnackbar(
         enqueueSnackbar,
-        '서브넷을 입력해주세요.',
+        '올바른 서브넷 형식을 입력해주세요. (예: 192.168.1.0/24)',
         'error',
         '#FF4853'
       );
       return;
     }
 
-    if (!gateway) {
+    if (!isValidIPAddress(gateway)) {
       showSnackbar(
         enqueueSnackbar,
-        '게이트웨이를 입력해주세요.',
+        '올바른 게이트웨이 IP 주소를 입력해주세요. (예: 192.168.1.1)',
         'error',
         '#FF4853'
       );
