@@ -49,40 +49,36 @@ const AddVolumeButton = ({ onCreate }: AddVolumeButtonProps) => {
       });
 
       const result = await response.json();
-
-      if (!response.ok) {
-        showSnackbar(
-          enqueueSnackbar,
-          result.error || '볼륨 생성에 실패했습니다.',
-          'error',
-          '#FF0000'
-        );
-        return;
-      }
-
       const createdVolume = result;
 
-      // 부모 컴포넌트로 생성된 볼륨 데이터 전달
-      onCreate(createdVolume);
-      // store에 볼륨 데이터 저장
-      addVolume(createdVolume);
-
-      showSnackbar(
-        enqueueSnackbar,
-        '볼륨이 성공적으로 생성되었습니다!',
-        'success',
-        '#4C48FF'
-      );
+      if (response.ok) {
+        showSnackbar(
+          enqueueSnackbar,
+          '볼륨이 성공적으로 생성되었습니다!',
+          'success',
+          '#4C48FF'
+        );
+        // 부모 컴포넌트로 생성된 볼륨 데이터 전달
+        onCreate(createdVolume);
+        // store에 볼륨 데이터 저장
+        addVolume(createdVolume);
+      } else {
+        showSnackbar(
+          enqueueSnackbar,
+          `볼륨 생성 실패: ${result.error}`,
+          'error',
+          '#FF4853'
+        );
+      }
     } catch (error) {
-      console.error('Error creating volume:', error);
+      console.error('네트워크 생성 중 에러:', error);
       showSnackbar(
         enqueueSnackbar,
-        '서버 오류로 인해 볼륨 생성에 실패했습니다.',
+        '볼륨 생성 중 에러가 발생했습니다.',
         'error',
-        '#FF0000'
+        '#FF4853'
       );
     }
-
     setIsModalOpen(false);
   };
 
