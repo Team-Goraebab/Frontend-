@@ -36,7 +36,7 @@ const ImageCard = ({ data }: CardDataProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const items = [
-    { label: 'ID', value: data.Id },
+    // { label: 'ID', value: data.Id },
     // { label: 'NAME', value: data.Labels?.['com.docker.compose.project'] },
     { label: 'SIZE', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB' },
     { label: 'TAGS', value: data.RepoTags.join(', ') },

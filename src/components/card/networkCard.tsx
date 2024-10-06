@@ -80,13 +80,31 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       });
       const result = await res.json();
       if (res.ok) {
-        console.log('네트워크 삭제 완료:', result.message);
+        showSnackbar(
+          enqueueSnackbar,
+          '네트워크가 성공적으로 삭제되었습니다!',
+          'success',
+          '#4C48FF'
+        );
         onDeleteSuccess();
       } else {
-        console.error('네트워크 삭제 실패:', result.error);
+        showSnackbar(
+          enqueueSnackbar,
+          `네트워크 삭제 실패: ${result.error}`,
+          'error',
+          '#FF4853'
+        );
       }
     } catch (error) {
       console.error('네트워크 삭제 요청 중 에러:', error);
+      {
+        showSnackbar(
+          enqueueSnackbar,
+          `네트워크 삭제 요청 중 에러: ${error}`,
+          'error',
+          '#FF4853'
+        );
+      }
     } finally {
       setLoading(false);
       setShowModal(false);

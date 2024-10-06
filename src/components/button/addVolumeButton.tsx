@@ -14,7 +14,6 @@ interface AddVolumeButtonProps {
 const AddVolumeButton = ({ onCreate }: AddVolumeButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
-  const addVolume = useVolumeStore((state) => state.addVolume);
 
   /**
    * add volume handler
@@ -49,7 +48,6 @@ const AddVolumeButton = ({ onCreate }: AddVolumeButtonProps) => {
       });
 
       const result = await response.json();
-      const createdVolume = result;
 
       if (response.ok) {
         showSnackbar(
@@ -58,10 +56,7 @@ const AddVolumeButton = ({ onCreate }: AddVolumeButtonProps) => {
           'success',
           '#4C48FF'
         );
-        // 부모 컴포넌트로 생성된 볼륨 데이터 전달
-        onCreate(createdVolume);
-        // store에 볼륨 데이터 저장
-        addVolume(createdVolume);
+        onCreate(result);
       } else {
         showSnackbar(
           enqueueSnackbar,

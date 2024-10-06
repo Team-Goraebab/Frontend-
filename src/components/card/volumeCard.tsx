@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, OptionModal } from '@/components';
 import { getStatusColors } from '@/utils/statusColorsUtils';
+import { useSnackbar } from 'notistack';
+import { showSnackbar } from '@/utils/toastUtils';
 
 interface VolumeProps {
   id: string;
@@ -27,6 +29,7 @@ interface VolumeCardProps {
  * @returns 볼륨 카드 UI
  */
 const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -54,13 +57,31 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
       });
       const result = await res.json();
       if (res.ok) {
-        console.log('볼륨 삭제 완료:', result.message);
+        showSnackbar(
+          enqueueSnackbar,
+          '볼륨이 성공적으로 삭제되었습니다!',
+          'success',
+          '#4C48FF'
+        );
         onDeleteSuccess();
       } else {
-        console.error('볼륨 삭제 실패:', result.error);
+        showSnackbar(
+          enqueueSnackbar,
+          `볼륨 삭제 실패: ${result.error}`,
+          'error',
+          '#FF4853'
+        );
       }
     } catch (error) {
-      console.error('볼륨 삭제 요청 중 에러:', error);
+      console.error('볼륨 삭제 중 에러:', error);
+      {
+        showSnackbar(
+          enqueueSnackbar,
+          `볼륨 삭제 요청 중 에러: ${error}`,
+          'error',
+          '#FF4853'
+        );
+      }
     } finally {
       setLoading(false);
       setShowModal(false);
