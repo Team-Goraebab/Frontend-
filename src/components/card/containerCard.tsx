@@ -42,11 +42,10 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { assignImageToContainer, assignNetworkToContainer } =
     useContainerStore();
 
-  const containerName = data.Names ? data.Names[0] : 'N/A';
+  const containerName = data.Names ? data.Names[0].replace(/^\//, '') : 'N/A';
   const imageName = data.Image || 'N/A';
 
   const items = [
-    // { label: 'ID', value: data.Id },
     { label: 'NAME', value: containerName },
     { label: 'CREATED', value: formatTimestamp(data.Created) || 'N/A' },
     { label: 'IMAGE', value: imageName },
