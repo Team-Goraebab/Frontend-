@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
+import { formatTimestamp } from '@/utils/formatTimestamp';
 
 interface CardProps {
   Id: string;
@@ -35,12 +36,17 @@ const ImageCard = ({ data }: CardDataProps) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const repoTag =
+    data.RepoTags.length > 0
+      ? data.RepoTags[0].split(':')
+      : ['<none>', '<none>'];
+  const [name, tag] = repoTag;
+
   const items = [
-    // { label: 'ID', value: data.Id },
-    // { label: 'NAME', value: data.Labels?.['com.docker.compose.project'] },
+    { label: 'NAME', value: name || '<none>' },
+    { label: 'TAG', value: tag || '<none>' },
+    { label: 'CREATED', value: formatTimestamp(data.Created) },
     { label: 'SIZE', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB' },
-    { label: 'TAGS', value: data.RepoTags.join(', ') || '<none>' },
-    { label: 'CREATED', value: new Date(data.Created * 1000).toLocaleString() },
   ];
 
   const handleOptionClick = () => {
@@ -95,10 +101,11 @@ const ImageCard = ({ data }: CardDataProps) => {
         style={{ backgroundColor: bg2 }}
       />
       <div className="ml-4 flex flex-col w-full">
-        <div className="flex justify-between text-grey_4 text-sm mb-3 relative">
-          <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
+        {/* <div className="flex justify-between text-grey_4 text-sm mb-3 relative"> */}
+        <div className="flex justify-end text-grey_4 text-sm mb-3 relative">
+          {/* <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
             {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
-          </span>
+          </span> */}
           <span
             className="font-semibold text-xs cursor-pointer"
             onClick={handleOptionClick}

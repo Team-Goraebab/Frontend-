@@ -198,7 +198,10 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       />
       <div className="ml-4 flex flex-col w-full">
         {/* Option 버튼 */}
-        <div className="flex justify-end text-grey_4 text-sm mb-3 relative">
+        <div className="flex justify-between text-grey_4 text-sm mb-3 relative">
+          <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
+            {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
+          </span>
           <span
             className="font-semibold text-xs cursor-pointer"
             onClick={handleOptionClick}
