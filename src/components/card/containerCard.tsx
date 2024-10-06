@@ -12,6 +12,7 @@ import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai';
 import { formatTimestamp } from '@/utils/formatTimestamp';
+import { fetchData } from '@/services/apiUtils';
 
 interface CardDataProps {
   data: any;
@@ -55,11 +56,6 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
 
   const handleOptionClick = () => {
     setShowOptions(!showOptions);
-  };
-
-  const handleGetInfo = () => {
-    console.log('정보 가져오기 클릭됨');
-    setShowOptions(false);
   };
 
   const handleRun = () => {
@@ -168,8 +164,27 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     setIsVolumeOpen(!isVolumeOpen);
   };
 
-  const toggleImageDropdown = () => {
-    setIsImageOpen(!isImageOpen);
+  const fetchContainerDetail = async (id: string) => {
+    try {
+      const data = await fetchData(`/api/container/detail?id=${id}`);
+      if (!data) {
+        throw new Error('Failed to fetch container detail');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching container detail:', error);
+      throw error;
+    }
+  };
+
+  const handleGetInfo = async () => {
+    try {
+      const containerDetail = await fetchContainerDetail(data.Id);
+      console.log('컨테이너 상세 정보:', containerDetail);
+      setShowOptions(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -178,9 +193,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         setShowOptions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };

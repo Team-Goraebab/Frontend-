@@ -7,6 +7,7 @@ import { showSnackbar } from '@/utils/toastUtils';
 import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { formatTimestamp } from '@/utils/formatTimestamp';
+import { fetchData } from '@/services/apiUtils';
 
 interface CardProps {
   Id: string;
@@ -53,10 +54,6 @@ const ImageCard = ({ data }: CardDataProps) => {
     setShowOptions(!showOptions);
   };
 
-  const handleGetInfo = () => {
-    setShowOptions(false);
-  };
-
   const handleDelete = () => {
     setShowModal(true);
     setShowOptions(false);
@@ -77,15 +74,36 @@ const ImageCard = ({ data }: CardDataProps) => {
     setShowModal(false);
   };
 
+  const fetchImageDetail = async (name: string) => {
+    try {
+      const data = await fetchData(`/api/image/detail?name=${name}`);
+      if (!data) {
+        throw new Error('Failed to fetch image detail');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching image detail:', error);
+      throw error;
+    }
+  };
+
+  const handleGetInfo = async () => {
+    try {
+      const imageDetail = await fetchImageDetail(data.RepoTags[0]);
+      console.log('이미지 상세 정보:', imageDetail);
+      setShowOptions(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
         setShowOptions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };

@@ -7,6 +7,7 @@ import { showSnackbar } from '@/utils/toastUtils';
 import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { formatDateTime } from '@/utils/formatTimestamp';
+import { fetchData } from '@/services/apiUtils';
 
 interface NetworkProps {
   Id: string;
@@ -149,15 +150,36 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     setShowOptions(false);
   };
 
+  const fetchNetworkDetail = async (id: string) => {
+    try {
+      const data = await fetchData(`/api/network/detail?id=${id}`);
+      if (!data) {
+        throw new Error('Failed to fetch network detail');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching network detail:', error);
+      throw error;
+    }
+  };
+
+  const handleGetInfo = async () => {
+    try {
+      const networkDetail = await fetchNetworkDetail(data.Id);
+      console.log('네트워크 상세 정보:', networkDetail);
+      setShowOptions(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
         setShowOptions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -183,7 +205,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           {showOptions && (
             <div className="absolute top-4 left-16">
               <OptionModal
-                onTopHandler={() => console.log('정보 가져오기 클릭됨')}
+                onTopHandler={handleGetInfo}
                 onMiddleHandler={handleConnect}
                 onBottomHandler={handleDelete}
               />

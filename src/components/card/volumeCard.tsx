@@ -4,6 +4,7 @@ import { getStatusColors } from '@/utils/statusColorsUtils';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { formatDateTime } from '@/utils/formatTimestamp';
+import { fetchData } from '@/services/apiUtils';
 
 interface VolumeProps {
   id: string;
@@ -108,6 +109,29 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
     setShowModal(false);
   };
 
+  const fetchVolumeDetail = async (name: string) => {
+    try {
+      const data = await fetchData(`/api/volume/detail?name=${name}`);
+      if (!data) {
+        throw new Error('Failed to fetch volume detail');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching volume detail:', error);
+      throw error;
+    }
+  };
+
+  const handleGetInfo = async () => {
+    try {
+      const volumeDetail = await fetchVolumeDetail(data.Name);
+      console.log('볼륨 상세 정보:', volumeDetail);
+      setShowOptions(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
@@ -140,7 +164,7 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
           {showOptions && (
             <div className="absolute top-4 left-16">
               <OptionModal
-                onTopHandler={() => console.log('정보 가져오기 클릭됨')}
+                onTopHandler={handleGetInfo}
                 onBottomHandler={handleDelete}
                 btnVisible={false}
               />

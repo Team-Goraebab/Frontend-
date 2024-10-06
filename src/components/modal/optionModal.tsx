@@ -38,7 +38,7 @@ const OptionModal = ({
         className="w-full py-1.5 text-black border-b border-grey_3 text-xs font-semibold"
         onClick={onTopHandler}
       >
-        {topTitle || '정보 가져오기'}
+        {topTitle || '상세 정보'}
       </button>
       {/* btnVisible이 true일 때만 middle 버튼을 보여줌 */}
       {btnVisible && (
@@ -46,7 +46,7 @@ const OptionModal = ({
           className="w-full py-1.5 text-black border-b border-grey_3 text-xs font-semibold"
           onClick={onMiddleHandler}
         >
-          {middleTitle || '실행 시키기'}
+          {middleTitle || '실행'}
         </button>
       )}
 
@@ -54,7 +54,7 @@ const OptionModal = ({
         className="w-full py-1.5 text-red-500 text-xs font-semibold"
         onClick={onBottomHandler}
       >
-        {bottomTitle || '삭제하기'}
+        {bottomTitle || '삭제'}
       </button>
     </div>
   );
