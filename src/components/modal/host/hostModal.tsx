@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { v4 as uuidv4 } from 'uuid';
+import { Dialog } from '@mui/material';
 import { showSnackbar } from '@/utils/toastUtils';
 import { colorsOption } from '@/data/color';
 import { ThemeColor } from '@/types/type';
@@ -98,9 +99,8 @@ const HostModal = ({ onClose, onSave, availableNetworks }: HostModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-20" />
-      <div className="relative bg-white p-6 rounded-md shadow-lg">
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth="sm">
+      <div className="p-4">
         <h2 className="text-lg font-semibold mb-4">Create New Host</h2>
         <input
           type="text"
@@ -180,7 +180,7 @@ const HostModal = ({ onClose, onSave, availableNetworks }: HostModalProps) => {
           <Button title={'Create'} onClick={handleSave} />
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

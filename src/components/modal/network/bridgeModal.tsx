@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Dialog } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { v4 as uuidv4 } from 'uuid';
@@ -87,8 +88,8 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="relative bg-white p-6 rounded-md shadow-lg w-2/5">
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
+      <div className="p-4">
         <h2 className="text-lg font-semibold mb-4">Create Custom Bridge</h2>
         <input
           type="text"
@@ -126,7 +127,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
           <Button title={'Create'} onClick={handleCreate} />
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

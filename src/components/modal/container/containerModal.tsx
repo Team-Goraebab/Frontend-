@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { Dialog } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { Button } from '@/components';
@@ -93,8 +93,8 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-32">
-      <div className="bg-white p-6 rounded-md shadow-lg w-2/5">
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth="md">
+      <div className="p-4">
         <h2 className="text-lg font-semibold mb-4">Create Container</h2>
         <input
           type="text"
@@ -166,7 +166,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
           <Button title={'Create'} onClick={handleSave} />
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 
