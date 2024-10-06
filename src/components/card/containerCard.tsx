@@ -7,28 +7,16 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { useSelectedNetworkStore } from '@/store/selectedNetworkStore';
 import { useContainerStore } from '@/store/containerStore';
-import { Volume, Image } from '@/types/type';
 import { useStore } from '@/store/cardStore';
 import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai';
-
-interface CardProps {
-  id: string;
-  name: string;
-  ip: string;
-  size: string;
-  tag: string;
-  active: string;
-  status: string;
-  image: Image;
-  volume?: Volume[];
-  network?: string;
-}
+import { formatTimestamp } from '@/utils/formatTimestamp';
 
 interface CardDataProps {
   data: any;
   onSelectNetwork?: (networkName: string) => void;
+  onDeleteSuccess: () => void;
 }
 
 /**
@@ -38,7 +26,7 @@ interface CardDataProps {
  * @param selectedHostName 선택한 호스트 name
  * @returns JSX.Element
  */
-const ContainerCard = ({ data }: CardDataProps) => {
+const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { selectedNetwork } = useSelectedNetworkStore();
   const { selectedHostId, selectedHostName } = selectedHostStore();
@@ -61,12 +49,12 @@ const ContainerCard = ({ data }: CardDataProps) => {
   const imageID = data.ImageID || 'N/A'; // 필요시 추가 가능
 
   const items = [
-    { label: 'ID', value: data.Id },
+    // { label: 'ID', value: data.Id },
     { label: 'NAME', value: containerName },
     { label: 'IMAGE', value: imageName },
-    { label: 'NETWORK', value: data.HostConfig.NetworkMode || 'N/A' },
-    { label: 'STATE', value: data.State || 'N/A' },
+    { label: 'NETWORK', value: data?.HostConfig?.NetworkMode || 'N/A' },
     { label: 'STATUS', value: data.Status || 'N/A' },
+    { label: 'CREATED', value: formatTimestamp(data.Created) || 'N/A' },
   ];
 
   const handleOptionClick = () => {
@@ -135,8 +123,45 @@ const ContainerCard = ({ data }: CardDataProps) => {
     setShowOptions(false);
   };
 
-  const handleConfirmDelete = () => {
-    setShowModal(false);
+  const handleConfirmDelete = async () => {
+    try {
+      const res = await fetch('/api/container/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: data.Id }),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        showSnackbar(
+          enqueueSnackbar,
+          '컨테이너가 성공적으로 삭제되었습니다!',
+          'success',
+          '#4C48FF'
+        );
+        onDeleteSuccess();
+      } else {
+        showSnackbar(
+          enqueueSnackbar,
+          `컨테이너 삭제 실패: ${result.error}`,
+          'error',
+          '#FF4853'
+        );
+      }
+    } catch (error) {
+      console.error('컨테이너 삭제 중 에러:', error);
+      {
+        showSnackbar(
+          enqueueSnackbar,
+          `컨테이너 삭제 요청 중 에러: ${error}`,
+          'error',
+          '#FF4853'
+        );
+      }
+    } finally {
+      setShowModal(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -207,36 +232,8 @@ const ContainerCard = ({ data }: CardDataProps) => {
             </span>
           </div>
         ))}
-
-        {/* 이미지 정보 드롭다운 */}
-        <div className="flex items-center mt-2">
-          <p
-            className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center mb-2 flex-shrink-0"
-            style={{ backgroundColor: bg1, color: bg2 }}
-          >
-            IMAGE
-          </p>
-          <button
-            onClick={toggleImageDropdown}
-            className="flex items-center justify-between w-full text-xs font-semibold text-left text-grey_6"
-          >
-            <div className="flex w-full items-center justify-between pb-2">
-              {isImageOpen ? 'Hide Image Info' : 'Show Image Info'}
-              {isImageOpen ? <AiOutlineUp /> : <AiOutlineDown />}
-            </div>
-          </button>
-        </div>
-
-        {/* 이미지 정보 드롭다운 내용 */}
-        {isImageOpen && (
-          <div className="flex flex-col mb-2 p-1 border rounded w-full">
-            <p className="text-xs">Image Name: {imageName}</p>
-            {/* <p className="text-xs">Image ID: {imageID}</p> */}
-          </div>
-        )}
-
         {/* 볼륨 드롭다운 */}
-        <div className="flex items-center">
+        <div className="flex items-center mt-2">
           <p
             className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center mb-2 flex-shrink-0"
             style={{ backgroundColor: bg1, color: bg2 }}
@@ -285,6 +282,7 @@ const ContainerCard = ({ data }: CardDataProps) => {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+        question={`컨테이너 [${data.Names[0]}]을 삭제하시겠습니까?`}
       />
     </div>
   );

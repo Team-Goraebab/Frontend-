@@ -1,33 +1,46 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
-import { useImageStore } from '@/store/imageStore';
-import { useVolumeStore } from '@/store/volumeStore';
-import { useContainerStore } from '@/store/containerStore';
 import { Button } from '@/components';
+import { fetchData } from '@/services/apiUtils';
 
 interface ContainerModalProps {
   onClose: () => void;
-  onSave: (containerData: any) => void;
+  onCreate: (containerData: any) => void;
 }
 
-const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
+const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
   const { enqueueSnackbar } = useSnackbar();
-  const images = useImageStore((state) => state.images);
-  const volumes = useVolumeStore((state) => state.volumes);
+  const [images, setImages] = useState<any[]>([]);
+  const [volumes, setVolumes] = useState<any[]>([]);
 
-  const [name, setName] = useState<string>('');
-  const [ip, setIp] = useState<string>('');
+  const [name, setName] = useState<string>(''); // 이름은 선택 사항
   const [ports, setPorts] = useState<string>('80:80,443:443');
   const [selectedVolumes, setSelectedVolumes] = useState<string[]>([]);
   const [selectedVolumesInfo, setSelectedVolumeInfo] = useState<any>([]);
   const [network, setNetwork] = useState<string>('bridge');
-  const [tag, setTag] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [selectedImageInfo, setSelectedImageInfo] = useState<any | null>(null);
+
+  // 이미지 및 볼륨 데이터를 가져오는 함수
+  const loadData = async () => {
+    try {
+      const volumeData = await fetchData('/api/volume/list');
+      const imageData = await fetchData('/api/image/list');
+      setVolumes(volumeData.Volumes || []);
+      setImages(imageData || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleVolumeChange = (volume: any, volumeName: string) => {
     setSelectedVolumes((prevSelected) =>
@@ -40,7 +53,6 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
         ? prevSelected.filter((vol: any) => vol.id !== volume.id)
         : [...prevSelected, volume]
     );
-    console.log(volume);
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -49,41 +61,34 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
 
     // 이미지 전체 정보 찾기 및 저장
     const selectedImageData = images.find(
-      (img) => img.name === selectedImageName
+      (img) => img.Id === selectedImageName
     );
     setSelectedImageInfo(selectedImageData || null);
-
-    console.log('Selected Image Info:', selectedImageData);
   };
 
   const handleSave = () => {
-    if (!name || !selectedImage || !ip) {
+    // 유효성 검사
+    if (!selectedImageInfo) {
       showSnackbar(
         enqueueSnackbar,
-        '모든 필드를 입력해주세요.',
+        '이미지를 선택해주세요.',
         'error',
         '#FF4853'
       );
       return;
     }
 
+    const imageNameWithTag = selectedImageInfo?.RepoTags?.[0];
+
     const newContainer = {
-      id: uuidv4(),
+      image: imageNameWithTag, // 필수: 컨테이너의 이미지를 지정
       name,
-      ip,
-      // size 수정 필요
-      size: 'N/A',
-      tag: selectedImageInfo?.tag || 'latest',
-      active: 'active',
-      status: 'running',
-      network: network,
-      image: selectedImageInfo,
-      volume: selectedVolumesInfo,
+      network, // 선택: 네트워크 설정 (기본값: bridge)
+      volume: selectedVolumesInfo, // 선택: 볼륨 설정
+      ports, // 선택: 포트 설정
     };
 
-    onSave(newContainer);
-    // 컨테이너 스토어에 저장
-    useContainerStore.getState().addContainer(newContainer);
+    onCreate(newContainer);
     onClose();
   };
 
@@ -93,13 +98,13 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
         <h2 className="text-lg font-semibold mb-4">Create Container</h2>
         <input
           type="text"
-          placeholder="Container Name"
+          placeholder="Container Name (optional)"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="mb-2 p-2 border border-gray-300 rounded w-full"
         />
 
-        {/* 이미지 선택 드롭다운 (단일 선택) */}
+        {/* 이미지 선택 드롭다운 */}
         <p className="font-semibold mb-2 mt-2">Select an Image:</p>
         <select
           value={selectedImage}
@@ -109,11 +114,14 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
           <option value="" hidden>
             Select an Image
           </option>
-          {images.map((image) => (
-            <option key={image.id} value={image.name}>
-              {image.name} ({image.source})
-            </option>
-          ))}
+          {images
+            .filter((image) => image.RepoTags && image.RepoTags.length > 0)
+            .map((image) => (
+              <option key={image.Id} value={image.Id}>
+                {image.Labels?.['com.docker.compose.project'] || 'N/A'} (
+                {image.RepoTags[0]})
+              </option>
+            ))}
         </select>
 
         {/* 볼륨 선택 체크박스 */}
@@ -121,31 +129,24 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
         <div className="mb-4 max-h-24 overflow-y-auto border p-2 rounded">
           {volumes.length > 0 ? (
             volumes.map((volume) => (
-              <div key={volume.id} className="flex items-center mb-2">
+              <div key={volume.Id} className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   id={`volume-${volume.id}`}
-                  value={volume.name}
-                  checked={selectedVolumes.includes(volume.name)}
-                  onChange={() => handleVolumeChange(volume, volume.name)}
+                  value={volume.Name}
+                  checked={selectedVolumes.includes(volume.Name)}
+                  onChange={() => handleVolumeChange(volume, volume.Name)}
                   className="mr-2"
                 />
-                <label htmlFor={`volume-${volume.id}`}>
-                  {volume.name} ({volume.driver})
+                <label htmlFor={`volume-${volume.Id}`}>
+                  {volume.Name} ({volume.Driver})
                 </label>
               </div>
             ))
           ) : (
-            <div>No volumes</div>
+            <div>No volumes available</div>
           )}
         </div>
-        <input
-          type="text"
-          placeholder="IP Address"
-          value={ip}
-          onChange={(e) => setIp(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full mt-2"
-        />
         <input
           type="text"
           placeholder="Ports (e.g., 80:80,443:443)"
@@ -159,13 +160,6 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
           value={network}
           onChange={(e) => setNetwork(e.target.value)}
           className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Tag"
-          value={tag}
-          onChange={(e) => setTag(e.target.value)}
-          className="mb-4 p-2 border border-gray-300 rounded w-full"
         />
         <div className="flex justify-end space-x-2 pt-8">
           <Button title={'Cancel'} onClick={onClose} color="grey" />
