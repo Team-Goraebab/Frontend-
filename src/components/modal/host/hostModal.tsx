@@ -18,6 +18,7 @@ interface HostModalProps {
     networkName: string,
     networkIp: string
   ) => void;
+  availableNetworks: { name: string; ip: string }[];
 }
 
 const HostModal = ({ onClose, onSave }: HostModalProps) => {
