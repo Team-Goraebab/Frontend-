@@ -91,7 +91,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           '네트워크가 성공적으로 삭제되었습니다!',
           'success',
-          '#4C48FF'
+          '#254b7a'
         );
         onDeleteSuccess();
       } else {

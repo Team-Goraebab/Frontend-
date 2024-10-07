@@ -105,7 +105,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         `호스트 ${selectedHostName}의 ${selectedNetwork.networkName} 네트워크에서 컨테이너가 실행되었습니다.`,
         'success',
-        '#4C48FF'
+        '#254b7a'
       );
     } else {
       showSnackbar(
@@ -138,7 +138,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           '컨테이너가 성공적으로 삭제되었습니다!',
           'success',
-          '#4C48FF'
+          '#254b7a'
         );
         onDeleteSuccess();
       } else {
