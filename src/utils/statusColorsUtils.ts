@@ -14,6 +14,6 @@ export const getStatusColors = (status: string) => {
     case 'dead':
       return { bg1: '#f6d4d6', bg2: '#FF4853' }; // 붉은색
     default:
-      return { bg1: '#D2D1F6', bg2: '#4C48FF' }; // 기본값 (보라색)
+      return { bg1: '#ccd9eb', bg2: '#254b7a' }; // 기본값
   }
 };

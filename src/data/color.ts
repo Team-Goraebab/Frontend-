@@ -1,6 +1,6 @@
 export const colorsOption = [
-  { id: 1, label: 'blue', color: '#4C48FF', sub: false },
-  { id: 2, label: 'blue', color: '#d2d1f6', sub: true },
+  { id: 1, label: 'blue', color: '#254b7a', sub: false },
+  { id: 2, label: 'blue', color: '#ccd9eb', sub: true },
   { id: 3, label: 'red', color: '#FF4853', sub: false },
   { id: 4, label: 'red', color: '#f6d4d6', sub: true },
   { id: 5, label: 'yellow', color: '#FFA048', sub: false },
