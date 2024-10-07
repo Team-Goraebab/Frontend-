@@ -226,7 +226,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
         </div>
 
         {/* 하단 버튼을 고정 */}
-        <div className="sticky bottom-0 bg-white py-4 flex justify-end space-x-4 border-t">
+        <div className="sticky bottom-0 bg-white py-4 pr-4 flex justify-end space-x-4 border-t">
           <Button title="Cancel" onClick={onClose} color="grey" />
           <Button title="Create" onClick={handleSave} />
         </div>
