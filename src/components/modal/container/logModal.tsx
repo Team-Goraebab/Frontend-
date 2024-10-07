@@ -7,8 +7,6 @@ import {
   Box,
   IconButton,
   Tooltip,
-  Typography,
-  TextField,
 } from '@mui/material';
 import { Button } from '@/components';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -37,7 +35,7 @@ const LogModal = ({
 
   const handleCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('ID copied to clipboard!');
+    alert('Copied Successfully!');
   };
 
   const fetchLogs = async () => {
@@ -145,7 +143,7 @@ const LogModal = ({
       <DialogContent dividers>
         <div
           ref={logRef}
-          className="overflow-y-auto bg-black_1 text-grey_2 text-sm p-3 rounded min-h-64"
+          className="overflow-y-auto scrollbar-custom bg-grey_0 text-black_6 text-sm p-3 rounded min-h-64"
         >
           <pre className="whitespace-pre-wrap">
             {filteredLogs || 'Fetching logs...'}
