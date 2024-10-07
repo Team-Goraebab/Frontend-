@@ -52,7 +52,7 @@ const AddBridgeButton = ({ onCreate }: AddBridgeButtonProps) => {
           enqueueSnackbar,
           '브리지 네트워크가 성공적으로 생성되었습니다!',
           'success',
-          '#4C48FF'
+          '#254b7a'
         );
 
         // 생성된 네트워크의 ID와 함께 부모 컴포넌트에 전달

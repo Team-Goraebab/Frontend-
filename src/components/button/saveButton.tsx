@@ -68,7 +68,7 @@ const SaveButton = () => {
       enqueueSnackbar,
       '설계도가 성공적으Z로 저장되었습니다!',
       'success',
-      '#4C48FF'
+      '#254b7a'
     );
   };
 

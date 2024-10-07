@@ -54,7 +54,7 @@ const AddVolumeButton = ({ onCreate }: AddVolumeButtonProps) => {
           enqueueSnackbar,
           '볼륨이 성공적으로 생성되었습니다!',
           'success',
-          '#4C48FF'
+          '#254b7a'
         );
         onCreate(result);
       } else {
