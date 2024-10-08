@@ -15,22 +15,21 @@ interface BtnProps {
  */
 const LargeButton = ({ title, onClick }: BtnProps) => {
   return (
-    <>
-      <button
-        onClick={onClick}
-        className={`
-        p-2 w-full text-blue_6 rounded-lg font-bold 
+    <button
+      onClick={onClick}
+      className={`
+        p-2 mb-4 w-full text-blue_6 rounded-lg font-bold 
         border border-blue_6 font-pretendard
         transition-all duration-100 ease-in-out
         active:transform active:scale-90
+        focus:outline-none
       `}
-      >
-        <div className="flex gap-2 items-center justify-center">
-          <HiPlus size={20} className="font-bold" />
-          <span>{title}</span>
-        </div>
-      </button>
-    </>
+    >
+      <div className="flex gap-2 items-center justify-center">
+        <HiPlus size={20} className="font-bold" />
+        <span>{title}</span>
+      </div>
+    </button>
   );
 };
 
