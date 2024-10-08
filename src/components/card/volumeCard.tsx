@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, OptionModal } from '@/components';
 import { getStatusColors } from '@/utils/statusColorsUtils';
