@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDockerClient } from '../../\baxiosInstance';
+import { createDockerClient } from '../../axiosInstance';
 
 export async function GET(req: NextRequest) {
   const dockerClient = createDockerClient();
 
   try {
-    const response = await dockerClient.get('/containers/json');
+    const response = await dockerClient.get('/containers/json?all=true');
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     console.error('Error fetching container:', error);

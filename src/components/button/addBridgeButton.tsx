@@ -7,7 +7,7 @@ import BridgeModal from '../modal/network/bridgeModal';
 import LargeButton from './largeButton';
 
 interface AddBridgeButtonProps {
-  onCreate: (networkData: any) => void;
+  onCreate: (createdNetwork: any) => void;
 }
 
 const AddBridgeButton = ({ onCreate }: AddBridgeButtonProps) => {
@@ -22,7 +22,7 @@ const AddBridgeButton = ({ onCreate }: AddBridgeButtonProps) => {
    * @param gateway bridge gateway
    * @param driver bridge driver
    */
-  const handleCreateBridge = (
+  const handleCreateBridge = async (
     id: string,
     name: string,
     subnet: string,
@@ -30,25 +30,50 @@ const AddBridgeButton = ({ onCreate }: AddBridgeButtonProps) => {
     driver: string
   ) => {
     const newNetworkData = {
-      id,
-      name,
-      subnet,
-      gateway,
-      driver,
+      Name: name,
+      Subnet: subnet,
+      Gateway: gateway,
+      Driver: driver,
       connectedContainers: [],
-      status: 'active',
     };
 
-    // 부모 컴포넌트로 생성된 네트워크 데이터 전달
-    onCreate(newNetworkData);
-    console.log('new ::', newNetworkData);
+    try {
+      const response = await fetch('/api/network/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newNetworkData),
+      });
 
-    showSnackbar(
-      enqueueSnackbar,
-      '브리지 네트워크가 성공적으로 생성되었습니다!',
-      'success',
-      '#4C48FF'
-    );
+      const result = await response.json();
+      if (response.ok) {
+        showSnackbar(
+          enqueueSnackbar,
+          '브리지 네트워크가 성공적으로 생성되었습니다!',
+          'success',
+          '#254b7a'
+        );
+
+        // 생성된 네트워크의 ID와 함께 부모 컴포넌트에 전달
+        onCreate({ ...newNetworkData, id: result.Id });
+      } else {
+        showSnackbar(
+          enqueueSnackbar,
+          `네트워크 생성 실패: ${result.error}`,
+          'error',
+          '#FF4853'
+        );
+      }
+    } catch (error) {
+      console.error('네트워크 생성 중 에러:', error);
+      showSnackbar(
+        enqueueSnackbar,
+        '네트워크 생성 중 에러가 발생했습니다.',
+        'error',
+        '#FF4853'
+      );
+    }
 
     setIsModalOpen(false);
   };

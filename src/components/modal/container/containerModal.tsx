@@ -1,33 +1,69 @@
 'use client';
 
-import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useEffect, useState } from 'react';
+import { Dialog } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
-import { useImageStore } from '@/store/imageStore';
-import { useVolumeStore } from '@/store/volumeStore';
-import { useContainerStore } from '@/store/containerStore';
 import { Button } from '@/components';
+import { fetchData } from '@/services/apiUtils';
 
 interface ContainerModalProps {
   onClose: () => void;
-  onSave: (containerData: any) => void;
+  onCreate: (containerData: any) => void;
 }
 
-const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
+const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
   const { enqueueSnackbar } = useSnackbar();
-  const images = useImageStore((state) => state.images);
-  const volumes = useVolumeStore((state) => state.volumes);
+  const [images, setImages] = useState<any[]>([]);
+  const [volumes, setVolumes] = useState<any[]>([]);
 
-  const [name, setName] = useState<string>('');
-  const [ip, setIp] = useState<string>('');
+  const [name, setName] = useState<string>(''); // 이름은 선택 사항
   const [ports, setPorts] = useState<string>('80:80,443:443');
   const [selectedVolumes, setSelectedVolumes] = useState<string[]>([]);
   const [selectedVolumesInfo, setSelectedVolumeInfo] = useState<any>([]);
-  const [network, setNetwork] = useState<string>('bridge');
-  const [tag, setTag] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [selectedImageInfo, setSelectedImageInfo] = useState<any | null>(null);
+  const [availableNetworks, setAvailableNetworks] = useState<
+    { Id: number; Name: string; IPAM: any }[]
+  >([]);
+  const [networkName, setNetworkName] = useState<string>('bridge');
+  const [networkIp, setNetworkIp] = useState<string>('172.17.0.1');
+
+  // 이미지 및 볼륨 데이터를 가져오는 함수
+  const loadData = async () => {
+    try {
+      const volumeData = await fetchData('/api/volume/list');
+      const imageData = await fetchData('/api/image/list');
+      setVolumes(volumeData.Volumes || []);
+      setImages(imageData || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchNetworks = async () => {
+      try {
+        const response = await fetch('/api/network/list');
+        const data = await response.json();
+        setAvailableNetworks(data || []);
+
+        if (data && data.networks.length > 0) {
+          setNetworkName(data.Name);
+          setNetworkIp(data.IPAM?.Config?.[0]?.Gateway);
+        }
+      } catch (error) {
+        console.log('네트워크 목록 에러 :', error);
+      }
+    };
+
+    fetchNetworks();
+  }, []);
+
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleVolumeChange = (volume: any, volumeName: string) => {
     setSelectedVolumes((prevSelected) =>
@@ -40,139 +76,162 @@ const ContainerModal = ({ onClose, onSave }: ContainerModalProps) => {
         ? prevSelected.filter((vol: any) => vol.id !== volume.id)
         : [...prevSelected, volume]
     );
-    console.log(volume);
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedImageName = event.target.value;
     setSelectedImage(selectedImageName);
-
-    // 이미지 전체 정보 찾기 및 저장
     const selectedImageData = images.find(
-      (img) => img.name === selectedImageName
+      (img) => img.Id === selectedImageName
     );
     setSelectedImageInfo(selectedImageData || null);
+  };
 
-    console.log('Selected Image Info:', selectedImageData);
+  const handleNetworkChange = (selectedNetworkName: string) => {
+    const selectedNetwork = availableNetworks.find(
+      (net) => net.Name === selectedNetworkName
+    );
+    setNetworkName(selectedNetworkName);
+    setNetworkIp(selectedNetwork?.IPAM?.Config?.[0]?.Gateway || '');
   };
 
   const handleSave = () => {
-    if (!name || !selectedImage || !ip) {
+    // 유효성 검사
+    if (!selectedImageInfo) {
       showSnackbar(
         enqueueSnackbar,
-        '모든 필드를 입력해주세요.',
+        '이미지를 선택해주세요.',
         'error',
         '#FF4853'
       );
       return;
     }
 
+    const imageNameWithTag = selectedImageInfo?.RepoTags?.[0];
+
     const newContainer = {
-      id: uuidv4(),
+      image: imageNameWithTag, // 필수: 컨테이너의 이미지를 지정
       name,
-      ip,
-      // size 수정 필요
-      size: 'N/A',
-      tag: selectedImageInfo?.tag || 'latest',
-      active: 'active',
-      status: 'running',
-      network: network,
-      image: selectedImageInfo,
-      volume: selectedVolumesInfo,
+      networkName, // 선택: 네트워크 설정 (기본값: bridge)
+      volume: selectedVolumesInfo, // 선택: 볼륨 설정
+      ports, // 선택: 포트 설정
     };
 
-    onSave(newContainer);
-    // 컨테이너 스토어에 저장
-    useContainerStore.getState().addContainer(newContainer);
+    onCreate(newContainer);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-32">
-      <div className="bg-white p-6 rounded-md shadow-lg w-2/5">
-        <h2 className="text-lg font-semibold mb-4">Create Container</h2>
-        <input
-          type="text"
-          placeholder="Container Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-
-        {/* 이미지 선택 드롭다운 (단일 선택) */}
-        <p className="font-semibold mb-2 mt-2">Select an Image:</p>
-        <select
-          value={selectedImage}
-          onChange={handleImageChange}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        >
-          <option value="" hidden>
-            Select an Image
-          </option>
-          {images.map((image) => (
-            <option key={image.id} value={image.name}>
-              {image.name} ({image.source})
-            </option>
-          ))}
-        </select>
-
-        {/* 볼륨 선택 체크박스 */}
-        <p className="font-semibold mb-2 mt-2">Select Volumes:</p>
-        <div className="mb-4 max-h-24 overflow-y-auto border p-2 rounded">
-          {volumes.length > 0 ? (
-            volumes.map((volume) => (
-              <div key={volume.id} className="flex items-center mb-2">
-                <input
-                  type="checkbox"
-                  id={`volume-${volume.id}`}
-                  value={volume.name}
-                  checked={selectedVolumes.includes(volume.name)}
-                  onChange={() => handleVolumeChange(volume, volume.name)}
-                  className="mr-2"
-                />
-                <label htmlFor={`volume-${volume.id}`}>
-                  {volume.name} ({volume.driver})
-                </label>
-              </div>
-            ))
-          ) : (
-            <div>No volumes</div>
-          )}
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth="md">
+      <div className="relative h-full flex flex-col">
+        {/* 타이틀을 고정 */}
+        <div className="sticky top-4 bg-white z-10 pb-4 border-b">
+          <h2 className="text-2xl font-bold text-center">Create Container</h2>
         </div>
-        <input
-          type="text"
-          placeholder="IP Address"
-          value={ip}
-          onChange={(e) => setIp(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full mt-2"
-        />
-        <input
-          type="text"
-          placeholder="Ports (e.g., 80:80,443:443)"
-          value={ports}
-          onChange={(e) => setPorts(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Network"
-          value={network}
-          onChange={(e) => setNetwork(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Tag"
-          value={tag}
-          onChange={(e) => setTag(e.target.value)}
-          className="mb-4 p-2 border border-gray-300 rounded w-full"
-        />
-        <div className="flex justify-end space-x-2 pt-8">
-          <Button title={'Cancel'} onClick={onClose} color="grey" />
-          <Button title={'Create'} onClick={handleSave} />
+
+        {/* 스크롤 가능한 컨텐츠 영역 */}
+        <div className="flex-grow overflow-y-auto px-4 pt-6">
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2">
+              Container Name (Optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter container name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
+            />
+          </div>
+
+          {/* 이미지 선택 드롭다운 */}
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2">
+              Select Image
+            </label>
+            <select
+              value={selectedImage}
+              onChange={handleImageChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
+            >
+              <option value="" hidden>
+                Select an Image
+              </option>
+              {images
+                .filter((image) => image.RepoTags && image.RepoTags.length > 0)
+                .map((image) => (
+                  <option key={image.Id} value={image.Id}>
+                    {image.Labels?.['com.docker.compose.project'] || 'N/A'} (
+                    {image.RepoTags[0]})
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {/* 볼륨 선택 체크박스 */}
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2">
+              Select Volumes
+            </label>
+            <div className="max-h-32 overflow-y-auto border border-gray-300 p-3 rounded-lg">
+              {volumes.length > 0 ? (
+                volumes.map((volume) => (
+                  <div key={volume.Id} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`volume-${volume.id}`}
+                      value={volume.Name}
+                      checked={selectedVolumes.includes(volume.Name)}
+                      onChange={() => handleVolumeChange(volume, volume.Name)}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`volume-${volume.Id}`}>
+                      {volume.Name} ({volume.Driver})
+                    </label>
+                  </div>
+                ))
+              ) : (
+                <p>No volumes available</p>
+              )}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2">Ports</label>
+            <input
+              type="text"
+              placeholder="80:80,443:443"
+              value={ports}
+              onChange={(e) => setPorts(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-semibold mb-2">
+              Select Network
+            </label>
+            <select
+              value={networkName}
+              onChange={(e) => handleNetworkChange(e.target.value)}
+              className="w-full p-3 border border-grey_3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {availableNetworks.map((net) => (
+                <option key={net.Id} value={net.Name}>
+                  {net.Name} (IP: {net.IPAM?.Config?.[0]?.Gateway || 'IP 없음'})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* 하단 버튼을 고정 */}
+        <div className="sticky bottom-0 bg-white py-4 pr-4 flex justify-end space-x-4 border-t">
+          <Button title="Cancel" onClick={onClose} color="grey" />
+          <Button title="Create" onClick={handleSave} />
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

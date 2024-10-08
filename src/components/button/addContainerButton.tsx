@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { showSnackbar } from '@/utils/toastUtils';
 import ContainerModal from '../modal/container/containerModal';
 import LargeButton from './largeButton';
+import { showSnackbar } from '@/utils/toastUtils';
 
 interface AddContainerButtonProps {
   onCreate: (containerData: any) => void;
@@ -14,29 +14,51 @@ const AddContainerButton = ({ onCreate }: AddContainerButtonProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handleAddContainer = (containerData: any) => {
-    // 부모 컴포넌트로 컨테이너 데이터 전달
-    onCreate(containerData);
+  const handleAddContainer = async (containerData: any) => {
+    try {
+      const res = await fetch('/api/container/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(containerData),
+      });
+      console.log(containerData);
 
-    // 성공 메시지 표시
-    showSnackbar(
-      enqueueSnackbar,
-      '컨테이너가 성공적으로 추가되었습니다!',
-      'success',
-      '#4C48FF'
-    );
+      const result = await res.json();
+      if (res.ok) {
+        showSnackbar(
+          enqueueSnackbar,
+          '컨테이너가 성공적으로 생성되었습니다!',
+          'success',
+          '#254b7a'
+        );
+        onCreate(result);
+      } else {
+        showSnackbar(
+          enqueueSnackbar,
+          `컨테이너 생성 실패: ${result.error}`,
+          'error',
+          '#FF4853'
+        );
+      }
+    } catch (error) {
+      console.error('컨테이너 생성 중 에러:', error);
+      showSnackbar(
+        enqueueSnackbar,
+        '컨테이너 생성 중 에러가 발생했습니다.',
+        'error',
+        '#FF4853'
+      );
+    }
 
-    // 모달 닫기
     setIsModalOpen(false);
   };
-
   return (
     <>
       <LargeButton title={'Container'} onClick={() => setIsModalOpen(true)} />
       {isModalOpen && (
         <ContainerModal
           onClose={() => setIsModalOpen(false)}
-          onSave={handleAddContainer}
+          onCreate={handleAddContainer}
         />
       )}
     </>

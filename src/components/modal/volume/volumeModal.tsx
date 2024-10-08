@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Dialog } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,12 +18,6 @@ interface VolumeModalProps {
   ) => void;
 }
 
-/**
- *
- * @param onClose 볼륨 모달 닫기 핸들러
- * @param onCreate 볼륨 생성 핸들러
- * @returns
- */
 const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
   const [name, setName] = useState<string>('');
   const [driver, setDriver] = useState<string>('local');
@@ -67,47 +62,52 @@ const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="relative bg-white p-6 rounded-md shadow-lg w-2/5">
-        <h2 className="text-lg font-semibold mb-4">Create Volume</h2>
-        <input
-          type="text"
-          placeholder="Volume Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Mount Point (e.g., /mnt/data)"
-          value={mountPoint}
-          onChange={(e) => setMountPoint(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Capacity (e.g., 10GB)"
-          value={capacity}
-          onChange={(e) => setCapacity(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
-        />
-        <select
-          value={driver}
-          onChange={(e) => setDriver(e.target.value)}
-          className="mb-8 p-2 border border-gray-300 rounded w-full"
-        >
-          {/* 드라이버 옵션 */}
-          <option value="local">Local</option>
-          <option value="nfs">NFS</option>
-          <option value="glusterfs">GlusterFS</option>
-          <option value="ceph">Ceph</option>
-        </select>
-        <div className="flex justify-end space-x-2 pt-8">
-          <Button title={'Cancel'} onClick={onClose} color="grey" />
-          <Button title={'Create'} onClick={handleCreate} />
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
+      <div className="relative h-full flex flex-col">
+        <div className="sticky top-0 bg-white z-10 pb-4 mt-4 border-b">
+          <h2 className="text-2xl font-bold text-center">Create Volume</h2>
+        </div>
+
+        <div className="flex-grow overflow-y-auto p-4">
+          <input
+            type="text"
+            placeholder="Volume Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mb-4 p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-grey_4"
+          />
+          <input
+            type="text"
+            placeholder="Mount Point (e.g., /mnt/data)"
+            value={mountPoint}
+            onChange={(e) => setMountPoint(e.target.value)}
+            className="mb-4 p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-grey_4"
+          />
+          <input
+            type="text"
+            placeholder="Capacity (e.g., 10GB)"
+            value={capacity}
+            onChange={(e) => setCapacity(e.target.value)}
+            className="mb-4 p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-grey_4"
+          />
+          <select
+            value={driver}
+            onChange={(e) => setDriver(e.target.value)}
+            className="mb-8 p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-grey_4"
+          >
+            <option value="local">Local</option>
+            <option value="nfs">NFS</option>
+            <option value="glusterfs">GlusterFS</option>
+            <option value="ceph">Ceph</option>
+          </select>
+        </div>
+
+        <div className="sticky bottom-0 bg-white py-4 pr-4 flex justify-end space-x-4 border-t">
+          <Button title="Cancel" onClick={onClose} color="grey" />
+          <Button title="Create" onClick={handleCreate} />
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

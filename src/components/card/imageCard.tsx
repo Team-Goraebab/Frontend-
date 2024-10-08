@@ -6,6 +6,9 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
+import { formatTimestamp } from '@/utils/formatTimestamp';
+import { fetchData } from '@/services/apiUtils';
+import ImageDetailModal from '../modal/image/imageDetailModal';
 
 interface CardProps {
   Id: string;
@@ -33,22 +36,25 @@ const ImageCard = ({ data }: CardDataProps) => {
   const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const repoTag =
+    data.RepoTags.length > 0
+      ? data.RepoTags[0].split(':')
+      : ['<none>', '<none>'];
+  const [name, tag] = repoTag;
+
   const items = [
-    { label: 'ID', value: data.Id },
-    // { label: 'NAME', value: data.Labels?.['com.docker.compose.project'] },
+    { label: 'NAME', value: name || '<none>' },
+    { label: 'TAG', value: tag || '<none>' },
+    { label: 'CREATED', value: formatTimestamp(data.Created) },
     { label: 'SIZE', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB' },
-    { label: 'TAGS', value: data.RepoTags.join(', ') },
-    { label: 'CREATED', value: new Date(data.Created * 1000).toLocaleString() },
   ];
 
   const handleOptionClick = () => {
     setShowOptions(!showOptions);
-  };
-
-  const handleGetInfo = () => {
-    setShowOptions(false);
   };
 
   const handleDelete = () => {
@@ -71,15 +77,38 @@ const ImageCard = ({ data }: CardDataProps) => {
     setShowModal(false);
   };
 
+  const fetchImageDetail = async (name: string) => {
+    try {
+      const data = await fetchData(`/api/image/detail?name=${name}`);
+      if (!data) {
+        throw new Error('Failed to fetch image detail');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching image detail:', error);
+      throw error;
+    }
+  };
+
+  const handleGetInfo = async () => {
+    try {
+      const imageDetail = await fetchImageDetail(data.RepoTags[0]);
+      console.log('이미지 상세 정보:', imageDetail);
+      setDetailData(imageDetail);
+      setShowOptions(false);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
         setShowOptions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -95,10 +124,11 @@ const ImageCard = ({ data }: CardDataProps) => {
         style={{ backgroundColor: bg2 }}
       />
       <div className="ml-4 flex flex-col w-full">
-        <div className="flex justify-between text-grey_4 text-sm mb-3 relative">
-          <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
+        {/* <div className="flex justify-between text-grey_4 text-sm mb-3 relative"> */}
+        <div className="flex justify-end text-grey_4 text-sm mb-3 relative">
+          {/* <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
             {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
-          </span>
+          </span> */}
           <span
             className="font-semibold text-xs cursor-pointer"
             onClick={handleOptionClick}
@@ -133,6 +163,11 @@ const ImageCard = ({ data }: CardDataProps) => {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+      />
+      <ImageDetailModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={detailData}
       />
     </div>
   );
