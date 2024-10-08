@@ -8,18 +8,12 @@ import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 
 interface NetworkProps {
-  id: string;
-  name: string;
-  subnet: string;
-  gateway: string;
-  driver: string;
-  connectedContainers: {
-    id: string;
-    name: string;
-    ip: string;
-    status: string;
-  }[];
-  status: string;
+  Id: string;
+  Name: string;
+  Driver: string;
+  Containers: { [key: string]: { Name: string; IPv4Address: string } };
+  Scope: string;
+  IPAM?: { Config?: { Subnet: string; Gateway: string }[] };
 }
 
 interface CardDataProps {
@@ -27,9 +21,8 @@ interface CardDataProps {
 }
 
 /**
- *
  * @param data 네트워크 데이터
- * @returns
+ * @returns 네트워크 카드 컴포넌트
  */
 const NetworkCard = ({ data }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -44,17 +37,26 @@ const NetworkCard = ({ data }: CardDataProps) => {
     (state) => state.addConnectedBridgeId
   );
 
+  const connectedContainers = Object.values(data.Containers).map(
+    (container) => `${container.Name} (${container.IPv4Address})`
+  );
+
+  // Subnet과 Gateway 정보 가져오기
+  const subnet = data.IPAM?.Config?.[0]?.Subnet || 'No Subnet';
+  const gateway = data.IPAM?.Config?.[0]?.Gateway || 'No Gateway';
+
   const networkItems = [
-    { label: 'Name', value: data.name },
-    { label: 'Subnet', value: data.subnet },
-    { label: 'Gateway', value: data.gateway },
-    { label: 'Driver', value: data.driver },
+    { label: 'Name', value: data.Name },
+    { label: 'Scope', value: data.Scope },
+    { label: 'Driver', value: data.Driver },
+    { label: 'Subnet', value: subnet },
+    { label: 'Gateway', value: gateway },
     {
       label: 'Containers',
       value:
-        data.connectedContainers
-          .map((container) => `${container.name} (${container.ip})`)
-          .join(', ') || 'No connected containers',
+        connectedContainers.length > 0
+          ? connectedContainers.join(', ')
+          : 'No connected containers',
     },
   ];
 
@@ -79,19 +81,18 @@ const NetworkCard = ({ data }: CardDataProps) => {
   const handleConnect = () => {
     if (selectedHostId) {
       const networkInfo = {
-        id: data.id,
-        name: data.name,
-        subnet: data.subnet,
-        networkIp: data.gateway,
-        driver: data.driver,
-        connectedContainers: data.connectedContainers.map((container) => ({
-          id: container.id,
-          name: container.name,
-          ip: container.ip,
-          status: container.status,
-        })),
-        status: data.status,
-        gateway: data.gateway,
+        id: data.Id,
+        name: data.Name,
+        gateway: gateway,
+        subnet: subnet,
+        driver: data.Driver,
+        connectedContainers: Object.entries(data.Containers).map(
+          ([id, container]) => ({
+            id,
+            name: container.Name,
+            ip: container.IPv4Address,
+          })
+        ),
       };
 
       addConnectedBridgeId(selectedHostId, networkInfo);

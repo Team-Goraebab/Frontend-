@@ -11,6 +11,7 @@ import { Volume, Image } from '@/types/type';
 import { useStore } from '@/store/cardStore';
 import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
+import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai';
 
 interface CardProps {
   id: string;
@@ -26,16 +27,16 @@ interface CardProps {
 }
 
 interface CardDataProps {
-  data: CardProps;
+  data: any;
   onSelectNetwork?: (networkName: string) => void;
 }
 
 /**
- *
+ * ContainerCard: 컨테이너 정보를 표시하는 컴포넌트
  * @param data 컨테이너 정보
  * @param selectedHostId 선택한 호스트 id
  * @param selectedHostName 선택한 호스트 name
- * @returns
+ * @returns JSX.Element
  */
 const ContainerCard = ({ data }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -47,18 +48,27 @@ const ContainerCard = ({ data }: CardDataProps) => {
   const { bg1, bg2 } = getStatusColors(data.status || 'primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
+  const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
   const { assignImageToContainer, assignNetworkToContainer } =
     useContainerStore();
 
+  // 컨테이너 이름은 'Names' 배열에서 추출합니다.
+  const containerName = data.Names ? data.Names[0] : 'N/A';
+
+  // 이미지 정보는 'RepoTags' 또는 'Image' 필드에서 추출
+  const imageName = data.Image || 'N/A';
+  const imageID = data.ImageID || 'N/A'; // 필요시 추가 가능
+
   const items = [
-    { label: 'ID', value: data.id },
-    { label: 'NAME', value: data.name },
-    { label: 'IMAGE', value: data.image?.name || 'N/A' },
-    { label: 'NETWORK', value: data.network || 'N/A' },
-    { label: 'TAGS', value: data.tag || 'N/A' },
+    { label: 'ID', value: data.Id },
+    { label: 'NAME', value: containerName },
+    { label: 'IMAGE', value: imageName },
+    { label: 'NETWORK', value: data.HostConfig.NetworkMode || 'N/A' },
+    { label: 'STATE', value: data.State || 'N/A' },
+    { label: 'STATUS', value: data.Status || 'N/A' },
   ];
-  console.log(data);
-  console.log('컨테이너 볼륨 데이터', data.volume);
+
   const handleOptionClick = () => {
     setShowOptions(!showOptions);
   };
@@ -82,15 +92,15 @@ const ContainerCard = ({ data }: CardDataProps) => {
     if (selectedHostId) {
       const newContainer = {
         id: uuidv4(),
-        name: data.name,
+        name: containerName,
         ip: data.ip,
         size: data.size,
-        tag: data.image?.tag || 'latest',
+        tag: data.Image?.tag || 'latest',
         active: data.active,
         status: 'running',
         network: selectedNetwork.networkName,
         image: data.image,
-        volume: data.volume || [],
+        mounts: data.Mounts || [],
       };
 
       addContainerToHost(selectedHostId, newContainer);
@@ -133,6 +143,14 @@ const ContainerCard = ({ data }: CardDataProps) => {
     setShowModal(false);
   };
 
+  const toggleVolumeDropdown = () => {
+    setIsVolumeOpen(!isVolumeOpen);
+  };
+
+  const toggleImageDropdown = () => {
+    setIsImageOpen(!isImageOpen);
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
@@ -157,6 +175,7 @@ const ContainerCard = ({ data }: CardDataProps) => {
         style={{ backgroundColor: bg2 }}
       />
       <div className="ml-4 flex flex-col w-full">
+        {/* Option 버튼 */}
         <div className="flex justify-end text-grey_4 text-sm mb-3 relative">
           <span
             className="font-semibold text-xs cursor-pointer"
@@ -174,6 +193,7 @@ const ContainerCard = ({ data }: CardDataProps) => {
             </div>
           )}
         </div>
+        {/* 컨테이너 정보 */}
         {items.map((item, index) => (
           <div key={index} className="flex items-center mt-[5px] space-x-3.5">
             <span
@@ -187,32 +207,80 @@ const ContainerCard = ({ data }: CardDataProps) => {
             </span>
           </div>
         ))}
-        {/* 볼륨 정보 표시 */}
-        <div className="flex mt-2">
+
+        {/* 이미지 정보 드롭다운 */}
+        <div className="flex items-center mt-2">
+          <p
+            className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center mb-2 flex-shrink-0"
+            style={{ backgroundColor: bg1, color: bg2 }}
+          >
+            IMAGE
+          </p>
+          <button
+            onClick={toggleImageDropdown}
+            className="flex items-center justify-between w-full text-xs font-semibold text-left text-grey_6"
+          >
+            <div className="flex w-full items-center justify-between pb-2">
+              {isImageOpen ? 'Hide Image Info' : 'Show Image Info'}
+              {isImageOpen ? <AiOutlineUp /> : <AiOutlineDown />}
+            </div>
+          </button>
+        </div>
+
+        {/* 이미지 정보 드롭다운 내용 */}
+        {isImageOpen && (
+          <div className="flex flex-col mb-2 p-1 border rounded w-full">
+            <p className="text-xs">Image Name: {imageName}</p>
+            {/* <p className="text-xs">Image ID: {imageID}</p> */}
+          </div>
+        )}
+
+        {/* 볼륨 드롭다운 */}
+        <div className="flex items-center">
           <p
             className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center mb-2 flex-shrink-0"
             style={{ backgroundColor: bg1, color: bg2 }}
           >
             VOLUME
           </p>
-          <div className="max-h-42 overflow-y-auto scrollbar-custom w-full flex-grow">
-            {data.volume?.map((volume, index) => (
-              <div
-                key={index}
-                className="flex flex-col mb-2 p-1 border rounded w-full"
-              >
-                <p className="text-xs font-semibold">{volume.name}</p>
-                {volume.driver && (
-                  <p className="text-xs">Driver: {volume.driver}</p>
-                )}
-                {volume.mountPoint && (
-                  <p className="text-xs">Mount: {volume.mountPoint}</p>
-                )}
-              </div>
-            ))}
-          </div>
+          <button
+            onClick={toggleVolumeDropdown}
+            className="flex w-full text-xs font-semibold text-left text-grey_6"
+          >
+            <div className="flex w-full items-center justify-between pb-2">
+              {isVolumeOpen ? 'Hide Volumes' : 'Show Volumes'}
+              {isVolumeOpen ? <AiOutlineUp /> : <AiOutlineDown />}
+            </div>
+          </button>
         </div>
+
+        {/* 볼륨 드롭다운 내용 */}
+        {isVolumeOpen && (
+          <div className="max-h-42 overflow-y-auto scrollbar-custom w-full flex-grow">
+            {data.Mounts?.length > 0 ? (
+              data.Mounts.map((mount: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col mb-2 p-1 border rounded w-full"
+                >
+                  {/* <p className="text-xs font-semibold">{mount.Name || 'N/A'}</p> */}
+                  {mount.Driver && (
+                    <p className="text-xs">Driver: {mount.Driver}</p>
+                  )}
+                  {mount.Destination && (
+                    <p className="text-xs">Mount: {mount.Destination}</p>
+                  )}
+                  {mount.Mode && <p className="text-xs">Mode: {mount.Mode}</p>}
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-grey_4">No volumes attached.</p>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* 삭제 모달 */}
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}

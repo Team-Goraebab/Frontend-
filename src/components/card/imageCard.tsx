@@ -6,24 +6,15 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
+
 interface CardProps {
-  id: string;
-  name?: string;
-  ip?: string;
-  size: string;
-  tag: string;
-  /**
-   * running
-   * stopped
-   */
-  active?: string;
-  /**
-   * primary
-   * secondary
-   * accent
-   * success
-   */
-  status?: string;
+  Id: string;
+  Labels?: {
+    [key: string]: string;
+  };
+  Size: number;
+  RepoTags: string[];
+  Created: number;
 }
 
 interface CardDataProps {
@@ -39,15 +30,17 @@ const ImageCard = ({ data }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const removeImage = useImageStore((state) => state.removeImage);
 
-  const { bg1, bg2 } = getStatusColors(data.status || 'primary');
+  const { bg1, bg2 } = getStatusColors('primary');
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const items = [
-    { label: 'ID', value: data.id },
-    { label: 'SIZE', value: data.size },
-    { label: 'TAGS', value: data.tag },
+    { label: 'ID', value: data.Id },
+    // { label: 'NAME', value: data.Labels?.['com.docker.compose.project'] },
+    { label: 'SIZE', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB' },
+    { label: 'TAGS', value: data.RepoTags.join(', ') },
+    { label: 'CREATED', value: new Date(data.Created * 1000).toLocaleString() },
   ];
 
   const handleOptionClick = () => {
@@ -64,7 +57,7 @@ const ImageCard = ({ data }: CardDataProps) => {
   };
 
   const handleConfirmDelete = () => {
-    removeImage(data.id);
+    removeImage(data.Id);
     showSnackbar(
       enqueueSnackbar,
       '이미지가 삭제되었습니다.',
@@ -102,9 +95,9 @@ const ImageCard = ({ data }: CardDataProps) => {
         style={{ backgroundColor: bg2 }}
       />
       <div className="ml-4 flex flex-col w-full">
-        <div className="flex justify-between text-grey_4 text-sm mt-2 mb-3 relative">
-          <span className={'font-pretendard font-bold text-black'}>
-            {data.name}
+        <div className="flex justify-between text-grey_4 text-sm mb-3 relative">
+          <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
+            {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
           </span>
           <span
             className="font-semibold text-xs cursor-pointer"
@@ -131,7 +124,7 @@ const ImageCard = ({ data }: CardDataProps) => {
               {item.label}
             </span>
             <span className="font-semibold text-xs truncate max-w-[150px]">
-              {item.value} {item.label === 'SIZE' ? 'MB' : null}
+              {item.value}
             </span>
           </div>
         ))}
