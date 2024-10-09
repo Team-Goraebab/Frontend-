@@ -131,12 +131,12 @@ const Sidebar = ({ progress }: SidebarProps) => {
 
     return data && data.length > 0
       ? data.map((item, index) => (
-          <CardComponent
-            key={index}
-            data={item}
-            onDeleteSuccess={handleDeleteSuccess}
-          />
-        ))
+        <CardComponent
+          key={index}
+          data={item}
+          onDeleteSuccess={handleDeleteSuccess}
+        />
+      ))
       : renderNoDataMessage(noDataMessage);
   };
 
@@ -152,7 +152,6 @@ const Sidebar = ({ progress }: SidebarProps) => {
       <div className="flex flex-col flex-grow pl-4 pr-4 pt-20 overflow-y-auto scrollbar-hide">
         <div className="flex-grow">{renderDataList()}</div>
       </div>
-      <div className="h-0.5 w-full bg-grey_2"></div>
       <div className="flex-shrink-0 p-4">
         {currentComponent ? (
           React.createElement(currentComponent.addButton, {
@@ -161,8 +160,8 @@ const Sidebar = ({ progress }: SidebarProps) => {
         ) : (
           <LargeButton title={'추가하기'} onClick={() => {}} />
         )}
+        <DaemonConnectBar />
       </div>
-      <DaemonConnectBar />
     </div>
   );
 };

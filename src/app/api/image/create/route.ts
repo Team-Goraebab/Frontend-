@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDockerClient } from '../../axiosInstance';
 import { Readable } from 'stream';
+import { createGzip, createBrotliCompress } from 'node:zlib';
+import tar from 'tar-stream';
+import { extname } from 'path';
 
 export async function POST(req: NextRequest) {
   const dockerClient = createDockerClient();
@@ -10,6 +13,7 @@ export async function POST(req: NextRequest) {
   const tag = formData.get('tag') as string || 'latest';
 
   if (!method || !imageName) {
+    console.error('Missing required parameters:', { method, imageName });
     return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
   }
 
@@ -19,11 +23,41 @@ export async function POST(req: NextRequest) {
     if (method === 'local') {
       const file = formData.get('file') as File | null;
       if (!file) {
+        console.error('No file provided for local build');
         return NextResponse.json({ error: 'No file provided for local build' }, { status: 400 });
       }
 
       const fileBuffer = Buffer.from(await file.arrayBuffer());
-      const readable = Readable.from(fileBuffer);
+      const fileExtension = extname(file.name).toLowerCase();
+
+      // tar 파일 생성 및 압축 해제 형식에 따라 처리
+      const pack = tar.pack();
+      pack.entry({ name: 'Dockerfile' }, `
+        FROM alpine:latest
+        WORKDIR /app
+        COPY ${file.name} /app/
+        RUN tar -xf /app/${file.name} -C /app
+      `);
+      pack.entry({ name: file.name }, fileBuffer);
+      pack.finalize();
+
+      let readable: Readable;
+
+      if (fileExtension === '.tar.gz' || fileExtension === '.tgz') {
+        const gzip = createGzip();
+        readable = Readable.from(pack).pipe(gzip);
+      } else if (fileExtension === '.tar.bz2' || fileExtension === '.tbz2') {
+        const brotli = createBrotliCompress();
+        readable = Readable.from(pack).pipe(brotli);
+      } else if (fileExtension === '.tar.xz') {
+        // XZ 포맷은 별도의 처리가 필요합니다. 여기서는 원본을 그대로 사용하도록 처리
+        readable = Readable.from(pack);
+      } else if (fileExtension === '.tar') {
+        readable = Readable.from(pack);
+      } else {
+        console.error('Unsupported file format:', fileExtension);
+        return NextResponse.json({ error: 'Unsupported file format' }, { status: 400 });
+      }
 
       response = await dockerClient.post('/build', readable, {
         params: {
@@ -41,6 +75,7 @@ export async function POST(req: NextRequest) {
         },
       });
     } else {
+      console.error('Invalid method specified:', method);
       return NextResponse.json({ error: 'Invalid method specified' }, { status: 400 });
     }
 
