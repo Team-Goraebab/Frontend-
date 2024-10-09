@@ -21,7 +21,6 @@ const AddContainerButton = ({ onCreate }: AddContainerButtonProps) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(containerData),
       });
-      console.log(containerData);
 
       const result = await res.json();
       if (res.ok) {
