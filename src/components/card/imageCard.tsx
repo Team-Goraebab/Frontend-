@@ -119,8 +119,13 @@ const ImageCard = ({ data }: CardDataProps) => {
       setIsModalOpen(true);
     } catch (error) {
       console.log(error);
+      throw error;
     }
   };
+
+  const handleStart = async () => {
+    setShowOptions(false);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -144,11 +149,7 @@ const ImageCard = ({ data }: CardDataProps) => {
         style={{ backgroundColor: bg2 }}
       />
       <div className="ml-4 flex flex-col w-full">
-        {/* <div className="flex justify-between text-grey_4 text-sm mb-3 relative"> */}
         <div className="flex justify-end text-grey_4 text-sm mb-3 relative">
-          {/* <span className={'font-pretendard font-bold text-grey_6 pt-2'}>
-            {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
-          </span> */}
           <span
             className="font-semibold text-xs cursor-pointer"
             onClick={handleOptionClick}
@@ -160,7 +161,8 @@ const ImageCard = ({ data }: CardDataProps) => {
               <OptionModal
                 onTopHandler={handleGetInfo}
                 onBottomHandler={handleDelete}
-                btnVisible={false}
+                onMiddleHandler={handleStart}
+                btnVisible={true}
               />
             </div>
           )}
