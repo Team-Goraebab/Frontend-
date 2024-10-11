@@ -62,15 +62,35 @@ const ImageCard = ({ data }: CardDataProps) => {
     setShowOptions(false);
   };
 
-  const handleConfirmDelete = () => {
-    removeImage(data.Id);
-    showSnackbar(
-      enqueueSnackbar,
-      '이미지가 삭제되었습니다.',
-      'success',
-      '#25BD6B'
-    );
-    setShowModal(false);
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`/api/image/delete?id=${data.Id}&force=true`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete image');
+      }
+
+      removeImage(data.Id);
+      showSnackbar(
+        enqueueSnackbar,
+        '이미지가 삭제되었습니다.',
+        'success',
+        '#25BD6B'
+      );
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      showSnackbar(
+        enqueueSnackbar,
+        '이미지 삭제에 실패했습니다.',
+        'error',
+        '#FF0000'
+      );
+    } finally {
+      setShowModal(false);
+    }
   };
 
   const handleCloseModal = () => {
