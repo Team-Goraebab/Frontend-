@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDockerClient } from '../../axiosInstance';
 import { Readable } from 'stream';
-import { createGzip, createBrotliCompress } from 'node:zlib';
+import { createGzip, createBrotliCompress, createGunzip } from 'node:zlib';
 import tar from 'tar-stream';
 import { extname } from 'path';
 
@@ -33,27 +33,54 @@ export async function POST(req: NextRequest) {
       // tar 파일 생성 및 압축 해제 형식에 따라 처리
       const pack = tar.pack();
       pack.entry({ name: 'Dockerfile' }, `
+        # Base image로 Alpine 사용
         FROM alpine:latest
+      
+        # Docker 환경에서 필요한 패키지 설치 (tar, gzip, bash 등)
+        RUN apk add --no-cache bash tar gzip xz
+      
+        # 작업 디렉터리 설정
         WORKDIR /app
+      
+        # 전달받은 파일을 작업 디렉터리로 복사
         COPY ${file.name} /app/
-        RUN tar -xf /app/${file.name} -C /app
+      
+        # 파일의 확장자에 따라 압축을 풀거나 처리하는 스크립트 실행
+        RUN if [[ "${fileExtension}" == ".tar.gz" || "${fileExtension}" == ".tgz" ]]; then \\
+              tar -xzf /app/${file.name} -C /app; \\
+            elif [[ "${fileExtension}" == ".tar.bz2" || "${fileExtension}" == ".tbz2" ]]; then \\
+              tar -xjf /app/${file.name} -C /app; \\
+            elif [[ "${fileExtension}" == ".tar.xz" ]]; then \\
+              tar -xJf /app/${file.name} -C /app; \\
+            elif [[ "${fileExtension}" == ".tar" ]]; then \\
+              tar -xf /app/${file.name} -C /app; \\
+            elif [[ "${fileExtension}" == ".gz" ]]; then \\
+              gzip -d /app/${file.name}; \\
+            else \\
+              echo "Unsupported file format"; exit 1; \\
+            fi
+      
+        # 이후에 추가로 필요한 스크립트나 실행 명령어들을 이곳에 추가
+        # 예: CMD ["bash"]
       `);
+
       pack.entry({ name: file.name }, fileBuffer);
       pack.finalize();
 
       let readable: Readable;
 
       if (fileExtension === '.tar.gz' || fileExtension === '.tgz') {
-        const gzip = createGzip();
-        readable = Readable.from(pack).pipe(gzip);
+        readable = Readable.from(pack);
       } else if (fileExtension === '.tar.bz2' || fileExtension === '.tbz2') {
         const brotli = createBrotliCompress();
         readable = Readable.from(pack).pipe(brotli);
       } else if (fileExtension === '.tar.xz') {
-        // XZ 포맷은 별도의 처리가 필요합니다. 여기서는 원본을 그대로 사용하도록 처리
         readable = Readable.from(pack);
       } else if (fileExtension === '.tar') {
         readable = Readable.from(pack);
+      } else if (fileExtension === '.gz') {
+        const gunzip = createGunzip();
+        readable = Readable.from(pack).pipe(gunzip);
       } else {
         console.error('Unsupported file format:', fileExtension);
         return NextResponse.json({ error: 'Unsupported file format' }, { status: 400 });
