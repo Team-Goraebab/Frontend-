@@ -96,7 +96,14 @@ const AddImageButton = ({ onCreate }: AddImageButtonProps) => {
 
   return (
     <>
-      <LargeButton title={'Image'} onClick={openModal}/>
+      <LargeButton
+        title="Image"
+        onClick={openModal}
+        isLoading={isLoading}
+        disabled={isLoading}
+      >
+        {isLoading ? '이미지 추가 중...' : 'Image'}
+      </LargeButton>
       {isModalOpen && (
         <ImageModal
           isOpen={isModalOpen}

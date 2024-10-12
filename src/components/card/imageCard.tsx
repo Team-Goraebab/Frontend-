@@ -26,6 +26,7 @@ interface CardProps {
 
 interface CardDataProps {
   data: CardProps;
+  onDeleteSuccess: () => void;
 }
 
 interface ContainerConfig {
@@ -38,7 +39,7 @@ interface ContainerConfig {
   hostId?: string;
 }
 
-const ImageCard = ({ data }: CardDataProps) => {
+const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const removeImage = useImageStore((state) => state.removeImage);
 
@@ -91,6 +92,8 @@ const ImageCard = ({ data }: CardDataProps) => {
         'success',
         '#25BD6B'
       );
+
+      onDeleteSuccess();  // 삭제 성공 후 콜백 함수 호출
     } catch (error) {
       console.error('Error deleting image:', error);
       showSnackbar(

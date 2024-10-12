@@ -1,15 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
-import { AiOutlineSave } from 'react-icons/ai';
+import SaveIcon from '@mui/icons-material/Save';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Box
+} from '@mui/material';
 
 const SaveButton = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [blueprintName, setBlueprintName] = useState('');
 
-  const handleSave = () => {
-    // main 태그 안의 내용만 저장함 (layout 제외)
+  const handleSave = async () => {
     const mainContent = document.querySelector('main')?.innerHTML;
 
     if (!mainContent) {
@@ -22,17 +33,13 @@ const SaveButton = () => {
       return;
     }
 
-    // mainContent를 실제 DOM으로 변환
     const parser = new DOMParser();
     const doc = parser.parseFromString(mainContent, 'text/html');
 
-    // react-transform-wrapper와 react-transform-component를 찾음
     const wrapper = doc.querySelector('.react-transform-wrapper');
     const component = doc.querySelector('.react-transform-component');
 
-    // react-transform-wrapper 및 react-transform-component가 있는지 확인
     if (wrapper && component) {
-      // wrapper와 component 안에 다른 태그나 요소가 있는지 확인
       const hasOtherContent =
         wrapper.innerHTML.trim().length > 0 ||
         component.innerHTML.trim().length > 0;
@@ -48,41 +55,115 @@ const SaveButton = () => {
       }
     }
 
-    // 파일 이름 생성 (설계도_날짜 형식)
-    const currentDateTime = new Date().toISOString().replace(/[:.]/g, '-');
-    const fileName = `설계도_${currentDateTime}.html`;
+    setIsModalOpen(true);
+  };
 
-    // main 태그의 내용을 Blob으로 저장
-    const blob = new Blob([mainContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  const handleSubmit = async () => {
+    if (!blueprintName.trim()) {
+      showSnackbar(
+        enqueueSnackbar,
+        '설계도 이름을 입력해주세요.',
+        'error',
+        '#FF4848'
+      );
+      return;
+    }
 
-    // 저장 완료 메시지 표시
-    showSnackbar(
-      enqueueSnackbar,
-      '설계도가 성공적으Z로 저장되었습니다!',
-      'success',
-      '#254b7a'
-    );
+    const mainContent = document.querySelector('main')?.innerHTML;
+    if (!mainContent) return;
+
+    try {
+      const response = await fetch('/storage/{storageId}/blueprint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: blueprintName,
+          data: mainContent,
+        }),
+      });
+
+      if (response.ok) {
+        showSnackbar(
+          enqueueSnackbar,
+          '설계도가 성공적으로 저장되었습니다!',
+          'success',
+          '#254b7a'
+        );
+        setIsModalOpen(false);
+        setBlueprintName('');
+      } else {
+        throw new Error('서버 응답 오류');
+      }
+    } catch (error) {
+      showSnackbar(
+        enqueueSnackbar,
+        '설계도 저장 중 오류가 발생했습니다.',
+        'error',
+        '#FF4848'
+      );
+    }
   };
 
   return (
     <>
-      <div className="fixed bottom-8 right-[40px] transform translate-x-4 h-[40px] px-4 bg-white text-blue_6 hover:text-white hover:bg-blue_4 active:bg-blue_5 rounded-lg shadow-lg flex items-center justify-center transition duration-200 ease-in-out">
-        <button
-          className="flex items-center gap-2 text-center"
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 8,
+          right: '40px',
+          transform: 'translateX(4px)',
+          bgcolor: 'white',
+          color: 'primary.main',
+          '&:hover': {
+            bgcolor: 'primary.main',
+            color: 'white',
+          },
+          '&:active': {
+            bgcolor: 'primary.dark',
+          },
+          borderRadius: '8px',
+          boxShadow: 3,
+          transition: 'all 0.2s ease-in-out',
+        }}
+      >
+        <Button
+          startIcon={<SaveIcon />}
           onClick={handleSave}
+          sx={{
+            height: '40px',
+            px: 2,
+            fontWeight: 'medium',
+          }}
         >
-          <AiOutlineSave size={20} />
-          <span className="font-medium">Save</span>
-        </button>
-      </div>
+          Save
+        </Button>
+      </Box>
+
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <DialogTitle>설계도 저장</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            설계도의 이름을 입력해주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="설계도 이름"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={blueprintName}
+            onChange={(e) => setBlueprintName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)}>취소</Button>
+          <Button onClick={handleSubmit}>저장</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
