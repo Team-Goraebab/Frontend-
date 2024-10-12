@@ -218,10 +218,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
         </Box>
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
           <Button onClick={onClose} sx={{ mr: 1 }}>
-            Cancel
+            취소
           </Button>
           <Button onClick={handleRun} variant="contained" disabled={!name}>
-            Run Container
+            실행
           </Button>
         </Box>
       </Box>
