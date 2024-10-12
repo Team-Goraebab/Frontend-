@@ -26,14 +26,8 @@ interface ImageStartOptionModalProps {
 interface ContainerConfig {
   name: string;
   image: string;
-  ports?: {
-    '3306/tcp'?: string;
-    '33060/tcp'?: string;
-  };
-  volumes?: {
-    hostPath?: string;
-    containerPath?: string;
-  };
+  ports?: { [key: string]: string };
+  volumes?: { hostPath?: string; containerPath?: string };
   env?: Array<{ variable: string; value: string }>;
   hostId?: string;
 }
