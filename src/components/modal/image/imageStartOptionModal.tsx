@@ -100,15 +100,15 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
+        width: 500,
+        bgcolor: '#fff',
         boxShadow: 24,
         p: 4,
-        borderRadius: 2,
+        borderRadius: '16px',
         maxHeight: '90vh',
         overflowY: 'auto',
       }}>
-        <Typography variant="h6" component="h2" gutterBottom>
+        <Typography variant="h6" component="h2" gutterBottom sx={{ color: '#2e3b55', fontWeight: 600 }}>
           Run Container: {imageName}
         </Typography>
         <Box sx={{ mt: 2 }}>
@@ -119,9 +119,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
             onChange={(e) => setName(e.target.value)}
             margin="normal"
             required
+            sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
           />
 
-          <Accordion>
+          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Host Selection (Optional)</Typography>
             </AccordionSummary>
@@ -142,7 +143,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
             </AccordionDetails>
           </Accordion>
 
-          <Accordion>
+          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Ports (Optional)</Typography>
             </AccordionSummary>
@@ -153,6 +154,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                 value={port3306}
                 onChange={(e) => setPort3306(e.target.value)}
                 margin="normal"
+                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
               />
               <TextField
                 fullWidth
@@ -160,11 +162,12 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                 value={port33060}
                 onChange={(e) => setPort33060(e.target.value)}
                 margin="normal"
+                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
               />
             </AccordionDetails>
           </Accordion>
 
-          <Accordion>
+          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Volumes (Optional)</Typography>
             </AccordionSummary>
@@ -175,6 +178,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                 value={volumeHostPath}
                 onChange={(e) => setVolumeHostPath(e.target.value)}
                 margin="normal"
+                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
               />
               <TextField
                 fullWidth
@@ -182,11 +186,12 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                 value={volumeContainerPath}
                 onChange={(e) => setVolumeContainerPath(e.target.value)}
                 margin="normal"
+                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
               />
             </AccordionDetails>
           </Accordion>
 
-          <Accordion>
+          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Environment Variables (Optional)</Typography>
             </AccordionSummary>
@@ -198,12 +203,14 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                     value={env.variable}
                     onChange={(e) => handleEnvVarChange(index, 'variable', e.target.value)}
                     size="small"
+                    sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
                   />
                   <TextField
                     label="Value"
                     value={env.value}
                     onChange={(e) => handleEnvVarChange(index, 'value', e.target.value)}
                     size="small"
+                    sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
                   />
                   <Button onClick={() => handleRemoveEnvVar(index)} color="error" variant="outlined" size="small">
                     Remove
@@ -217,10 +224,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
           </Accordion>
         </Box>
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={onClose} sx={{ mr: 1 }}>
+          <Button onClick={onClose} sx={{ mr: 1, color: '#2e3b55' }}>
             취소
           </Button>
-          <Button onClick={handleRun} variant="contained" disabled={!name}>
+          <Button onClick={handleRun} variant="contained" sx={{ backgroundColor: '#2e3b55', color: '#fff' }} disabled={!name}>
             실행
           </Button>
         </Box>

@@ -3,17 +3,8 @@
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
-import SaveIcon from '@mui/icons-material/Save';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-  Box
-} from '@mui/material';
+import { AiOutlineSave } from 'react-icons/ai';
+import { BASE_URL } from '@/app/api/urlPath';
 
 const SaveButton = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -73,7 +64,7 @@ const SaveButton = () => {
     if (!mainContent) return;
 
     try {
-      const response = await fetch('/storage/{storageId}/blueprint', {
+      const response = await fetch(`${BASE_URL}/storage/1/blueprint`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,62 +99,46 @@ const SaveButton = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          position: 'fixed',
-          bottom: 8,
-          right: '40px',
-          transform: 'translateX(4px)',
-          bgcolor: 'white',
-          color: 'primary.main',
-          '&:hover': {
-            bgcolor: 'primary.main',
-            color: 'white',
-          },
-          '&:active': {
-            bgcolor: 'primary.dark',
-          },
-          borderRadius: '8px',
-          boxShadow: 3,
-          transition: 'all 0.2s ease-in-out',
-        }}
-      >
-        <Button
-          startIcon={<SaveIcon />}
+      <div className="fixed bottom-8 right-[45px] transform translate-x-4 h-[40px] px-4 bg-white text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg shadow-lg flex items-center justify-center transition duration-200 ease-in-out">
+        <button
+          className="flex items-center gap-2 text-center"
           onClick={handleSave}
-          sx={{
-            height: '40px',
-            px: 2,
-            fontWeight: 'medium',
-          }}
         >
-          Save
-        </Button>
-      </Box>
+          <AiOutlineSave size={20} />
+          <span className="font-medium">Save</span>
+        </button>
+      </div>
 
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <DialogTitle>설계도 저장</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            설계도의 이름을 입력해주세요.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="설계도 이름"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={blueprintName}
-            onChange={(e) => setBlueprintName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsModalOpen(false)}>취소</Button>
-          <Button onClick={handleSubmit}>저장</Button>
-        </DialogActions>
-      </Dialog>
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">설계도 저장</h2>
+            <p className="text-gray-600 mb-4">설계도의 이름을 입력해주세요.</p>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="설계도 이름"
+              value={blueprintName}
+              onChange={(e) => setBlueprintName(e.target.value)}
+              autoFocus
+            />
+            <div className="flex justify-end mt-6 gap-2">
+              <button
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                onClick={() => setIsModalOpen(false)}
+              >
+                취소
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                onClick={handleSubmit}
+              >
+                저장
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

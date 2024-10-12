@@ -27,7 +27,7 @@ const LargeButton = ({ title, onClick, isLoading = false, disabled = false, icon
       onClick={onClick}
       disabled={disabled || isLoading}
       className={`
-        p-2 mb-4 w-full text-blue_6 rounded-lg font-bold 
+        p-2 w-full text-blue_6 rounded-lg font-bold 
         border border-blue_6 font-pretendard
         transition-all duration-100 ease-in-out
         active:transform active:scale-90

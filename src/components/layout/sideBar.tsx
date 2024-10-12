@@ -160,6 +160,8 @@ const Sidebar = ({ progress }: SidebarProps) => {
         ) : (
           <LargeButton title={'추가하기'} onClick={() => {}} />
         )}
+      </div>
+      <div>
         <DaemonConnectBar />
       </div>
     </div>
