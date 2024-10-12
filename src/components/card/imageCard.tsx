@@ -9,6 +9,7 @@ import { getStatusColors } from '@/utils/statusColorsUtils';
 import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import ImageDetailModal from '../modal/image/imageDetailModal';
+import ImageStartOptionModal from '@/components/modal/image/imageStartOptionModal';
 
 interface CardProps {
   Id: string;
@@ -18,17 +19,25 @@ interface CardProps {
   Size: number;
   RepoTags: string[];
   Created: number;
+  ExposedPorts?: { [key: string]: {} };
+  Volumes?: { [key: string]: {} };
+  Env?: string[];
 }
 
 interface CardDataProps {
   data: CardProps;
 }
 
-/**
- *
- * @param data 이미지 데이터
- * @returns
- */
+interface ContainerConfig {
+  name: string;
+  image: string;
+  network?: string;
+  ports?: string;
+  volumes?: string;
+  env?: string;
+  hostId?: string;
+}
+
 const ImageCard = ({ data }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const removeImage = useImageStore((state) => state.removeImage);
@@ -37,7 +46,9 @@ const ImageCard = ({ data }: CardDataProps) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [detailData, setDetailData] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<any>(null);
+  const [isRunModalOpen, setIsRunModalOpen] = useState<boolean>(false);
+
   const cardRef = useRef<HTMLDivElement>(null);
 
   const repoTag =
@@ -125,7 +136,40 @@ const ImageCard = ({ data }: CardDataProps) => {
 
   const handleStart = async () => {
     setShowOptions(false);
+    setIsRunModalOpen(true);
   }
+
+  const handleRunContainer = async (containerConfig: ContainerConfig) => {
+    try {
+      const response = await fetch('/api/image/run', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(containerConfig),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to run container');
+      }
+
+      const result = await response.json();
+      showSnackbar(
+        enqueueSnackbar,
+        '컨테이너가 성공적으로 실행되었습니다.',
+        'success',
+        '#25BD6B'
+      );
+    } catch (error) {
+      console.error('Error running container:', error);
+      showSnackbar(
+        enqueueSnackbar,
+        '컨테이너 실행에 실패했습니다.',
+        'error',
+        '#FF0000'
+      );
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -190,6 +234,12 @@ const ImageCard = ({ data }: CardDataProps) => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         data={detailData}
+      />
+      <ImageStartOptionModal
+        isOpen={isRunModalOpen}
+        onClose={() => setIsRunModalOpen(false)}
+        onRun={handleRunContainer}
+        imageName={data.RepoTags[0]}
       />
     </div>
   );

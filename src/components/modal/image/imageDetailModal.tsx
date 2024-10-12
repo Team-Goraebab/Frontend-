@@ -37,7 +37,6 @@ const ImageDetailModal = ({ open, onClose, data }: ImageDetailModalProps) => {
     >
       <DialogTitle>{`${name} : ${tag}`}</DialogTitle>
       <DialogContent dividers>
-        {/* Fixed Header */}
         <div className="p-5 font-pretendard border-b border-grey_1 bg-white">
           <div className="grid grid-cols-2 gap-4 mt-3">
             <div>
@@ -47,18 +46,16 @@ const ImageDetailModal = ({ open, onClose, data }: ImageDetailModalProps) => {
               <strong>Tag:</strong> {tag}
             </div>
             <div>
-              <strong>Size:</strong> {(data.Size / (1024 * 1024)).toFixed(2)} MB
+              <strong>Size:</strong> {(data?.Size / (1024 * 1024)).toFixed(2)} MB
             </div>
             <div>
-              <strong>Created:</strong> {formatDateTime(data.Created)}
+              <strong>Created:</strong> {formatDateTime(data?.Created)}
             </div>
           </div>
         </div>
         <Divider />
 
-        {/* Scrollable Content */}
         <DialogContent className="overflow-y-auto flex-grow bg-grey_0">
-          {/* Layers Section */}
           <div className="my-5">
             <h3 className="text-base font-semibold text-grey_6">Layers</h3>
             {data?.RootFS?.Layers?.length > 0 ? (
@@ -92,8 +89,6 @@ const ImageDetailModal = ({ open, onClose, data }: ImageDetailModalProps) => {
               <p className="text-sm text-grey_4 mt-2">No layers available</p>
             )}
           </div>
-
-          {/* Metadata Section */}
           <div className="my-5">
             <h3 className="text-base font-semibold text-grey_6">Metadata</h3>
             <div className="flex justify-between mt-2">
@@ -115,8 +110,6 @@ const ImageDetailModal = ({ open, onClose, data }: ImageDetailModalProps) => {
           </div>
         </DialogContent>
       </DialogContent>
-
-      {/* Fixed Footer */}
       <DialogActions className="p-5 border-t border-grey_1 bg-white">
         <Button title={'닫기'} onClick={onClose} color="grey" />
       </DialogActions>
