@@ -32,9 +32,9 @@ interface ContainerConfig {
   name: string;
   image: string;
   network?: string;
-  ports?: string;
-  volumes?: string;
-  env?: string;
+  ports?: { [key: string]: string };
+  volumes?: { hostPath?: string; containerPath?: string };
+  env?: Array<{ variable: string; value: string }>;
   hostId?: string;
 }
 
