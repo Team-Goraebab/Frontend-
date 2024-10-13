@@ -14,7 +14,6 @@ import DaemonConnectBar from '../bar/daemonConnectBar';
 import { AiOutlineInfoCircle, AiOutlineReload } from 'react-icons/ai';
 import LargeButton from '../button/largeButton';
 import { fetchData } from '@/services/apiUtils';
-import { FiRefreshCcw } from 'react-icons/fi';
 import { RxReload } from 'react-icons/rx';
 
 interface SidebarProps {
@@ -154,8 +153,11 @@ const Sidebar = ({ progress }: SidebarProps) => {
   return (
     <div className="fixed top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2 pt-14">
       <div className="flex justify-between items-center px-6 py-2 bg-gray-100 border-b border-grey_2">
-        <h2 className="text-md font-semibold font-pretendard">
+        <h2 className="text-md font-semibold font-pretendard flex items-center">
           {currentComponent?.title || '데이터'}
+          <span className="ml-2 px-2 py-1 bg-blue-400 text-white text-xs font-pretendard rounded-lg">
+            {dataHandlers[activeId as 1 | 2 | 3 | 4]?.data.length || 0}
+          </span>
         </h2>
         <button
           className="text-blue_6 font-bold"
