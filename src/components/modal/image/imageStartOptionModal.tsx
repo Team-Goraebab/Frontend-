@@ -56,8 +56,8 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
     if (DNDNetworkIp) {
       const matchingHost = hosts.find((host) => host.networkIp === DNDNetworkIp);
       if (matchingHost) {
-        setSelectedHostId(matchingHost.id); // 해당 호스트의 id를 선택
-        setSelectedNetworkIp(matchingHost.networkIp); // 네트워크 IP도 설정
+        setSelectedHostId(matchingHost.id);
+        setSelectedNetworkIp(matchingHost.networkIp);
       }
     }
   }, [DNDNetworkIp, hosts]);
@@ -109,6 +109,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
     if (selectedHostId) {
       config.hostId = selectedHostId;
+    }
+
+    if (selectedNetworkIp) {
+      config.networkIp = selectedNetworkIp;
     }
 
     const result = onRun(config);

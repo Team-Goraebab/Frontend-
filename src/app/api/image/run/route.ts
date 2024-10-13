@@ -15,17 +15,19 @@ export async function POST(req: NextRequest) {
   const bodyData: ContainerConfig = await req.json();
   const dockerClient = createDockerClient();
 
-  // 네트워크 목록을 API 호출을 통해 가져오기
+  console.log(bodyData);
+
+
   const fetchNetworks = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/network/list'); // 네트워크 정보를 가져오는 API 호출
+      const response = await fetch('http://localhost:3000/api/network/list');
       if (!response.ok) {
         throw new Error('Failed to fetch networks');
       }
       return await response.json();
     } catch (error) {
       console.error('Failed to fetch networks:', error);
-      return []; // 네트워크를 가져오지 못했을 경우 빈 배열 반환
+      return [];
     }
   };
 

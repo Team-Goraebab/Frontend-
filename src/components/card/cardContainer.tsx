@@ -100,9 +100,9 @@ const CardContainer = ({
 
       // API 성공적으로 실행되었을 때만 드래그된 이미지를 컨테이너로 변환하여 drop
       if (draggedItem) {
-        const newContainer = { ...draggedItem, name: containerConfig.name }; // 이미지가 컨테이너로 변환된 상태
-        setDroppedContainers((prev) => [...prev, newContainer]); // 드롭된 항목 추가
-        setDraggedItem(null); // 드래그된 항목을 초기화
+        const newContainer = { ...draggedItem, name: containerConfig.name };
+        setDroppedContainers((prev) => [...prev, newContainer]);
+        setDraggedItem(null);
       }
 
       setIsModalOpen(false);
