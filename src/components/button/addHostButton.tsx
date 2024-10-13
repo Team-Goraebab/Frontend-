@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HostModal from '../modal/host/hostModal';
 import { useHostStore } from '@/store/hostStore';
 import { useSnackbar } from 'notistack';
@@ -10,17 +10,30 @@ import { HiOutlineHome, HiPlus } from 'react-icons/hi';
 
 const AddHostButton = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [availableNetworks] = useState<{ name: string; ip: string }[]>([
-    { name: 'bridge', ip: '172.17.0.1' },
-    { name: 'host', ip: '192.168.1.1' },
-    { name: 'custom-network', ip: '10.0.0.1' },
-  ]);
+  const [availableNetworks, setAvailableNetworks] = useState<
+    { name: string; ip: string }[]
+  >([]);
 
   const { enqueueSnackbar } = useSnackbar();
   const addHost = useHostStore((state) => state.addHost);
   const addConnectedBridgeId = selectedHostStore(
     (state) => state.addConnectedBridgeId
   );
+
+  useEffect(() => {
+    // 네트워크 목록을 API에서 가져오는 함수
+    const fetchNetworks = async () => {
+      try {
+        const response = await fetch('/api/network/list');
+        const data = await response.json();
+        setAvailableNetworks(data.networks || []);
+      } catch (error) {
+        console.error('네트워크 목록을 불러오는데 실패했습니다.', error);
+      }
+    };
+
+    fetchNetworks();
+  }, []);
 
   const handleAddHost = (
     id: string,

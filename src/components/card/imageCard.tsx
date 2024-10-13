@@ -10,8 +10,6 @@ import { fetchData } from '@/services/apiUtils';
 import ImageDetailModal from '../modal/image/imageDetailModal';
 import ImageStartOptionModal from '@/components/modal/image/imageStartOptionModal';
 import { FiInfo, FiTrash, FiPlay, FiCpu, FiTag, FiSave, FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import { AiFillProfile } from 'react-icons/ai';
-import { FaIdCard, FaSortNumericDown } from 'react-icons/fa';
 import { TbNumber } from 'react-icons/tb';
 
 interface CardProps {
@@ -144,6 +142,8 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         },
         body: JSON.stringify(containerConfig),
       });
+
+      console.log(containerConfig);
 
       if (!response.ok) {
         throw new Error('Failed to run container');

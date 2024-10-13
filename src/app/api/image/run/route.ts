@@ -4,7 +4,8 @@ import { createDockerClient } from '../../axiosInstance';
 interface ContainerConfig {
   name: string;
   image: string;
-  network?: string;
+  hostId?: string;
+  networkIp?: string;
   volumes?: string;
   ports?: string;
   env?: string;
@@ -13,7 +14,30 @@ interface ContainerConfig {
 export async function POST(req: NextRequest) {
   const bodyData: ContainerConfig = await req.json();
   const dockerClient = createDockerClient();
-  console.log(bodyData);
+
+  // 네트워크 목록을 API 호출을 통해 가져오기
+  const fetchNetworks = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/network/list'); // 네트워크 정보를 가져오는 API 호출
+      if (!response.ok) {
+        throw new Error('Failed to fetch networks');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch networks:', error);
+      return []; // 네트워크를 가져오지 못했을 경우 빈 배열 반환
+    }
+  };
+
+  // 네트워크 정보 가져오기
+  const networks = await fetchNetworks();
+  const network = networks.find((net: any) => {
+    // IPAM 및 Config 배열이 null이거나 존재하지 않는 경우를 제외하고 Gateway를 비교
+    return net.IPAM?.Config?.[0] && net.IPAM?.Config?.[0]?.Gateway === bodyData.networkIp;
+  });
+
+  // 네트워크가 없으면 'bridge'로 설정
+  const networkMode = network ? network.Name : 'bridge';
 
   try {
     const createResponse = await dockerClient.post(
@@ -21,10 +45,10 @@ export async function POST(req: NextRequest) {
       {
         Image: bodyData.image,
         HostConfig: {
-          NetworkMode: bodyData.network || 'bridge',
+          NetworkMode: networkMode, // 네트워크 이름을 적용
           Mounts: bodyData.volumes?.split(',')
             .map((vol) => {
-              const [source, target] = vol.split(':').map(part => part.trim());
+              const [source, target] = vol.split(':').map((part) => part.trim());
               if (source && target) {
                 return {
                   Target: target,
@@ -46,7 +70,7 @@ export async function POST(req: NextRequest) {
           acc[`${containerPort}/tcp`] = {};
           return acc;
         }, {}),
-        Env: bodyData.env?.split(',').filter(envVar => envVar.includes('=')).map(envVar => {
+        Env: bodyData.env?.split(',').filter((envVar) => envVar.includes('=')).map((envVar) => {
           const [key, ...values] = envVar.split('=');
           return `${key.trim()}=${values.join('=').trim()}`;
         }),
@@ -59,7 +83,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: 'Container created and started successfully',
-      containerId: containerId
+      containerId: containerId,
     }, { status: 200 });
 
   } catch (error) {

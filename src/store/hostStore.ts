@@ -18,8 +18,8 @@ interface HostStore {
   deleteAllHosts: () => void;
 }
 
-// 호스트 정보를 저장하는 store
-export const useHostStore = create<HostStore>((set) => ({
+// 호스트 및 네트워크 정보를 저장하는 store
+export const useHostStore = create<HostStore>((set, get) => ({
   hosts: [],
   networks: [],
 
@@ -39,12 +39,10 @@ export const useHostStore = create<HostStore>((set) => ({
   // 네트워크 삭제
   deleteNetwork: (hostId, networkId) =>
     set((state) => {
-      // 업데이트된 네트워크 목록
       const updatedNetworks = state.networks.filter(
         (network) => network.id !== networkId || network.hostId !== hostId
       );
 
-      // 호스트를 업데이트하고 네트워크 정보를 제거
       const updatedHosts = state.hosts.map((host) => {
         if (host.id === hostId) {
           return {

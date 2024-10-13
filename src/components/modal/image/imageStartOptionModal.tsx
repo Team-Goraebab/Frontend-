@@ -35,6 +35,7 @@ interface ContainerConfig {
   volumes?: { hostPath?: string; containerPath?: string };
   env?: Array<{ variable: string; value: string }>;
   hostId?: string;
+  networkIp?: string;
 }
 
 const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, onClose, onRun, imageName }) => {
@@ -45,6 +46,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
   const [volumeContainerPath, setVolumeContainerPath] = useState('');
   const [envVars, setEnvVars] = useState<Array<{ variable: string; value: string }>>([]);
   const [selectedHostId, setSelectedHostId] = useState('');
+  const [selectedNetworkIp, setSelectedNetworkIp] = useState(''); // networkIp 상태 추가
 
   const hosts = useHostStore(state => state.hosts);
 
@@ -61,6 +63,16 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
   const handleRemoveEnvVar = (index: number) => {
     const newEnvVars = envVars.filter((_, i) => i !== index);
     setEnvVars(newEnvVars);
+  };
+
+  const handleHostChange = (hostId: string) => {
+    setSelectedHostId(hostId);
+
+    // 선택한 호스트의 networkIp를 설정
+    const selectedHost = hosts.find(host => host.id === hostId);
+    if (selectedHost) {
+      setSelectedNetworkIp(selectedHost.networkIp);
+    }
   };
 
   const handleRun = () => {
@@ -87,6 +99,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
     if (selectedHostId) {
       config.hostId = selectedHostId;
+    }
+
+    if (selectedNetworkIp) {
+      config.networkIp = selectedNetworkIp;
     }
 
     const result = onRun(config);
@@ -142,10 +158,12 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                   labelId="host-select-label"
                   value={selectedHostId}
                   label="Host"
-                  onChange={(e) => setSelectedHostId(e.target.value as string)}
+                  onChange={(e) => handleHostChange(e.target.value as string)} // 호스트 선택 시 networkIp 설정
                 >
                   {hosts.map(host => (
-                    <MenuItem key={host.id} value={host.id}>{host.hostNm}</MenuItem>
+                    <MenuItem key={host.id} value={host.id}>
+                      {host.hostNm}({host.networkIp})
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
