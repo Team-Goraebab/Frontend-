@@ -222,7 +222,6 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             ))}
           </div>
 
-          {/* 상세 정보 버튼을 우측 하단에 배치 */}
           <div className="flex justify-end mt-4">
             <button
               onClick={handleGetInfo}

@@ -35,7 +35,7 @@ const Modal = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <div className="bg-white rounded-2xl py-6 px-12 shadow-xl">
+      <div className="bg-white rounded-2xl py-6 px-12">
         <p className="mb-6 text-center font-semibold text-lg text-black_6">
           {question || '정말로 삭제하시겠습니까?'}
         </p>

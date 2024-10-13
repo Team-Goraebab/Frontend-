@@ -6,6 +6,8 @@ import { Tooltip } from 'react-tooltip';
 import { MENU_ITEMS } from '@/data/menu';
 import { useMenuStore } from '@/store/menuStore';
 import { FiSettings, FiGrid } from 'react-icons/fi';
+import { FileQuestion, FileQuestionIcon } from 'lucide-react';
+import { FaQuestion } from 'react-icons/fa';
 
 const Header = () => {
   const router = useRouter();
@@ -95,6 +97,15 @@ const Header = () => {
           >
             <FiSettings className="text-xl" data-tooltip-id="management-tooltip" />
             <Tooltip id="management-tooltip" content="Management" />
+          </div>
+          <div
+            onClick={() => {}}
+            className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
+              pathname === '/management' ? 'text-blue-400' : ''
+            }`}
+          >
+            <FaQuestion className="text-xl" data-tooltip-id="guide" />
+            <Tooltip id="guide" content="Management" />
           </div>
         </div>
         {isRightSidePath && (
