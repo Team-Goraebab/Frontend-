@@ -154,6 +154,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       }
       return data;
     } catch (error) {
+      console.error('Error fetching container detail:', error);
       throw error;
     }
   };

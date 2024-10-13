@@ -37,6 +37,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
    * activeId에 따른 카드 데이터 변경
    */
   let cardData: any[];
+
   switch (activeId) {
     case 1:
       cardData = CONTAINER_CARD_DATA;
