@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { PanButtons, Sidebar } from '@/components';
+import React, { useState, useEffect } from 'react';
+import { Header, PanButtons, Sidebar } from '@/components';
 import {
   IMAGE_CARD_DATA,
   CONTAINER_CARD_DATA,
@@ -14,11 +14,22 @@ import { useMenuStore } from '@/store/menuStore';
 import DeleteBlueprintButton from '../button/deleteBlueprintButton';
 import { SnackbarProvider } from 'notistack';
 import { usePathname } from 'next/navigation';
+import Splash from '@/components/splash/splash';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { activeId } = useMenuStore();
   const [isHandMode, setIsHandMode] = useState(false);
+  const [loading, setLoading] = useState(true); // 스플래시 화면 표시 여부를 위한 상태
+
+  useEffect(() => {
+    // 스플래시 화면을 3초 동안 표시
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   /**
    * activeId에 따른 카드 데이터 변경
@@ -45,8 +56,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const isSimpleLayout =
     pathname.includes('management') || pathname.includes('dashboard');
 
+  if (loading) {
+    return <Splash />;
+  }
+
   return (
     <SnackbarProvider maxSnack={3}>
+      <Header />
       <div className="relative flex h-screen bg-basic_1 overflow-hidden">
         {isSimpleLayout ? (
           <div className="flex flex-col flex-1">

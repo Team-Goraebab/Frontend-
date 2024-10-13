@@ -5,8 +5,6 @@ import '../../public/style/style.css';
 import React from 'react';
 import Layout from '../components/layout/layout';
 import localFont from 'next/font/local';
-import { Sidebar, Header } from '@/components';
-import { SnackbarProvider } from 'notistack';
 
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
@@ -26,7 +24,6 @@ export default function RootLayout({ children, }: Readonly<{
   return (
     <html lang="ko" className={pretendard.variable}>
       <body>
-          <Header />
           <Layout>{children}</Layout>
       </body>
     </html>
