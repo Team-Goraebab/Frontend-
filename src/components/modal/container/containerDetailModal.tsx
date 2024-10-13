@@ -107,7 +107,6 @@ const ContainerDetailModal = ({
         </div>
       </DialogTitle>
       <DialogContent dividers>
-        {/* General Information */}
         <Box mb={3}>
           <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
             General Information
@@ -140,7 +139,6 @@ const ContainerDetailModal = ({
           </Box>
         </Box>
         <Divider />
-        {/* Host Configuration */}
         <Box my={3}>
           <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
             Host Configuration
@@ -163,7 +161,6 @@ const ContainerDetailModal = ({
           </Box>
         </Box>
         <Divider />
-        {/* Network Settings */}
         <Box my={3}>
           <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
             Network Settings
@@ -178,7 +175,6 @@ const ContainerDetailModal = ({
           </Box>
         </Box>
         <Divider />
-        {/* State Information */}
         <Box my={3}>
           <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
             State Information

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Tooltip } from 'react-tooltip';
 import { MENU_ITEMS } from '@/data/menu';
 import { useMenuStore } from '@/store/menuStore';
-import { FiSettings, FiGrid, FiChevronUp, FiChevronDown } from 'react-icons/fi';
+import { FiSettings, FiGrid } from 'react-icons/fi';
 import { FaQuestion } from 'react-icons/fa';
 
 const Header = () => {

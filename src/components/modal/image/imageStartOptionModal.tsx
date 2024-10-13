@@ -12,7 +12,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Chip,
   Stack,
   IconButton, Divider,
 } from '@mui/material';
@@ -44,7 +43,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({
                                                                        onClose,
                                                                        onRun,
                                                                        imageName,
-                                                                       DNDNetworkIp
+                                                                       DNDNetworkIp,
                                                                      }) => {
   const [name, setName] = useState('');
   const [port3306, setPort3306] = useState('');

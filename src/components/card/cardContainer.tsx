@@ -45,8 +45,8 @@ const CardContainer = ({
                          onDropContainer,
                        }: CardContainerProps) => {
   const [droppedContainers, setDroppedContainers] = useState<Container[]>([]); // 드롭된 컨테이너 상태
-  const [selectedImage, setSelectedImage] = useState<string>(""); // 선택된 이미지 이름
-  const [selectedNetworkIp, setSelectedNetworkIp] = useState<string>(""); // 선택된 네트워크 IP (드롭 시 사용)
+  const [selectedImage, setSelectedImage] = useState<string>(''); // 선택된 이미지 이름
+  const [selectedNetworkIp, setSelectedNetworkIp] = useState<string>(''); // 선택된 네트워크 IP (드롭 시 사용)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태
   const [draggedItem, setDraggedItem] = useState<Container | null>(null); // 현재 드래그된 아이템 상태
 
@@ -71,16 +71,10 @@ const CardContainer = ({
 
   drop(ref);
 
-  const handleNetworkClick = () => {
-    if (onSelectNetwork) {
-      onSelectNetwork();
-    }
-  };
-
   // 모달 닫기 핸들러 (취소 시 드롭된 항목 취소)
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedImage("");
+    setSelectedImage('');
     setDraggedItem(null); // 드래그된 아이템을 초기화하여 취소
   };
 
@@ -106,13 +100,13 @@ const CardContainer = ({
       }
 
       setIsModalOpen(false);
-      setSelectedImage("");
+      setSelectedImage('');
 
       showSnackbar(
         enqueueSnackbar,
         '컨테이너가 성공적으로 실행되었습니다.',
         'success',
-        '#25BD6B'
+        '#25BD6B',
       );
     } catch (error) {
       console.error('Error running container:', error);
@@ -120,7 +114,7 @@ const CardContainer = ({
         enqueueSnackbar,
         '컨테이너 실행에 실패했습니다.',
         'error',
-        '#FF0000'
+        '#FF0000',
       );
     }
   };

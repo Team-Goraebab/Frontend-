@@ -208,7 +208,6 @@ const Sidebar = ({ progress }: SidebarProps) => {
       <div>
         <DaemonConnectBar />
       </div>
-      {/* HelpModal 컴포넌트 */}
       <HelpModal
         isOpen={isHelpModalOpen}
         onClose={() => setIsHelpModalOpen(false)}

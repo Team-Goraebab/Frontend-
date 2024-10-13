@@ -9,7 +9,7 @@ import { getStatusColors } from '@/utils/statusColorsUtils';
 import { formatDateTime } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import NetworkDetailModal from '../modal/network/networkDetailModal';
-import { FiInfo, FiTrash, FiLink, FiCpu, FiCalendar, FiHardDrive, FiSlash, FiSend, FiBox } from 'react-icons/fi';
+import { FiInfo, FiTrash, FiLink, FiCpu, FiCalendar, FiHardDrive, FiSend, FiBox } from 'react-icons/fi';
 
 interface NetworkProps {
   Id: string;
@@ -35,7 +35,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const connectedContainers = Object.values(data.Containers || {}).map(
-    (container) => `${container.Name} (${container.IPv4Address})`
+    (container) => `${container.Name} (${container.IPv4Address})`,
   );
 
   const subnet = data.IPAM?.Config?.[0]?.Subnet || 'No Subnet';
@@ -50,7 +50,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     {
       label: 'Containers',
       value: connectedContainers.length > 0 ? connectedContainers.join(', ') : 'No connected',
-      icon: FiBox
+      icon: FiBox,
     },
   ];
 
@@ -74,7 +74,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           '네트워크가 성공적으로 삭제되었습니다!',
           'success',
-          '#254b7a'
+          '#254b7a',
         );
         onDeleteSuccess();
       } else {
@@ -82,7 +82,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           `네트워크 삭제 실패: ${result.error}`,
           'error',
-          '#FF4853'
+          '#FF4853',
         );
       }
     } catch (error) {
@@ -91,7 +91,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         `네트워크 삭제 요청 중 에러: ${error}`,
         'error',
-        '#FF4853'
+        '#FF4853',
       );
     } finally {
       setLoading(false);
@@ -116,7 +116,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             id,
             name: container.Name,
             ip: container.IPv4Address,
-          })
+          }),
         ),
       };
 
@@ -125,14 +125,14 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '네트워크가 성공적으로 연결되었습니다.',
         'success',
-        '#254b7a'
+        '#254b7a',
       );
     } else {
       showSnackbar(
         enqueueSnackbar,
         '호스트를 선택해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
     }
   };
@@ -161,7 +161,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '네트워크 정보를 가져오는데 실패했습니다.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
     }
   };

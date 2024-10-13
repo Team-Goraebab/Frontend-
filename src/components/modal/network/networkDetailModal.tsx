@@ -27,10 +27,10 @@ interface NetworkDetailModalProps {
 }
 
 const NetworkDetailModal = ({
-  open,
-  onClose,
-  data,
-}: NetworkDetailModalProps) => {
+                              open,
+                              onClose,
+                              data,
+                            }: NetworkDetailModalProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyToClipboard = (value: string) => {
@@ -41,7 +41,7 @@ const NetworkDetailModal = ({
       },
       (err) => {
         console.error('Error copying text: ', err);
-      }
+      },
     );
   };
 
@@ -60,10 +60,8 @@ const NetworkDetailModal = ({
     >
       <DialogTitle>{`${data?.Name || 'Unknown Network'}`}</DialogTitle>
       <DialogContent dividers>
-        {/* Fixed Header */}
         <div className="p-5 font-pretendard border-b border-grey_1 bg-white">
           <div className="grid grid-cols-2 gap-4 mt-3">
-            {/* Scope and Driver */}
             <div>
               <strong>Scope:</strong> {data?.Options?.Scope || 'N/A'}
             </div>
@@ -91,9 +89,7 @@ const NetworkDetailModal = ({
         </div>
         <Divider />
 
-        {/* Scrollable Content */}
         <DialogContent className="overflow-y-auto flex-grow bg-grey_0">
-          {/* Containers Section */}
           <div className="my-5">
             <h3 className="text-base font-semibold text-grey_6">Containers</h3>
             {Object.keys(data?.Containers || {}).length > 0 ? (
@@ -122,7 +118,7 @@ const NetworkDetailModal = ({
                           </TableCell>
                           <TableCell>{container.MacAddress || 'N/A'}</TableCell>
                         </TableRow>
-                      )
+                      ),
                     )}
                   </TableBody>
                 </Table>
@@ -136,7 +132,6 @@ const NetworkDetailModal = ({
 
           <Divider />
 
-          {/* IPAM Section */}
           <div className="my-5">
             <h3 className="text-base font-semibold text-grey_6">IPAM</h3>
             {data?.IPAM?.Config?.length > 0 ? (
@@ -171,7 +166,6 @@ const NetworkDetailModal = ({
 
           <Divider />
 
-          {/* Labels Section */}
           <div className="my-5">
             <h3 className="text-base font-semibold text-grey_6">Labels</h3>
             {Object.keys(data?.Labels || {}).length > 0 ? (
@@ -189,7 +183,6 @@ const NetworkDetailModal = ({
         </DialogContent>
       </DialogContent>
 
-      {/* Fixed Footer */}
       <DialogActions className="p-5 border-t border-grey_1 bg-white">
         <Button title={'닫기'} onClick={onClose} color="grey" />
       </DialogActions>

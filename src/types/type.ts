@@ -6,6 +6,7 @@ export interface Volume {
   capacity: string;
   status: string;
 }
+
 export interface Image {
   id: string;
   name: string;

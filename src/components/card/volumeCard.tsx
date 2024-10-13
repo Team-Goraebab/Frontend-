@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Modal } from '@/components';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { useSnackbar } from 'notistack';
@@ -33,6 +33,7 @@ interface VolumeCardProps {
 
 /**
  * @param data 볼륨 데이터
+ * @param onDeleteSuccess
  * @returns 볼륨 카드 UI
  */
 const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
@@ -79,7 +80,7 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
           enqueueSnackbar,
           '볼륨이 성공적으로 삭제되었습니다!',
           'success',
-          '#254b7a'
+          '#254b7a',
         );
         onDeleteSuccess();
       } else {
@@ -87,7 +88,7 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
           enqueueSnackbar,
           `볼륨 삭제 실패: ${result.error}`,
           'error',
-          '#FF4853'
+          '#FF4853',
         );
       }
     } catch (error) {
@@ -97,7 +98,7 @@ const VolumeCard = ({ data, onDeleteSuccess }: VolumeCardProps) => {
           enqueueSnackbar,
           `볼륨 삭제 요청 중 에러: ${error}`,
           'error',
-          '#FF4853'
+          '#FF4853',
         );
       }
     } finally {

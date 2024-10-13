@@ -16,10 +16,10 @@ interface OptionModalProps {
  * @returns
  */
 const BarOptionModal = ({
-  onTopHandler,
-  onMiddleHandler,
-  onBottomHandler,
-}: OptionModalProps) => {
+                          onTopHandler,
+                          onMiddleHandler,
+                          onBottomHandler,
+                        }: OptionModalProps) => {
   return (
     <div className="flex flex-col z-50 items-center rounded-xl w-32 absolute bg-white shadow-lg border border-grey_2">
       <button
@@ -29,16 +29,6 @@ const BarOptionModal = ({
         {'버전 정보'}
         <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-grey_3" />
       </button>
-
-      {/* 
-      <button
-        className="w-full py-2 text-black_6 text-xs font-semibold hover:bg-grey_0 transition-colors relative"
-        onClick={onMiddleHandler}
-      >
-        {'시스템 정보'}
-        <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-grey_3" />
-      </button>
-      */}
 
       <button
         className="w-full py-2 text-black_6 text-xs font-semibold hover:bg-grey_0 rounded-b-xl transition-colors"

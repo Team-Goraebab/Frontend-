@@ -4,7 +4,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Box,
   IconButton,
   Tooltip,
 } from '@mui/material';
@@ -22,11 +21,11 @@ interface LogModalProps {
 }
 
 const LogModal = ({
-  open,
-  onClose,
-  containerId,
-  containerName,
-}: LogModalProps) => {
+                    open,
+                    onClose,
+                    containerId,
+                    containerName,
+                  }: LogModalProps) => {
   const [logs, setLogs] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredLogs, setFilteredLogs] = useState<string | null>(null);
@@ -49,11 +48,11 @@ const LogModal = ({
     }
   };
 
+  //TODO : 스크롤 미작동 이슈 해결하기
   useEffect(() => {
     if (open) {
       fetchLogs();
       if (logRef.current) {
-        // 모달이 열릴 때 스크롤을 맨 아래로 설정
         setTimeout(() => {
           logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
         }, 100);
@@ -93,7 +92,7 @@ const LogModal = ({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle>
         <strong>{containerName} Logs</strong>
-        <p className="text-sm">
+        <p className="text-sm font-pretendard">
           Container ID:
           {containerId}
           <Tooltip title="Copy ID">
@@ -112,13 +111,11 @@ const LogModal = ({
               className="pl-2 border border-grey_2 rounded focus:outline-none focus:border-grey_4 text-sm"
             />
           )}
-          {/* 검색 아이콘 */}
           <Tooltip title="Search Logs">
             <IconButton onClick={() => setShowSearch(!showSearch)}>
               <SearchIcon className="text-grey_6" />
             </IconButton>
           </Tooltip>
-          {/* 복사 아이콘 */}
           <Tooltip title="Copy Logs">
             <IconButton
               onClick={() => handleCopyToClipboard(filteredLogs || '')}
@@ -126,13 +123,11 @@ const LogModal = ({
               <ContentCopyIcon className="text-grey_6" />
             </IconButton>
           </Tooltip>
-          {/* 타임라인 아이콘 (최신 로그로 스크롤) */}
           <Tooltip title="Scroll to Latest Logs">
             <IconButton onClick={scrollToBottom}>
               <TimelineIcon className="text-grey_6" />
             </IconButton>
           </Tooltip>
-          {/* 휴지통 아이콘 (로그 초기화) */}
           <Tooltip title="Clear Logs">
             <IconButton onClick={clearLogs}>
               <DeleteIcon className="text-grey_6" />

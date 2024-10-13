@@ -154,7 +154,6 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       }
       return data;
     } catch (error) {
-      console.error('Error fetching container detail:', error);
       throw error;
     }
   };
@@ -166,7 +165,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       setShowOptions(false);
       setIsModalOpen(true);
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   };
 

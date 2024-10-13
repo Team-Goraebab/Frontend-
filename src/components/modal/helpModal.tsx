@@ -1,4 +1,3 @@
-// HelpModal.tsx
 import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -9,10 +8,10 @@ import CloseIcon from '@mui/icons-material/Close';
 interface HelpModalProps {
   isOpen: boolean;
   onClose: () => void;
-  activeType: 'container' | 'image' | 'network' | 'volume';  // 각 타입 추가
+  activeType: 'container' | 'image' | 'network' | 'volume';
 }
 
-const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, activeType }) => {
+const HelpModal = ({ isOpen, onClose, activeType }: HelpModalProps) => {
   const helpData = {
     container: {
       title: '컨테이너',

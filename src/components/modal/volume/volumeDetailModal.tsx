@@ -39,7 +39,6 @@ const VolumeDetailModal = ({ open, onClose, data }: VolumeDetailModalProps) => {
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>{`${data?.Name}`}</DialogTitle>
       <DialogContent dividers>
-        {/* General Information */}
         <div className="p-5 font-pretendard border-b border-grey_1 bg-white">
           <h2 className="text-lg font-bold">General Information</h2>
           <div className="grid grid-cols-2 gap-4 mt-3">
@@ -69,7 +68,6 @@ const VolumeDetailModal = ({ open, onClose, data }: VolumeDetailModalProps) => {
 
         <Divider />
 
-        {/* Labels */}
         <Box my={2}>
           <Typography variant="h6">Labels</Typography>
           {data?.Labels && Object.keys(data.Labels).length > 0 ? (
@@ -87,7 +85,6 @@ const VolumeDetailModal = ({ open, onClose, data }: VolumeDetailModalProps) => {
 
         <Divider />
 
-        {/* Options */}
         <Box my={2}>
           <Typography variant="h6">Options</Typography>
           {data?.Options ? (

@@ -25,10 +25,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true); // 스플래시 화면 표시 여부를 위한 상태
 
   useEffect(() => {
-    // 스플래시 화면을 4초 동안 표시
+    // 스플래시 화면을 3초 동안 표시
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);

@@ -14,7 +14,7 @@ interface BridgeModalProps {
     name: string,
     subnet: string,
     gateway: string,
-    driver: string
+    driver: string,
   ) => void;
 }
 
@@ -59,7 +59,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
         enqueueSnackbar,
         '브리지 이름을 입력해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -69,7 +69,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
         enqueueSnackbar,
         '올바른 서브넷 형식을 입력해주세요. (예: 192.168.1.0/24)',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -79,12 +79,12 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
         enqueueSnackbar,
         '올바른 게이트웨이 IP 주소를 입력해주세요. (예: 192.168.1.1)',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
 
-    const id = uuidv4(); // 네트워크 ID 생성
+    const id = uuidv4();
     onCreate(id, name, subnet, gateway, driver);
     onClose();
   };
@@ -119,7 +119,6 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
           onChange={(e) => setDriver(e.target.value)}
           className="mb-8 p-2 border border-gray-300 rounded w-full"
         >
-          {/* 드라이버 옵션 */}
           <option value="bridge">Bridge</option>
           <option value="host">Host</option>
           <option value="overlay">Overlay</option>

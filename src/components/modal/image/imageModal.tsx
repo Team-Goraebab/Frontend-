@@ -12,7 +12,6 @@ import {
   TextField,
   Typography,
   Box,
-  Paper,
   IconButton,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';

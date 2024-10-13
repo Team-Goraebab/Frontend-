@@ -13,7 +13,7 @@ import {
   RadioGroup, Select,
   TextField,
   Typography,
-  Button
+  Button,
 } from '@mui/material';
 import { showSnackbar } from '@/utils/toastUtils';
 import { colorsOption } from '@/data/color';
@@ -28,7 +28,7 @@ interface HostModalProps {
     isRemote: boolean,
     themeColor: ThemeColor,
     networkName: string,
-    networkIp: string
+    networkIp: string,
   ) => void;
   availableNetworks: { name: string; ip: string }[];
 }
@@ -48,7 +48,7 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
 
   const defaultColor = colorsOption.find((color) => !color.sub);
   const defaultSubColor = colorsOption.find(
-    (color) => color.label === defaultColor?.label && color.sub
+    (color) => color.label === defaultColor?.label && color.sub,
   );
 
   const [selectedColor, setSelectedColor] = useState<ThemeColor>({
@@ -70,7 +70,6 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
           setNetworkIp(data.IPAM?.Config?.[0]?.Gateway);
         }
       } catch (error) {
-        console.log('네트워크 목록 에러 :', error);
         throw error;
       }
     };
@@ -84,7 +83,7 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
         enqueueSnackbar,
         'Host 이름을 입력해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -94,7 +93,7 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
         enqueueSnackbar,
         '네트워크를 선택해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -106,14 +105,14 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
       isRemote,
       selectedColor,
       networkName,
-      networkIp
+      networkIp,
     );
     onClose();
   };
 
   const handleNetworkChange = (selectedNetworkName: string) => {
     const selectedNetwork = availableNetworks.find(
-      (net) => net.Name === selectedNetworkName
+      (net) => net.Name === selectedNetworkName,
     );
     setNetworkName(selectedNetworkName);
     setNetworkIp(selectedNetwork?.IPAM?.Config?.[0]?.Gateway || '');
@@ -121,10 +120,10 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
 
   const handleColorSelection = (colorLabel: string) => {
     const mainColor = colorsOption.find(
-      (color) => color.label === colorLabel && !color.sub
+      (color) => color.label === colorLabel && !color.sub,
     );
     const subColor = colorsOption.find(
-      (color) => color.label === colorLabel && color.sub
+      (color) => color.label === colorLabel && color.sub,
     );
 
     setSelectedColor({
