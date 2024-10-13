@@ -169,9 +169,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   return (
     <div className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-        <div className="flex items-center space-x-2">
-          <span className="font-medium font-pretendard text-sm text-gray-700">Network</span>
-        </div>
+        <div className="flex items-center space-x-2" />
         <div className="flex">
           <button
             onClick={handleConnect}
