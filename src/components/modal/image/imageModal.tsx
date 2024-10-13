@@ -13,7 +13,7 @@ import {
   Typography,
   Box,
   Paper,
-  IconButton
+  IconButton,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { FolderOpen, Label, Description, Delete, Hub, Close } from '@mui/icons-material';
@@ -33,7 +33,7 @@ interface ModalProps {
     file: File | null,
     size: string,
     source: 'local' | 'dockerHub',
-    dockerImageInfo?: any
+    dockerImageInfo?: any,
   ) => void;
 }
 
@@ -65,7 +65,7 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
       setName('');
       setTag('');
       setSize('');
-      setActiveTab(0); // Reset to Docker Hub tab when closed
+      setActiveTab(0);
       setDockerImageInfo(null);
     }
   }, [isOpen]);
@@ -79,7 +79,7 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
     if (file) {
       const validExtensions = ['.tar', '.tar.gz', '.tar.bz2', '.tar.xz'];
       const isValidExtension = validExtensions.some((ext) =>
-        file.name.toLowerCase().endsWith(ext)
+        file.name.toLowerCase().endsWith(ext),
       );
 
       if (!isValidExtension) {
@@ -87,7 +87,7 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
           enqueueSnackbar,
           'tar, tar.gz, tar.bz2, tar.xz 파일만 업로드 가능합니다.',
           'error',
-          '#FF4853'
+          '#FF4853',
         );
         return;
       }
@@ -98,7 +98,7 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
           enqueueSnackbar,
           '파일 용량이 5000MB를 초과했습니다.',
           'error',
-          '#FF4853'
+          '#FF4853',
         );
       } else {
         setFile(file);
@@ -176,7 +176,7 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
         return (
           <>
             {file ? (
-              <Box sx={{border:'1px solid', borderRadius: 4, position: 'relative', p: 2, width: '100%', mt: 2 }}>
+              <Box sx={{ border: '1px solid', borderRadius: 4, position: 'relative', p: 2, width: '100%', mt: 2 }}>
                 <Typography variant="subtitle1" color="primary" fontWeight="bold">
                   {file.name}
                 </Typography>

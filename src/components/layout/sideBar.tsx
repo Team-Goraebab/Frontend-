@@ -15,6 +15,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import LargeButton from '../button/largeButton';
 import { fetchData } from '@/services/apiUtils';
 import { RxReload } from 'react-icons/rx';
+import HelpModal from '@/components/modal/helpModal';
 
 interface SidebarProps {
   progress: number;
@@ -48,10 +49,13 @@ const loadData = async (
 
 const Sidebar = ({ progress }: SidebarProps) => {
   const { activeId } = useMenuStore();
+
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [networkData, setNetworkData] = useState<any[]>([]);
   const [volumeData, setVolumeData] = useState<any[]>([]);
   const [containerData, setContainerData] = useState<any[]>([]);
   const [imageData, setImageData] = useState<any[]>([]);
+  const [activeHelpType, setActiveHelpType] = useState<'container' | 'image' | 'network' | 'volume'>('container');
 
   const dataHandlers: Record<1 | 2 | 3 | 4, DataHandlerType> = {
     1: { data: containerData, setData: setContainerData },
@@ -79,30 +83,39 @@ const Sidebar = ({ progress }: SidebarProps) => {
     }
   };
 
+  const openHelpModal = (type: 'container' | 'image' | 'network' | 'volume') => {
+    setActiveHelpType(type);
+    setIsHelpModalOpen(true);
+  };
+
   const componentMap = {
     1: {
       title: '컨테이너',
       addButton: AddContainerButton,
       cardComponent: ContainerCard,
       noDataMessage: '컨테이너를 추가하세요',
+      helpType: 'container',
     },
     2: {
       title: '이미지',
       addButton: AddImageButton,
       cardComponent: ImageCard,
       noDataMessage: '이미지를 추가하세요',
+      helpType: 'image',
     },
     3: {
       title: '네트워크',
       addButton: AddBridgeButton,
       cardComponent: NetworkCard,
       noDataMessage: '네트워크 데이터를 추가하세요',
+      helpType: 'network',
     },
     4: {
       title: '볼륨',
       addButton: AddVolumeButton,
       cardComponent: VolumeCard,
       noDataMessage: '볼륨 데이터를 추가하세요',
+      helpType: 'volume',
     },
   };
 
@@ -159,6 +172,17 @@ const Sidebar = ({ progress }: SidebarProps) => {
           <span className="ml-2 px-2 py-1 bg-blue-400 text-white text-xs font-pretendard rounded-lg">
             {dataHandlers[activeId as 1 | 2 | 3 | 4]?.data.length || 0}
           </span>
+          <button
+            className="ml-2 text-blue_6 font-bold"
+            onClick={() => {
+              if (currentComponent?.helpType) {
+                openHelpModal(currentComponent.helpType as 'container' | 'image' | 'network' | 'volume');
+              }
+            }}
+            title="도움말"
+          >
+            <AiOutlineInfoCircle size={16} />
+          </button>
         </h2>
         <button
           className="text-blue_6 font-bold"
@@ -184,6 +208,12 @@ const Sidebar = ({ progress }: SidebarProps) => {
       <div>
         <DaemonConnectBar />
       </div>
+      {/* HelpModal 컴포넌트 */}
+      <HelpModal
+        isOpen={isHelpModalOpen}
+        onClose={() => setIsHelpModalOpen(false)}
+        activeType={activeHelpType}
+      />
     </div>
   );
 };
