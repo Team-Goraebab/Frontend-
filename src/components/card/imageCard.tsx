@@ -199,7 +199,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             className="p-2 rounded-full hover:bg-gray-200 transition-colors"
             title="Toggle Details"
           >
-            {isExpanded ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+            {isExpanded ? <FiChevronUp size={16} className="text-gray-500" /> : <FiChevronDown size={16} className="text-gray-500" />}
           </button>
         </div>
       </div>
