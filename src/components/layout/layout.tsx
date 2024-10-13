@@ -15,6 +15,8 @@ import DeleteBlueprintButton from '../button/deleteBlueprintButton';
 import { SnackbarProvider } from 'notistack';
 import { usePathname } from 'next/navigation';
 import Splash from '@/components/splash/splash';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -61,33 +63,35 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SnackbarProvider maxSnack={3}>
-      <Header />
-      <div className="relative flex h-screen bg-basic_1 overflow-hidden">
-        {isSimpleLayout ? (
-          <div className="flex flex-col flex-1">
-            <div className="flex-1 bg-basic_1 bg-grey_0">
-              <main className={`relative ${isHandMode ? 'hand-mode' : ''}`}>
-                {children}
-              </main>
+    <DndProvider backend={HTML5Backend}>
+      <SnackbarProvider maxSnack={3}>
+        <Header />
+        <div className="relative flex h-screen bg-basic_1 overflow-hidden">
+          {isSimpleLayout ? (
+            <div className="flex flex-col flex-1">
+              <div className="flex-1 bg-basic_1 bg-grey_0">
+                <main className={`relative ${isHandMode ? 'hand-mode' : ''}`}>
+                  {children}
+                </main>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col flex-1 ml-[300px]">
-            <div className="flex-1 bg-basic_1 bg-grey_0">
-              <main className={`relative ${isHandMode ? 'hand-mode' : ''}`}>
-                {children}
-              </main>
-              <Sidebar progress={30} />
-              <PanButtons />
-              <AddHostButton />
-              <DeleteBlueprintButton />
-              <SaveButton />
+          ) : (
+            <div className="flex flex-col flex-1 ml-[300px]">
+              <div className="flex-1 bg-basic_1 bg-grey_0">
+                <main className={`relative ${isHandMode ? 'hand-mode' : ''}`}>
+                  {children}
+                </main>
+                <Sidebar progress={30} />
+                <PanButtons />
+                <AddHostButton />
+                <DeleteBlueprintButton />
+                <SaveButton />
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </SnackbarProvider>
+          )}
+        </div>
+      </SnackbarProvider>
+    </DndProvider>
   );
 };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Modal } from '@/components';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
@@ -11,6 +11,7 @@ import ImageDetailModal from '../modal/image/imageDetailModal';
 import ImageStartOptionModal from '@/components/modal/image/imageStartOptionModal';
 import { FiInfo, FiTrash, FiPlay, FiCpu, FiTag, FiSave, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { TbNumber } from 'react-icons/tb';
+import { useDrag } from 'react-dnd';
 
 interface CardProps {
   Id: string;
@@ -41,6 +42,22 @@ interface ContainerConfig {
 }
 
 const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
+  const ref = useRef<HTMLDivElement>(null); // useRef 생성
+
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'IMAGE_CARD',
+    item: { image: data.RepoTags[0] },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
+  useEffect(() => {
+    if (ref.current) {
+      drag(ref); // drag를 ref에 연결
+    }
+  }, [ref, drag]);
+
   const { enqueueSnackbar } = useSnackbar();
   const removeImage = useImageStore((state) => state.removeImage);
 
@@ -143,8 +160,6 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         body: JSON.stringify(containerConfig),
       });
 
-      console.log(containerConfig);
-
       if (!response.ok) {
         throw new Error('Failed to run container');
       }
@@ -172,7 +187,11 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   };
 
   return (
-    <div className="relative bg-white border rounded-lg transition-all duration-300 mb-2 overflow-hidden"> {/* 카드 사이 간격 조정 */}
+    <div
+      ref={ref}
+      style={{ opacity: isDragging ? 0.5 : 1 }}
+      className="relative bg-white border rounded-lg transition-all duration-300 mb-2 overflow-hidden"
+    >
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
         <div className="flex items-center space-x-2">
           <span className="font-bold font-pretendard text-sm text-gray-700 truncate">
@@ -199,7 +218,8 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             className="p-2 rounded-full hover:bg-gray-200 transition-colors"
             title="Toggle Details"
           >
-            {isExpanded ? <FiChevronUp size={16} className="text-gray-500" /> : <FiChevronDown size={16} className="text-gray-500" />}
+            {isExpanded ? <FiChevronUp size={16} className="text-gray-500" /> :
+              <FiChevronDown size={16} className="text-gray-500" />}
           </button>
         </div>
       </div>

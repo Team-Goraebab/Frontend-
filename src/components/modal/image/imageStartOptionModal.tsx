@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   Box,
@@ -26,6 +26,7 @@ interface ImageStartOptionModalProps {
   onClose: () => void;
   onRun: (config: ContainerConfig) => void | Promise<void>;
   imageName: string;
+  DNDNetworkIp?: string;
 }
 
 interface ContainerConfig {
@@ -38,7 +39,7 @@ interface ContainerConfig {
   networkIp?: string;
 }
 
-const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, onClose, onRun, imageName }) => {
+const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, onClose, onRun, imageName, DNDNetworkIp }) => {
   const [name, setName] = useState('');
   const [port3306, setPort3306] = useState('');
   const [port33060, setPort33060] = useState('');
@@ -46,9 +47,20 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
   const [volumeContainerPath, setVolumeContainerPath] = useState('');
   const [envVars, setEnvVars] = useState<Array<{ variable: string; value: string }>>([]);
   const [selectedHostId, setSelectedHostId] = useState('');
-  const [selectedNetworkIp, setSelectedNetworkIp] = useState(''); // networkIp 상태 추가
+  const [selectedNetworkIp, setSelectedNetworkIp] = useState('');
 
-  const hosts = useHostStore(state => state.hosts);
+  const hosts = useHostStore((state) => state.hosts);
+
+  // DNDNetworkIp가 있을 경우 해당 IP를 가진 호스트를 기본 선택값으로 설정
+  useEffect(() => {
+    if (DNDNetworkIp) {
+      const matchingHost = hosts.find((host) => host.networkIp === DNDNetworkIp);
+      if (matchingHost) {
+        setSelectedHostId(matchingHost.id); // 해당 호스트의 id를 선택
+        setSelectedNetworkIp(matchingHost.networkIp); // 네트워크 IP도 설정
+      }
+    }
+  }, [DNDNetworkIp, hosts]);
 
   const handleAddEnvVar = () => {
     setEnvVars([...envVars, { variable: '', value: '' }]);
@@ -67,9 +79,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
   const handleHostChange = (hostId: string) => {
     setSelectedHostId(hostId);
-
-    // 선택한 호스트의 networkIp를 설정
-    const selectedHost = hosts.find(host => host.id === hostId);
+    const selectedHost = hosts.find((host) => host.id === hostId);
     if (selectedHost) {
       setSelectedNetworkIp(selectedHost.networkIp);
     }
@@ -94,15 +104,11 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
     }
 
     if (envVars.length > 0) {
-      config.env = envVars.filter(env => env.variable && env.value);
+      config.env = envVars.filter((env) => env.variable && env.value);
     }
 
     if (selectedHostId) {
       config.hostId = selectedHostId;
-    }
-
-    if (selectedNetworkIp) {
-      config.networkIp = selectedNetworkIp;
     }
 
     const result = onRun(config);
@@ -116,19 +122,21 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 480,
-        bgcolor: '#ffffff',
-        p: 3,
-        borderRadius: 2,
-        boxShadow: 3,
-        maxHeight: '90vh',
-        overflowY: 'auto',
-      }}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 480,
+          bgcolor: '#ffffff',
+          p: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
+      >
         <Typography variant="h6" fontWeight="600" gutterBottom>
           Start New Container
         </Typography>
@@ -149,7 +157,9 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
           <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Host Selection <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
+              <Typography>
+                Host Selection <Chip label="Optional" size="small" sx={{ ml: 1 }} />
+              </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <FormControl fullWidth>
@@ -158,11 +168,11 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                   labelId="host-select-label"
                   value={selectedHostId}
                   label="Host"
-                  onChange={(e) => handleHostChange(e.target.value as string)} // 호스트 선택 시 networkIp 설정
+                  onChange={(e) => handleHostChange(e.target.value as string)}
                 >
-                  {hosts.map(host => (
+                  {hosts.map((host) => (
                     <MenuItem key={host.id} value={host.id}>
-                      {host.hostNm}({host.networkIp})
+                      {host.hostNm} ({host.networkIp})
                     </MenuItem>
                   ))}
                 </Select>
@@ -172,7 +182,9 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
           <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Ports <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
+              <Typography>
+                Ports <Chip label="Optional" size="small" sx={{ ml: 1 }} />
+              </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Stack spacing={2}>
@@ -194,7 +206,9 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
           <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Volumes <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
+              <Typography>
+                Volumes <Chip label="Optional" size="small" sx={{ ml: 1 }} />
+              </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Stack spacing={2}>
@@ -216,7 +230,9 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
 
           <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Environment Variables <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
+              <Typography>
+                Environment Variables <Chip label="Optional" size="small" sx={{ ml: 1 }} />
+              </Typography>
             </AccordionSummary>
             <AccordionDetails>
               {envVars.map((env, index) => (
