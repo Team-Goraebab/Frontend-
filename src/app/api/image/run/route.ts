@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     return net.IPAM?.Config?.[0] && net.IPAM?.Config?.[0]?.Gateway === bodyData.networkIp;
   });
 
-  // 네트워크가 없으면 'bridge'로 설정
+  // 네트워크가 없으면 bridge로 설정
   const networkMode = network ? network.Name : 'bridge';
 
   try {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       {
         Image: bodyData.image,
         HostConfig: {
-          NetworkMode: networkMode, // 네트워크 이름을 적용
+          NetworkMode: networkMode,
           Mounts: bodyData.volumes?.split(',')
             .map((vol) => {
               const [source, target] = vol.split(':').map((part) => part.trim());
