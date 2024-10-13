@@ -24,22 +24,22 @@ interface ModalProps {
  * @returns
  */
 const Modal = ({
-  question,
-  confirmText,
-  closeText,
-  isOpen,
-  onClose,
-  onConfirm,
-}: ModalProps) => {
+                 question,
+                 confirmText,
+                 closeText,
+                 isOpen,
+                 onClose,
+                 onConfirm,
+               }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <div className="bg-white rounded-2xl py-6 px-12">
-        <p className="mb-6 text-center font-semibold text-lg text-black_6">
+        <p className="mb-6 text-center font-semibold font-pretendard text-lg text-black_6">
           {question || '정말로 삭제하시겠습니까?'}
         </p>
-        <div className="flex justify-center space-x-4">
+        <div className="flex justify-center space-x-4 font-pretendard">
           <Button title={'삭제'} color="red" onClick={onConfirm} />
           <Button title={'취소'} color="grey" onClick={onClose} />
         </div>

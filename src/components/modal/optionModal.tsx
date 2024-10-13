@@ -44,7 +44,7 @@ const OptionModal = ({
 
       {btnVisible && (
         <button
-          className="w-full py-2 text-black_6 text-xs font-semibold hover:bg-grey_0 transition-colors relative"
+          className="w-full py-2 text-black_6 text-xs font-semibold font-pretendard hover:bg-grey_0 transition-colors relative"
           onClick={onMiddleHandler}
         >
           {middleTitle || '실행'}
@@ -53,7 +53,7 @@ const OptionModal = ({
       )}
 
       <button
-        className="w-full py-2 text-danger text-xs font-semibold hover:bg-red_0 rounded-b-xl transition-colors"
+        className="w-full py-2 text-danger text-xs font-semibold font-pretendard hover:bg-red_0 rounded-b-xl transition-colors"
         onClick={onBottomHandler}
       >
         {bottomTitle || '삭제'}

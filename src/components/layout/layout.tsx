@@ -81,7 +81,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <main className={`relative ${isHandMode ? 'hand-mode' : ''}`}>
                   {children}
                 </main>
-                <Sidebar progress={30} />
+                <Sidebar />
                 <PanButtons />
                 <AddHostButton />
                 <DeleteBlueprintButton />

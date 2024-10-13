@@ -16,10 +16,6 @@ import LargeButton from '../button/largeButton';
 import { fetchData } from '@/services/apiUtils';
 import { RxReload } from 'react-icons/rx';
 
-interface SidebarProps {
-  progress: number;
-}
-
 type DataHandlerType = {
   data: any[];
   setData: React.Dispatch<React.SetStateAction<any[]>>;
@@ -46,7 +42,7 @@ const loadData = async (
   }
 };
 
-const Sidebar = ({ progress }: SidebarProps) => {
+const Sidebar = () => {
   const { activeId } = useMenuStore();
 
   const [networkData, setNetworkData] = useState<any[]>([]);

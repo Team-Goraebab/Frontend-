@@ -44,7 +44,7 @@ const Header = () => {
 
   return (
     <header
-      className="fixed top-3 left-1/2 transform -translate-x-1/2 w-auto max-w-3xl bg-blue_6 text-white z-30 rounded-full shadow-lg overflow-hidden">
+      className="fixed top-4 left-1/2 transform -translate-x-1/2 w-auto max-w-3xl bg-blue_5 text-white z-30 rounded-full shadow-lg overflow-hidden">
       <div
         ref={headerRef}
         className="transition-all duration-500 ease-in-out"
@@ -67,7 +67,7 @@ const Header = () => {
                   data-tooltip-id={`tooltip-${item.name}`}
                   data-tooltip-content={item.name}
                 >
-                  <item.icon className="text-xl mb-1" />
+                  <item.icon className="text-xl" />
                   <Tooltip id={`tooltip-${item.name}`} />
                 </div>
               ))}
