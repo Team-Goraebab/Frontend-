@@ -13,9 +13,12 @@ import {
   AccordionSummary,
   AccordionDetails,
   Chip,
-  Stack
+  Stack,
+  IconButton
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useHostStore } from '@/store/hostStore';
 
 interface ImageStartOptionModalProps {
@@ -102,18 +105,18 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 500,
+        width: 480,
         bgcolor: '#ffffff',
-        p: 4,
-        borderRadius: '16px',
-        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+        p: 3,
+        borderRadius: 2,
+        boxShadow: 3,
         maxHeight: '90vh',
         overflowY: 'auto',
       }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Run a new container
+        <Typography variant="h6" fontWeight="600" gutterBottom>
+          Start New Container
         </Typography>
-        <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+        <Typography variant="body2" color="textSecondary" gutterBottom>
           {imageName}
         </Typography>
 
@@ -125,10 +128,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
             onChange={(e) => setName(e.target.value)}
             margin="normal"
             required
-            sx={{ borderRadius: '8px', mb: 2 }}
+            sx={{ mb: 2 }}
           />
 
-          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
+          <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Host Selection <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
@@ -149,7 +152,7 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
+          <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Ports <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
@@ -160,20 +163,18 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                   label="Port for 3306/tcp"
                   value={port3306}
                   onChange={(e) => setPort3306(e.target.value)}
-                  sx={{ borderRadius: '8px' }}
                 />
                 <TextField
                   fullWidth
                   label="Port for 33060/tcp"
                   value={port33060}
                   onChange={(e) => setPort33060(e.target.value)}
-                  sx={{ borderRadius: '8px' }}
                 />
               </Stack>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
+          <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Volumes <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
@@ -184,47 +185,45 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                   label="Volume Host Path"
                   value={volumeHostPath}
                   onChange={(e) => setVolumeHostPath(e.target.value)}
-                  sx={{ borderRadius: '8px' }}
                 />
                 <TextField
                   fullWidth
                   label="Volume Container Path"
                   value={volumeContainerPath}
                   onChange={(e) => setVolumeContainerPath(e.target.value)}
-                  sx={{ borderRadius: '8px' }}
                 />
               </Stack>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
+          <Accordion disableGutters elevation={0} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Environment Variables <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
             <AccordionDetails>
               {envVars.map((env, index) => (
-                <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <TextField
                     label="Variable"
                     value={env.variable}
                     onChange={(e) => handleEnvVarChange(index, 'variable', e.target.value)}
                     size="small"
-                    sx={{ borderRadius: '8px' }}
+                    sx={{ flex: 1 }}
                   />
                   <TextField
                     label="Value"
                     value={env.value}
                     onChange={(e) => handleEnvVarChange(index, 'value', e.target.value)}
                     size="small"
-                    sx={{ borderRadius: '8px' }}
+                    sx={{ flex: 1 }}
                   />
-                  <Button onClick={() => handleRemoveEnvVar(index)} color="error" variant="outlined" size="small">
-                    Remove
-                  </Button>
+                  <IconButton onClick={() => handleRemoveEnvVar(index)} size="small" color="error">
+                    <DeleteIcon />
+                  </IconButton>
                 </Box>
               ))}
-              <Button onClick={handleAddEnvVar} variant="outlined" size="small" sx={{ mt: 1 }}>
-                Add Env Var
+              <Button onClick={handleAddEnvVar} startIcon={<AddIcon />} variant="outlined" size="small">
+                Add Variable
               </Button>
             </AccordionDetails>
           </Accordion>

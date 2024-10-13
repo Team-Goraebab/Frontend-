@@ -1,16 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal, OptionModal } from '@/components';
-import { v4 as uuidv4 } from 'uuid';
+import { Modal } from '@/components';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
-import { useSelectedNetworkStore } from '@/store/selectedNetworkStore';
-import { useContainerStore } from '@/store/containerStore';
-import { useStore } from '@/store/cardStore';
-import { selectedHostStore } from '@/store/seletedHostStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
-import { AiOutlineUp, AiOutlineDown, AiOutlineFileText } from 'react-icons/ai';
 import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import ContainerDetailModal from '../modal/container/containerDetailModal';
@@ -21,10 +15,10 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiCpu,
-  FiFile, FiFileText, FiGlobe,
+  FiFileText, FiGlobe,
   FiHardDrive,
   FiImage, FiInfo,
-  FiMoreVertical, FiPauseCircle, FiTrash, FiXCircle,
+  FiPauseCircle, FiTrash, FiXCircle,
 } from 'react-icons/fi';
 
 interface CardDataProps {
