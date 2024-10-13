@@ -17,7 +17,6 @@ const Header = () => {
   const { activeId, setActiveId } = useMenuStore();
   const [barWidth, setBarWidth] = useState(0);
   const [barLeft, setBarLeft] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(true);
 
   const isRightSidePath =
     pathname === '/management' || pathname === '/dashboard';
@@ -36,7 +35,7 @@ const Header = () => {
           setBarWidth(activeItem.clientWidth);
           setBarLeft(
             activeItem.getBoundingClientRect().left -
-            navRef.current.getBoundingClientRect().left
+            navRef.current.getBoundingClientRect().left,
           );
         }
       }
@@ -44,7 +43,8 @@ const Header = () => {
   }, [activeId, isRightSidePath]);
 
   return (
-    <header className="fixed top-3 left-1/2 transform -translate-x-1/2 w-auto max-w-3xl bg-blue_6 text-white z-30 rounded-full shadow-lg overflow-hidden">
+    <header
+      className="fixed top-3 left-1/2 transform -translate-x-1/2 w-auto max-w-3xl bg-blue_6 text-white z-30 rounded-full shadow-lg overflow-hidden">
       <div
         ref={headerRef}
         className="transition-all duration-500 ease-in-out"
@@ -93,7 +93,8 @@ const Header = () => {
                 <Tooltip id="management-tooltip" content="Management" />
               </div>
               <div
-                onClick={() => {}}
+                onClick={() => {
+                }}
                 className={`cursor-pointer text-white hover:text-white transition-colors duration-300`}
               >
                 <FaQuestion className="text-xl" data-tooltip-id="guide" />

@@ -15,9 +15,6 @@ export async function POST(req: NextRequest) {
   const bodyData: ContainerConfig = await req.json();
   const dockerClient = createDockerClient();
 
-  console.log(bodyData);
-
-
   const fetchNetworks = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/network/list');
@@ -76,7 +73,7 @@ export async function POST(req: NextRequest) {
           const [key, ...values] = envVar.split('=');
           return `${key.trim()}=${values.join('=').trim()}`;
         }),
-      }
+      },
     );
 
     const containerId = createResponse.data.Id;
@@ -94,13 +91,13 @@ export async function POST(req: NextRequest) {
     if (error instanceof Error && 'response' in error) {
       return NextResponse.json(
         { error: (error as any).response.data.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to run container' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

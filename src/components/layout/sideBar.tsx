@@ -11,7 +11,7 @@ import { useMenuStore } from '@/store/menuStore';
 import ImageCard from '../card/imageCard';
 import ContainerCard from '../card/containerCard';
 import DaemonConnectBar from '../bar/daemonConnectBar';
-import { AiOutlineInfoCircle, AiOutlineReload } from 'react-icons/ai';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
 import LargeButton from '../button/largeButton';
 import { fetchData } from '@/services/apiUtils';
 import { RxReload } from 'react-icons/rx';
@@ -35,7 +35,7 @@ const apiMap: Record<number, { url: string; dataKey?: string }> = {
 const loadData = async (
   apiUrl: string,
   setData: React.Dispatch<React.SetStateAction<any[]>>,
-  dataKey?: string
+  dataKey?: string,
 ) => {
   try {
     const data = await fetchData(apiUrl);
@@ -68,7 +68,7 @@ const Sidebar = ({ progress }: SidebarProps) => {
       await loadData(
         url,
         dataHandlers[activeId as 1 | 2 | 3 | 4].setData,
-        dataKey
+        dataKey,
       );
 
       setTimeout(() => {
@@ -109,7 +109,8 @@ const Sidebar = ({ progress }: SidebarProps) => {
   const currentComponent = componentMap[activeId as 1 | 2 | 3 | 4];
 
   const renderNoDataMessage = (message: string) => (
-    <div className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
+    <div
+      className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
       <AiOutlineInfoCircle className="text-blue_6 text-2xl mb-2" />
       <p className="font-pretendard font-medium text-blue_6">{message}</p>
     </div>
@@ -164,7 +165,7 @@ const Sidebar = ({ progress }: SidebarProps) => {
           onClick={refreshData}
           title="새로고침"
         >
-          <RxReload size={16}/>
+          <RxReload size={16} />
         </button>
       </div>
       <div className="flex flex-col flex-grow pl-4 pr-4 pt-4 overflow-y-auto scrollbar-hide">
@@ -176,7 +177,8 @@ const Sidebar = ({ progress }: SidebarProps) => {
             onCreate: handleCreate,
           })
         ) : (
-          <LargeButton title={'추가하기'} onClick={() => {}} />
+          <LargeButton title={'추가하기'} onClick={() => {
+          }} />
         )}
       </div>
       <div>
