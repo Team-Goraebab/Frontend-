@@ -35,7 +35,6 @@ interface StatusProps {
  * ContainerCard: 컨테이너 정보를 표시하는 컴포넌트
  * @param data 컨테이너 정보
  * @param selectedHostId 선택한 호스트 id
- * @param selectedHostName 선택한 호스트 name
  * @returns JSX.Element
  */
 const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
@@ -81,7 +80,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       running: 'text-green_6',
       paused: 'text-yellow_6',
       exited: 'text-red_6',
-      default: 'text-gray-700'
+      default: 'text-gray-700',
     };
 
     const color = stateColor[state.toLowerCase() as keyof typeof stateColor] || stateColor.default;
@@ -113,7 +112,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           '컨테이너가 성공적으로 삭제되었습니다!',
           'success',
-          '#254b7a'
+          '#254b7a',
         );
         onDeleteSuccess();
       } else {
@@ -121,7 +120,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           `컨테이너 삭제 실패: ${result.error}`,
           'error',
-          '#FF4853'
+          '#FF4853',
         );
       }
     } catch (error) {
@@ -131,7 +130,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           enqueueSnackbar,
           `컨테이너 삭제 요청 중 에러: ${error}`,
           'error',
-          '#FF4853'
+          '#FF4853',
         );
       }
     } finally {

@@ -11,16 +11,15 @@ import {
   Divider,
   Tooltip,
   IconButton,
+  Button,
 } from '@mui/material';
-import { FiPlay, FiRefreshCw, FiXSquare } from 'react-icons/fi';
-
+import { FiRefreshCw, FiXSquare } from 'react-icons/fi';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { formatDateTime } from '@/utils/formatTimestamp';
-import { Button } from '@/components';
-import axios from 'axios';
 import { useSnackbar } from 'notistack';
-import { showSnackbar } from '@/utils/toastUtils';
 import { FaPlay, FaStop } from 'react-icons/fa';
+import axios from 'axios';
+import { showSnackbar } from '@/utils/toastUtils';
+import { formatDateTime } from '@/utils/formatTimestamp';
 
 interface ContainerDetailModalProps {
   open: boolean;
@@ -29,15 +28,20 @@ interface ContainerDetailModalProps {
 }
 
 const ContainerDetailModal = ({
-  open,
-  onClose,
-  data,
-}: ContainerDetailModalProps) => {
+                                open,
+                                onClose,
+                                data,
+                              }: ContainerDetailModalProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('ID copied to clipboard!');
+    showSnackbar(
+      enqueueSnackbar,
+      'Container ID copied to clipboard!',
+      'info',
+      '#254b7a',
+    );
   };
 
   const truncateId = (id: string | undefined, length = 20) => {
@@ -48,163 +52,157 @@ const ContainerDetailModal = ({
   const handleAction = async (action: string) => {
     try {
       const response = await axios.post(
-        `/api/container/${action}?id=${data?.Id}`
+        `/api/container/${action}?id=${data?.Id}`,
       );
-      console.log(response);
       showSnackbar(
         enqueueSnackbar,
-        `컨테이너가 성공적으로 ${action} 했습니다!`,
+        `Container ${action} successfully!`,
         'success',
-        '#254b7a'
+        '#254b7a',
       );
     } catch (error) {
-      console.error(`Error while performing ${action}:`, error);
-      alert(`Failed to ${action} container`);
+      showSnackbar(
+        enqueueSnackbar,
+        `Failed to ${action} container`,
+        'error',
+        '#d32f2f',
+      );
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>
-        {`${data?.Name || 'Unknown Container'}`}
-
-        <div className="flex space-x-2 absolute top-2 right-4">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" PaperProps={{
+      sx: {
+        borderRadius: 3,
+        padding: 3,
+        backgroundColor: '#f9fafb',
+        boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.1)',
+      },
+    }}>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, color: '#333' }}>
+          {`${data?.Name || 'Unknown Container'}`}
+        </Typography>
+        <div>
           <Tooltip title="Start Container">
-            <IconButton
-              onClick={() => handleAction('start')}
-              color="primary"
-              size="small"
-            >
-              <FaPlay className="text-white w-3 h-3" />
+            <IconButton onClick={() => handleAction('start')} size="small">
+              <FaPlay style={{ color: '#4caf50' }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Stop Container">
-            <IconButton
-              onClick={() => handleAction('stop')}
-              color="secondary"
-              size="small"
-            >
-              <FaStop />
+            <IconButton onClick={() => handleAction('stop')} size="small">
+              <FaStop style={{ color: '#f44336' }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Restart Container">
-            <IconButton
-              onClick={() => handleAction('restart')}
-              color="default"
-              size="small"
-            >
-              <FiRefreshCw />
+            <IconButton onClick={() => handleAction('restart')} size="small">
+              <FiRefreshCw style={{ color: '#ff9800' }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Kill Container">
-            <IconButton
-              onClick={() => handleAction('kill')}
-              color="error"
-              size="small"
-            >
-              <FiXSquare />
+            <IconButton onClick={() => handleAction('kill')} size="small">
+              <FiXSquare style={{ color: '#d32f2f' }} />
             </IconButton>
           </Tooltip>
         </div>
       </DialogTitle>
       <DialogContent dividers>
-        {/* Container General Information */}
-        <Box mb={2}>
-          <Typography variant="h6">General Information</Typography>
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            <p>
-              <strong>Container ID:</strong> {truncateId(data?.Id)}
+        {/* General Information */}
+        <Box mb={3}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
+            General Information
+          </Typography>
+          <Box display="flex" justifyContent="space-between" mb={2}>
+            <Box display="flex" alignItems="center">
+              <Typography variant="body2" sx={{ color: '#666', mr: 1 }}>
+                Container ID:
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500, color: '#333' }}>
+                {truncateId(data?.Id)}
+              </Typography>
               <Tooltip title="Copy ID">
-                <IconButton onClick={() => handleCopyToClipboard(data?.Id)}>
+                <IconButton onClick={() => handleCopyToClipboard(data?.Id)} size="small" sx={{ ml: 1 }}>
                   <ContentCopyIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-            </p>
-            <p>
-              <strong>Created:</strong> {formatDateTime(data?.Created)}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-2">
-            <p>
-              <strong>Status:</strong> {data?.State?.Status || 'Unknown'}
-            </p>
-            <p>
-              <strong>Platform:</strong> {data?.Platform || 'Unknown'}
-            </p>
-          </div>
+            </Box>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Created: {formatDateTime(data?.Created)}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Status: <strong>{data?.State?.Status || 'Unknown'}</strong>
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Platform: {data?.Platform || 'Unknown'}
+            </Typography>
+          </Box>
         </Box>
         <Divider />
         {/* Host Configuration */}
-        <Box my={2}>
-          <Typography variant="h6">Host Configuration</Typography>
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            <strong>Hostname Path:</strong>{' '}
-            {truncateId(data?.HostConfig?.HostnamePath)}
-            <p>
-              <strong>Hosts Path:</strong>{' '}
-              {truncateId(data?.HostConfig?.HostsPath)}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-2">
-            <strong>Log Path:</strong> {truncateId(data?.HostConfig?.LogPath)}
-            <strong>Network Mode:</strong>{' '}
-            {data?.HostConfig?.NetworkMode || 'Unknown'}
-          </div>
+        <Box my={3}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
+            Host Configuration
+          </Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Hostname Path: {truncateId(data?.HostConfig?.HostnamePath)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Hosts Path: {truncateId(data?.HostConfig?.HostsPath)}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between" mt={2}>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Log Path: {truncateId(data?.HostConfig?.LogPath)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Network Mode: {data?.HostConfig?.NetworkMode || 'Unknown'}
+            </Typography>
+          </Box>
         </Box>
-
         <Divider />
-
         {/* Network Settings */}
-        <Box my={2}>
-          <Typography variant="h6">Network Settings</Typography>
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            <p>
-              <strong>Sandbox ID:</strong>{' '}
-              {truncateId(data?.NetworkSettings?.SandboxID)}
-            </p>
-            <p>
-              <strong>IP Address:</strong>{' '}
-              {data?.NetworkSettings?.IPAddress || 'N/A'}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-2">
-            <p>
-              <strong>Platform:</strong> {data?.Platform || 'Unknown'}
-            </p>
-            <p>
-              <strong>Process Label:</strong>{' '}
-              {data?.NetworkSettings?.ProcessLabel || 'N/A'}
-            </p>
-          </div>
+        <Box my={3}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
+            Network Settings
+          </Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Sandbox ID: {truncateId(data?.NetworkSettings?.SandboxID)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              IP Address: {data?.NetworkSettings?.IPAddress || 'N/A'}
+            </Typography>
+          </Box>
         </Box>
-
         <Divider />
-
         {/* State Information */}
-        <Box my={2}>
-          <Typography variant="h6">State Information</Typography>
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            <p>
-              <strong>Started At:</strong>{' '}
-              {formatDateTime(data?.State?.StartedAt)}
-            </p>
-            <p>
-              <strong>Finished At:</strong>{' '}
-              {formatDateTime(data?.State?.FinishedAt)}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-2">
-            <p>
-              <strong>Restart Count:</strong> {data?.RestartCount || 0}
-            </p>
-            <p>
-              <strong>Exit Code:</strong> {data?.State?.ExitCode || 'N/A'}
-            </p>
-          </div>
+        <Box my={3}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 500, color: '#333', mb: 1 }}>
+            State Information
+          </Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Started At: {formatDateTime(data?.State?.StartedAt)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Finished At: {formatDateTime(data?.State?.FinishedAt)}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between" mt={2}>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Restart Count: {data?.RestartCount || 0}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              Exit Code: {data?.State?.ExitCode || 'N/A'}
+            </Typography>
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button title="Close" onClick={onClose} color="grey" />
+        <Button onClick={onClose} sx={{ borderRadius: 2, mt: 2 }}>닫기</Button>
       </DialogActions>
     </Dialog>
   );
