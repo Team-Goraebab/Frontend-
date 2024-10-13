@@ -99,13 +99,13 @@ const SaveButton = () => {
 
   return (
     <>
-      <div className="fixed bottom-8 right-[45px] transform translate-x-4 h-[40px] px-4 bg-white text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg shadow-lg flex items-center justify-center transition duration-200 ease-in-out">
+      <div className="fixed bottom-8 right-[50px] transform translate-x-4 h-[40px] px-4 bg-white border-gray-300 border text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg flex items-center justify-center transition duration-200 ease-in-out">
         <button
           className="flex items-center gap-2 text-center"
           onClick={handleSave}
         >
           <AiOutlineSave size={20} />
-          <span className="font-medium">Save</span>
+          <span className="font-medium font-pretendard">저장</span>
         </button>
       </div>
 

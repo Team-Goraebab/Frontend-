@@ -54,18 +54,18 @@ const PanButtons = () => {
   };
 
   return (
-    <div className="fixed top-1/2 right-[40px] transform translate-x-4 w-[40px] p-1 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center">
+    <div className="fixed bottom-8 left-[480px] transform translate-x-4 p-1 border-gray-300 border bg-white rounded-lg flex flex-row items-center justify-center">
       <button
-        className={`p-1.5 rounded-lg mb-1 ${
+        className={`p-1.5 rounded-lg ${
           !isHandMode ? 'bg-blue_1 text-blue_6' : 'text-black'
         }`}
         onClick={handleMouseClick}
       >
         <HiOutlineCursorClick size={20} />
       </button>
-      <div className="border-t w-full"></div>
+      <div className="w-px h-6 bg-gray-300 mx-1"></div>
       <button
-        className={`p-1.5 rounded-lg mt-1 ${
+        className={`p-1.5 rounded-lg ${
           isHandMode ? 'bg-blue_1 text-blue_6' : 'text-black'
         }`}
         onClick={handleHandClick}
