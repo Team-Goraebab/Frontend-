@@ -88,7 +88,7 @@ const AddHostButton = () => {
 
   return (
     <>
-      <div className="fixed top-20 right-[40px] transform translate-x-4 h-[40px] rounded-lg flex items-center justify-between">
+      <div className="fixed bottom-8 left-[320px] transform translate-x-4 h-[40px] rounded-lg flex items-center justify-between">
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 text-white bg-blue_6 hover:from-blue-600 hover:to-blue-800 text-center rounded-md transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
