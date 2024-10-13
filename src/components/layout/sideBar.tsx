@@ -11,9 +11,11 @@ import { useMenuStore } from '@/store/menuStore';
 import ImageCard from '../card/imageCard';
 import ContainerCard from '../card/containerCard';
 import DaemonConnectBar from '../bar/daemonConnectBar';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { AiOutlineInfoCircle, AiOutlineReload } from 'react-icons/ai';
 import LargeButton from '../button/largeButton';
 import { fetchData } from '@/services/apiUtils';
+import { FiRefreshCcw } from 'react-icons/fi';
+import { RxReload } from 'react-icons/rx';
 
 interface SidebarProps {
   progress: number;
@@ -24,7 +26,6 @@ type DataHandlerType = {
   setData: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
-// activeId와 API 경로를 미리 매핑한 객체
 const apiMap: Record<number, { url: string; dataKey?: string }> = {
   1: { url: '/api/container/list' },
   2: { url: '/api/image/list' },
@@ -32,7 +33,6 @@ const apiMap: Record<number, { url: string; dataKey?: string }> = {
   4: { url: '/api/volume/list', dataKey: 'Volumes' },
 };
 
-// 데이터를 로드하는 함수
 const loadData = async (
   apiUrl: string,
   setData: React.Dispatch<React.SetStateAction<any[]>>,
@@ -54,7 +54,6 @@ const Sidebar = ({ progress }: SidebarProps) => {
   const [containerData, setContainerData] = useState<any[]>([]);
   const [imageData, setImageData] = useState<any[]>([]);
 
-  // 데이터를 관리하는 핸들러 매핑
   const dataHandlers: Record<1 | 2 | 3 | 4, DataHandlerType> = {
     1: { data: containerData, setData: setContainerData },
     2: { data: imageData, setData: setImageData },
@@ -67,14 +66,12 @@ const Sidebar = ({ progress }: SidebarProps) => {
       const { url, dataKey } = apiMap[activeId] || {};
       if (!url) return;
 
-      // 새로운 데이터를 로드하여 업데이트
       await loadData(
         url,
         dataHandlers[activeId as 1 | 2 | 3 | 4].setData,
         dataKey
       );
 
-      // 3초 지연 후 다시 데이터 로드
       setTimeout(() => {
         loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
       }, 2000);
@@ -85,21 +82,25 @@ const Sidebar = ({ progress }: SidebarProps) => {
 
   const componentMap = {
     1: {
+      title: '컨테이너',
       addButton: AddContainerButton,
       cardComponent: ContainerCard,
       noDataMessage: '컨테이너를 추가하세요',
     },
     2: {
+      title: '이미지',
       addButton: AddImageButton,
       cardComponent: ImageCard,
       noDataMessage: '이미지를 추가하세요',
     },
     3: {
+      title: '네트워크',
       addButton: AddBridgeButton,
       cardComponent: NetworkCard,
       noDataMessage: '네트워크 데이터를 추가하세요',
     },
     4: {
+      title: '볼륨',
       addButton: AddVolumeButton,
       cardComponent: VolumeCard,
       noDataMessage: '볼륨 데이터를 추가하세요',
@@ -108,7 +109,6 @@ const Sidebar = ({ progress }: SidebarProps) => {
 
   const currentComponent = componentMap[activeId as 1 | 2 | 3 | 4];
 
-  // No data 메시지 표시 함수
   const renderNoDataMessage = (message: string) => (
     <div className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
       <AiOutlineInfoCircle className="text-blue_6 text-2xl mb-2" />
@@ -122,7 +122,6 @@ const Sidebar = ({ progress }: SidebarProps) => {
     loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
   };
 
-  // 데이터를 렌더링하는 함수
   const renderDataList = () => {
     if (!currentComponent) return null;
 
@@ -140,7 +139,12 @@ const Sidebar = ({ progress }: SidebarProps) => {
       : renderNoDataMessage(noDataMessage);
   };
 
-  // activeId 변경 시 데이터 로드
+  const refreshData = () => {
+    const { url, dataKey } = apiMap[activeId] || {};
+    if (!url) return;
+    loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
+  };
+
   useEffect(() => {
     const { url, dataKey } = apiMap[activeId] || {};
     if (!url) return;
@@ -148,8 +152,20 @@ const Sidebar = ({ progress }: SidebarProps) => {
   }, [activeId]);
 
   return (
-    <div className="fixed top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2">
-      <div className="flex flex-col flex-grow pl-4 pr-4 pt-20 overflow-y-auto scrollbar-hide">
+    <div className="fixed top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2 pt-14">
+      <div className="flex justify-between items-center px-6 py-2 bg-gray-100 border-b border-grey_2">
+        <h2 className="text-md font-semibold font-pretendard">
+          {currentComponent?.title || '데이터'}
+        </h2>
+        <button
+          className="text-blue_6 font-bold"
+          onClick={refreshData}
+          title="새로고침"
+        >
+          <RxReload size={16}/>
+        </button>
+      </div>
+      <div className="flex flex-col flex-grow pl-4 pr-4 pt-4 overflow-y-auto scrollbar-hide">
         <div className="flex-grow">{renderDataList()}</div>
       </div>
       <div className="flex-shrink-0 p-4 border-t">

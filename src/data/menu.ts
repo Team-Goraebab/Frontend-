@@ -1,15 +1,18 @@
 import { FaBox, FaImages, FaNetworkWired, FaDatabase } from 'react-icons/fa';
-import { FiSettings, FiGrid, FiBell, FiCpu, FiTool } from 'react-icons/fi';
+import { FiSettings, FiGrid, FiBell, FiCpu, FiTool, FiBox, FiImage, FiVolume } from 'react-icons/fi';
+import { PiNetworkX } from 'react-icons/pi';
+import { GiFishingNet, GiNetworkBars } from 'react-icons/gi';
+import { LuNetwork } from 'react-icons/lu';
 
 {
   /* 메뉴의 id 값을 통해 sidebar를 랜더링합니다. */
 }
 
 export const MENU_ITEMS = [
-  { id: 1, name: 'Container', path: '/', icon: FaBox },
-  { id: 2, name: 'Image', path: '/', icon: FaImages },
-  { id: 3, name: 'Network', path: '/', icon: FaNetworkWired },
-  { id: 4, name: 'Volume', path: '/', icon: FaDatabase },
+  { id: 1, name: 'Container', path: '/', icon: FiBox },
+  { id: 2, name: 'Image', path: '/', icon: FiImage },
+  { id: 3, name: 'Network', path: '/', icon: LuNetwork },
+  { id: 4, name: 'Volume', path: '/', icon: FiCpu },
 ];
 
 export const MANAGEMENT_MENU = [

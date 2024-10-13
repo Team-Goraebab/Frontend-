@@ -12,6 +12,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Chip,
+  Stack
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useHostStore } from '@/store/hostStore';
@@ -101,16 +103,20 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 500,
-        bgcolor: '#fff',
-        boxShadow: 24,
+        bgcolor: '#ffffff',
         p: 4,
         borderRadius: '16px',
+        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
         maxHeight: '90vh',
         overflowY: 'auto',
       }}>
-        <Typography variant="h6" component="h2" gutterBottom sx={{ color: '#2e3b55', fontWeight: 600 }}>
-          Run Container: {imageName}
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Run a new container
         </Typography>
+        <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+          {imageName}
+        </Typography>
+
         <Box sx={{ mt: 2 }}>
           <TextField
             fullWidth
@@ -119,12 +125,12 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
             onChange={(e) => setName(e.target.value)}
             margin="normal"
             required
-            sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
+            sx={{ borderRadius: '8px', mb: 2 }}
           />
 
-          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
+          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Host Selection (Optional)</Typography>
+              <Typography>Host Selection <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
             <AccordionDetails>
               <FormControl fullWidth>
@@ -143,57 +149,57 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
+          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Ports (Optional)</Typography>
+              <Typography>Ports <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <TextField
-                fullWidth
-                label="Port for 3306/tcp"
-                value={port3306}
-                onChange={(e) => setPort3306(e.target.value)}
-                margin="normal"
-                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
-              />
-              <TextField
-                fullWidth
-                label="Port for 33060/tcp"
-                value={port33060}
-                onChange={(e) => setPort33060(e.target.value)}
-                margin="normal"
-                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
-              />
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Port for 3306/tcp"
+                  value={port3306}
+                  onChange={(e) => setPort3306(e.target.value)}
+                  sx={{ borderRadius: '8px' }}
+                />
+                <TextField
+                  fullWidth
+                  label="Port for 33060/tcp"
+                  value={port33060}
+                  onChange={(e) => setPort33060(e.target.value)}
+                  sx={{ borderRadius: '8px' }}
+                />
+              </Stack>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
+          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Volumes (Optional)</Typography>
+              <Typography>Volumes <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <TextField
-                fullWidth
-                label="Volume Host Path"
-                value={volumeHostPath}
-                onChange={(e) => setVolumeHostPath(e.target.value)}
-                margin="normal"
-                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
-              />
-              <TextField
-                fullWidth
-                label="Volume Container Path"
-                value={volumeContainerPath}
-                onChange={(e) => setVolumeContainerPath(e.target.value)}
-                margin="normal"
-                sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
-              />
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Volume Host Path"
+                  value={volumeHostPath}
+                  onChange={(e) => setVolumeHostPath(e.target.value)}
+                  sx={{ borderRadius: '8px' }}
+                />
+                <TextField
+                  fullWidth
+                  label="Volume Container Path"
+                  value={volumeContainerPath}
+                  onChange={(e) => setVolumeContainerPath(e.target.value)}
+                  sx={{ borderRadius: '8px' }}
+                />
+              </Stack>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#fff', borderRadius: '8px', mb: 2 }}>
+          <Accordion sx={{ backgroundColor: '#fafafa', borderRadius: '8px', mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Environment Variables (Optional)</Typography>
+              <Typography>Environment Variables <Chip label="Optional" size="small" sx={{ ml: 1 }} /></Typography>
             </AccordionSummary>
             <AccordionDetails>
               {envVars.map((env, index) => (
@@ -203,14 +209,14 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
                     value={env.variable}
                     onChange={(e) => handleEnvVarChange(index, 'variable', e.target.value)}
                     size="small"
-                    sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
+                    sx={{ borderRadius: '8px' }}
                   />
                   <TextField
                     label="Value"
                     value={env.value}
                     onChange={(e) => handleEnvVarChange(index, 'value', e.target.value)}
                     size="small"
-                    sx={{ borderRadius: '8px', backgroundColor: '#fff' }}
+                    sx={{ borderRadius: '8px' }}
                   />
                   <Button onClick={() => handleRemoveEnvVar(index)} color="error" variant="outlined" size="small">
                     Remove
@@ -224,10 +230,10 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({ isOpen, o
           </Accordion>
         </Box>
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={onClose} sx={{ mr: 1, color: '#2e3b55' }}>
+          <Button onClick={onClose} sx={{ mr: 1 }}>
             취소
           </Button>
-          <Button onClick={handleRun} variant="contained" sx={{ backgroundColor: '#2e3b55', color: '#fff' }} disabled={!name}>
+          <Button onClick={handleRun} variant="contained" color="primary" disabled={!name}>
             실행
           </Button>
         </Box>

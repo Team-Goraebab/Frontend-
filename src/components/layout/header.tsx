@@ -26,30 +26,14 @@ const Header = () => {
 
   useEffect(() => {
     if (navRef.current) {
-      if (isRightSidePath) {
-        const activeIndex = MENU_ITEMS.findIndex(
-          (item) => item.id === activeId
-        );
-        if (activeIndex !== -1) {
-          const activeItem = navRef.current.children[activeIndex];
-          if (activeItem) {
-            setBarWidth(activeItem.clientWidth);
-            setBarLeft(
-              activeItem.getBoundingClientRect().left -
-                navRef.current.getBoundingClientRect().left
-            );
-          }
-        }
-      } else {
-        const activeIndex = MENU_ITEMS.findIndex(
-          (item) => item.id === activeId
-        );
+      const activeIndex = MENU_ITEMS.findIndex((item) => item.id === activeId);
+      if (activeIndex !== -1) {
         const activeItem = navRef.current.children[activeIndex];
         if (activeItem) {
           setBarWidth(activeItem.clientWidth);
           setBarLeft(
             activeItem.getBoundingClientRect().left -
-              navRef.current.getBoundingClientRect().left
+            navRef.current.getBoundingClientRect().left
           );
         }
       }
@@ -57,7 +41,7 @@ const Header = () => {
   }, [activeId, isRightSidePath]);
 
   return (
-    <header className="fixed w-full p-4 bg-grey_1 z-30">
+    <header className="fixed w-full p-4 bg-blue_6 text-white z-30">
       <div className="container mx-auto flex justify-between items-center relative">
         <div className="flex-grow" />
         <nav
@@ -68,25 +52,26 @@ const Header = () => {
             <div
               key={item.id}
               onClick={() => handleNavigation(item.path, item.id)}
-              className={`flex flex-col items-center cursor-pointer font-pretendard ${
+              className={`flex flex-col items-center cursor-pointer font-semibold text-sm transition-colors duration-300 ${
                 activeId === item.id && !isRightSidePath
-                  ? 'text-blue_6'
-                  : 'text-grey_6'
+                  ? 'text-blue-400'
+                  : 'text-white hover:text-white'
               }`}
               data-tooltip-id={`tooltip-${item.name}`}
               data-tooltip-content={item.name}
             >
-              <item.icon className="text-2xl" />
+              <item.icon className="text-xl mb-1" />
               <Tooltip id={`tooltip-${item.name}`} />
             </div>
           ))}
+
           {!isRightSidePath && (
             <div
-              className="absolute bottom-0 h-1 bg-blue_6 rounded-tl rounded-tr transition-all duration-300"
+              className="absolute bottom-0 h-1 bg-blue-400 rounded-tl rounded-tr transition-all duration-500"
               style={{
                 width: `${barWidth}px`,
-                left: `${barLeft - 24}px`,
-                top: 37,
+                left: `${barLeft-24}px`,
+                top: 36,
               }}
             />
           )}
@@ -95,35 +80,30 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <div
             onClick={() => handleNavigation('/dashboard', 5)}
-            className={`cursor-pointer text-grey_6 hover:text-blue_6 ${
-              pathname === '/dashboard' ? 'text-blue_6' : ''
+            className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
+              pathname === '/dashboard' ? 'text-blue-400' : ''
             }`}
           >
-            <FiGrid className="text-2xl" data-tooltip-id="dashboard-tooltip" />
+            <FiGrid className="text-xl" data-tooltip-id="dashboard-tooltip" />
             <Tooltip id="dashboard-tooltip" content="Dashboard" />
           </div>
-
           <div
             onClick={() => handleNavigation('/management', 6)}
-            className={`cursor-pointer text-grey_6 hover:text-blue_6 ${
-              pathname === '/management' ? 'text-blue_6' : ''
+            className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
+              pathname === '/management' ? 'text-blue-400' : ''
             }`}
           >
-            <FiSettings
-              className="text-2xl"
-              data-tooltip-id="management-tooltip"
-            />
-            <Tooltip id="management-tooltip" content="management" />
+            <FiSettings className="text-xl" data-tooltip-id="management-tooltip" />
+            <Tooltip id="management-tooltip" content="Management" />
           </div>
         </div>
-
         {isRightSidePath && (
           <div
-            className="absolute bottom-0 h-1 bg-blue_6 rounded-tl rounded-tr transition-all duration-300"
+            className="absolute bottom-0 h-1 rounded-tl rounded-tr transition-all duration-500"
             style={{
               width: `${barWidth}px`,
               right: pathname === '/management' ? '0px' : '40px',
-              top: 37,
+              top: 38,
             }}
           />
         )}
