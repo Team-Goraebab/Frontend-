@@ -6,11 +6,13 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
-import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import ImageDetailModal from '../modal/image/imageDetailModal';
 import ImageStartOptionModal from '@/components/modal/image/imageStartOptionModal';
-import { FiInfo, FiTrash, FiPlay, FiCpu, FiTag, FiCalendar, FiSave } from 'react-icons/fi';
+import { FiInfo, FiTrash, FiPlay, FiCpu, FiTag, FiSave, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { AiFillProfile } from 'react-icons/ai';
+import { FaIdCard, FaSortNumericDown } from 'react-icons/fa';
+import { TbNumber } from 'react-icons/tb';
 
 interface CardProps {
   Id: string;
@@ -49,6 +51,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>(null);
   const [isRunModalOpen, setIsRunModalOpen] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false); // 아코디언 상태
 
   const repoTag =
     data.RepoTags.length > 0
@@ -60,6 +63,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     { label: 'Name', value: name || '<none>', icon: FiCpu },
     { label: 'Tag', value: tag || '<none>', icon: FiTag },
     { label: 'Size', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB', icon: FiSave },
+    { label: "Id", value: data.Id || '<none>', icon: TbNumber}
   ];
 
   const handleDelete = () => {
@@ -163,11 +167,17 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     }
   };
 
+  const toggleAccordion = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
+    <div className="relative bg-white border rounded-lg transition-all duration-300 mb-2 overflow-hidden"> {/* 카드 사이 간격 조정 */}
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
         <div className="flex items-center space-x-2">
-          <span className="font-medium font-pretendard text-sm text-gray-700">Image</span>
+          <span className="font-bold font-pretendard text-sm text-gray-700 truncate">
+            {data.RepoTags[0] || 'Unnamed Image'}
+          </span>
         </div>
         <div className="flex">
           <button
@@ -178,42 +188,52 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             <FiPlay className="text-gray-500" size={16} />
           </button>
           <button
-            onClick={handleGetInfo}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-            title="Image Info"
-          >
-            <FiInfo className="text-gray-500" size={16} />
-          </button>
-          <button
             onClick={handleDelete}
             className="p-2 rounded-full hover:bg-gray-200 transition-colors"
             title="Delete Image"
           >
             <FiTrash className="text-gray-500" size={16} />
           </button>
+          <button
+            onClick={toggleAccordion}
+            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            title="Toggle Details"
+          >
+            {isExpanded ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+          </button>
         </div>
       </div>
 
-      <div className="p-4">
-        <span className="font-pretendard font-bold text-md text-gray-800 truncate flex-grow">
-          {data.RepoTags[0] || 'Unnamed Image'}
-        </span>
-        <div className="grid gap-4 mt-4">
-          {items.map((item, index) => (
-            <div key={index} className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg" style={{ backgroundColor: bg1 }}>
-                <item.icon size={16} style={{ color: bg2 }} />
+      {isExpanded && (
+        <div className="p-4">
+          <div className="grid gap-4">
+            {items.map((item, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg" style={{ backgroundColor: bg1 }}>
+                  <item.icon size={16} style={{ color: bg2 }} />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-500 font-medium font-pretendard">{item.label}</span>
+                  <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+                    {item.value}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium font-pretendard">{item.label}</span>
-                <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
-                  {item.value}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* 상세 정보 버튼을 우측 하단에 배치 */}
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleGetInfo}
+              className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+              title="Image Info"
+            >
+              <FiInfo className="text-gray-500" size={16} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <Modal
         isOpen={showModal}
