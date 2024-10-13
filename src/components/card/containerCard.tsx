@@ -15,11 +15,26 @@ import { formatTimestamp } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import ContainerDetailModal from '../modal/container/containerDetailModal';
 import LogModal from '../modal/container/logModal';
+import {
+  FiActivity, FiAlertCircle,
+  FiCalendar, FiCheckCircle,
+  FiChevronDown,
+  FiChevronUp,
+  FiCpu,
+  FiFile, FiFileText, FiGlobe,
+  FiHardDrive,
+  FiImage, FiInfo,
+  FiMoreVertical, FiPauseCircle, FiTrash, FiXCircle,
+} from 'react-icons/fi';
 
 interface CardDataProps {
   data: any;
   onSelectNetwork?: (networkName: string) => void;
   onDeleteSuccess: () => void;
+}
+
+interface StatusProps {
+  state: string;
 }
 
 /**
@@ -31,9 +46,6 @@ interface CardDataProps {
  */
 const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { selectedNetwork } = useSelectedNetworkStore();
-  const { selectedHostId, selectedHostName } = selectedHostStore();
-  const addContainerToHost = useStore((state) => state.addContainerToHost);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const { bg1, bg2 } = getStatusColors(data.State);
@@ -44,78 +56,47 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<boolean>(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState<boolean>(false);
-  const { assignImageToContainer, assignNetworkToContainer } =
-    useContainerStore();
+
 
   const containerName = data.Names ? data.Names[0].replace(/^\//, '') : 'N/A';
   const imageName = data.Image || 'N/A';
 
   const items = [
-    { label: 'NAME', value: containerName },
-    { label: 'CREATED', value: formatTimestamp(data.Created) || 'N/A' },
-    { label: 'IMAGE', value: imageName },
-    { label: 'NETWORK', value: data?.HostConfig?.NetworkMode || 'N/A' },
-    { label: 'STATUS', value: data.Status || 'N/A' },
+    { label: 'Name', value: containerName, icon: FiCpu },
+    { label: 'Created', value: formatTimestamp(data.Created) || 'N/A', icon: FiCalendar },
+    { label: 'Image', value: imageName, icon: FiImage },
+    { label: 'Network', value: data?.HostConfig?.NetworkMode || 'N/A', icon: FiGlobe },
+    { label: 'Status', value: data.Status || 'N/A', icon: FiActivity },
   ];
 
-  const handleOptionClick = () => {
-    setShowOptions(!showOptions);
+  const StatusIcon: React.FC<StatusProps> = ({ state }) => {
+    switch (state.toLowerCase()) {
+      case 'running':
+        return <FiCheckCircle className="text-green_6" size={16} />;
+      case 'paused':
+        return <FiPauseCircle className="text-yellow_6" size={16} />;
+      case 'exited':
+        return <FiXCircle className="text-red_6" size={16} />;
+      default:
+        return <FiAlertCircle className="text-gray-500" size={16} />;
+    }
+  };
+
+  const StatusText: React.FC<StatusProps> = ({ state }) => {
+    const stateColor = {
+      running: 'text-green_6',
+      paused: 'text-yellow_6',
+      exited: 'text-red_6',
+      default: 'text-gray-700'
+    };
+
+    const color = stateColor[state.toLowerCase() as keyof typeof stateColor] || stateColor.default;
+
+    return <span className={`font-medium font-pretendard text-sm ${color}`}>{state}</span>;
   };
 
   const handleLogsClick = () => {
     setIsLogModalOpen(true);
-  };
-
-  const handleRun = () => {
-    if (!selectedNetwork) {
-      showSnackbar(
-        enqueueSnackbar,
-        '네트워크를 선택해주세요.',
-        'error',
-        '#FF4853'
-      );
-      return;
-    }
-
-    if (selectedHostId) {
-      const newContainer = {
-        id: uuidv4(),
-        name: containerName,
-        ip: data.ip,
-        size: data.size,
-        tag: data.Image?.tag || 'latest',
-        active: data.active,
-        status: 'running',
-        network: selectedNetwork.networkName,
-        image: data.image,
-        mounts: data.Mounts || [],
-      };
-
-      addContainerToHost(selectedHostId, newContainer);
-
-      if (data.image) {
-        assignImageToContainer(newContainer.id, data.image);
-      } else {
-        console.warn('Image information is missing for the container.');
-      }
-
-      assignNetworkToContainer(newContainer.id, selectedNetwork.hostId);
-
-      showSnackbar(
-        enqueueSnackbar,
-        `호스트 ${selectedHostName}의 ${selectedNetwork.networkName} 네트워크에서 컨테이너가 실행되었습니다.`,
-        'success',
-        '#254b7a'
-      );
-    } else {
-      showSnackbar(
-        enqueueSnackbar,
-        '호스트를 선택해주세요.',
-        'error',
-        '#FF4853'
-      );
-    }
-    setShowOptions(false);
   };
 
   const handleDelete = () => {
@@ -188,7 +169,6 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const handleGetInfo = async () => {
     try {
       const containerDetail = await fetchContainerDetail(data.Id);
-      console.log('컨테이너 상세 정보:', containerDetail);
       setDetailData(containerDetail);
       setShowOptions(false);
       setIsModalOpen(true);
@@ -210,103 +190,97 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   }, [cardRef]);
 
   return (
-    <div
-      ref={cardRef}
-      className="relative flex items-start px-3 pt-1 pb-3 bg-grey_0 shadow rounded-lg mb-4"
-    >
-      <div
-        className="absolute left-0 top-0 bottom-0 w-2.5 rounded-l-lg"
-        style={{ backgroundColor: bg2 }}
-      />
-      <div className="ml-4 flex flex-col w-full">
-        <div className="flex justify-between text-grey_4 text-sm mb-3 relative">
-          <span className={'flex font-pretendard font-bold text-grey_6 pt-2'}>
-            {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}{' '}
-            <AiOutlineFileText
-              className="cursor-pointer text-blue_500 ml-2"
-              size={18}
-              onClick={handleLogsClick}
-              title="View Logs"
-            />
-          </span>
-          <span
-            className="font-semibold text-xs cursor-pointer"
-            onClick={handleOptionClick}
+    <div ref={cardRef} className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
+      <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
+        <div className="flex items-center space-x-2">
+          <StatusIcon state={data.State} />
+          <StatusText state={data.State} />
+        </div>
+        <div className="flex">
+          <button
+            onClick={handleLogsClick}
+            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            title="View Logs"
           >
-            •••
-          </span>
-          {showOptions && (
-            <div className="absolute top-4 left-28">
-              <OptionModal
-                onTopHandler={handleGetInfo}
-                onMiddleHandler={handleRun}
-                onBottomHandler={handleDelete}
-              />
+            <FiFileText className="text-gray-500" size={16} />
+          </button>
+          <button
+            onClick={handleGetInfo}
+            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            title="Container Info"
+          >
+            <FiInfo className="text-gray-500" size={16} />
+          </button>
+          <button
+            onClick={handleDelete}
+            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            title="Delete Container"
+          >
+            <FiTrash className="text-gray-500" size={16} />
+          </button>
+        </div>
+      </div>
+
+
+      <div className="p-4">
+        <span className="font-pretendard font-bold text-md text-gray-800 truncate flex-grow">
+          {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
+        </span>
+        <div className="grid gap-4 mt-4">
+          {items.map((item, index) => (
+            <div key={index} className="flex items-center space-x-3">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: bg1 }}>
+                <item.icon size={16} style={{ color: bg2 }} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-500 font-medium font-pretendard">{item.label}</span>
+                <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+                  {item.value}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6">
+          <button
+            onClick={toggleVolumeDropdown}
+            className="flex items-center justify-between w-full text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+          >
+            <div className="flex items-center space-x-2">
+              <FiHardDrive size={16} />
+              <span>Volumes</span>
+            </div>
+            {isVolumeOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+          </button>
+
+          {isVolumeOpen && (
+            <div
+              className="mt-3 space-y-2 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              {data.Mounts?.length > 0 ? (
+                data.Mounts.map((mount: {
+                  Driver: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined;
+                  Destination: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined;
+                  Mode: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined;
+                }, index: React.Key | null | undefined) => (
+                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                    {mount.Driver && <p className="text-xs text-gray-600">Driver: {mount.Driver}</p>}
+                    {mount.Destination && <p className="text-xs text-gray-600">Mount: {mount.Destination}</p>}
+                    {mount.Mode && <p className="text-xs text-gray-600">Mode: {mount.Mode}</p>}
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">No volumes attached.</p>
+              )}
             </div>
           )}
         </div>
-        {/* 컨테이너 정보 */}
-        {items.map((item, index) => (
-          <div key={index} className="flex items-center mt-[5px] space-x-3.5">
-            <span
-              className="text-xs py-1 w-[65px] rounded-md font-bold text-center"
-              style={{ backgroundColor: bg1, color: bg2 }}
-            >
-              {item.label}
-            </span>
-            <span className="font-semibold text-xs truncate max-w-[150px]">
-              {item.value}
-            </span>
-          </div>
-        ))}
-        {/* 볼륨 드롭다운 */}
-        <div className="flex items-center mt-2">
-          <p
-            className="text-xs py-1 w-[65px] h-6 mr-2 rounded-md font-bold text-center flex-shrink-0"
-            style={{ backgroundColor: bg1, color: bg2 }}
-          >
-            VOLUME
-          </p>
-          <button
-            onClick={toggleVolumeDropdown}
-            className="flex w-full text-xs font-semibold text-left text-grey_6"
-          >
-            <div className="flex w-full items-center justify-between pb-2 pl-1">
-              {isVolumeOpen ? 'Hide Volumes' : 'Show Volumes'}
-              {isVolumeOpen ? <AiOutlineUp /> : <AiOutlineDown />}
-            </div>
-          </button>
-        </div>
-
-        {/* 볼륨 드롭다운 내용 */}
-        {isVolumeOpen && (
-          <div className="max-h-42 overflow-y-auto scrollbar-custom w-full flex-grow">
-            {data.Mounts?.length > 0 ? (
-              data.Mounts.map((mount: any, index: number) => (
-                <div
-                  key={index}
-                  className="flex flex-col mb-2 p-1 border rounded w-full"
-                >
-                  {mount.Driver && (
-                    <p className="text-xs">Driver: {mount.Driver}</p>
-                  )}
-                  {mount.Destination && (
-                    <p className="text-xs">Mount: {mount.Destination}</p>
-                  )}
-                  {mount.Mode && <p className="text-xs">Mode: {mount.Mode}</p>}
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-grey_4">No volumes attached.</p>
-            )}
-          </div>
-        )}
       </div>
+
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
-        question={`컨테이너를 삭제하시겠습니까?`}
       />
       <ContainerDetailModal
         open={isModalOpen}

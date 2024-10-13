@@ -152,7 +152,7 @@ const Sidebar = ({ progress }: SidebarProps) => {
       <div className="flex flex-col flex-grow pl-4 pr-4 pt-20 overflow-y-auto scrollbar-hide">
         <div className="flex-grow">{renderDataList()}</div>
       </div>
-      <div className="flex-shrink-0 p-4">
+      <div className="flex-shrink-0 p-4 border-t">
         {currentComponent ? (
           React.createElement(currentComponent.addButton, {
             onCreate: handleCreate,
