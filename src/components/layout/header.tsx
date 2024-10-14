@@ -43,7 +43,7 @@ const Header = () => {
   }, [activeId, isRightSidePath]);
 
   return (
-    <header className="fixed w-full p-4 bg-blue_5 text-white z-[9999]">
+    <header className="fixed w-full p-4 bg-blue_5 text-white z-[999]">
       <div className="container mx-auto flex justify-between items-center relative">
         <div className="flex-grow" />
         <nav

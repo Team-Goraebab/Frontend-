@@ -47,7 +47,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
         const data = await response.json();
         setAvailableNetworks(data || []);
 
-        if (data && data.networks.length > 0) {
+        if (data && data.networks?.length > 0) {
           setNetworkName(data.Name);
           setNetworkIp(data.IPAM?.Config?.[0]?.Gateway);
         }
