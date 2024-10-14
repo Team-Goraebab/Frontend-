@@ -17,7 +17,7 @@ const ContainerCardGroup = ({ projectName, containers, onDeleteSuccess }: Contai
       >
         <div className="flex flex-row items-center gap-2">
           <FiBox />
-          <h3 className="font-semibold text-md font-pretendard truncate">{projectName || 'Unknown Project'}</h3>
+          <h3 className="font-[500] text-sm font-montserrat truncate">{projectName || 'Unknown Project'}</h3>
         </div>
       </div>
       <div className="p-3">

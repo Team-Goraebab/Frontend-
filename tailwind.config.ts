@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         pretendard: ['var(--font-pretendard)'],
+        montserrat: ['var(--font-montserrat)'],
       },
       colors: {
         primary: '#254b7a',

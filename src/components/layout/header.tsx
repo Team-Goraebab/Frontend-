@@ -6,7 +6,7 @@ import { Tooltip } from 'react-tooltip';
 import { MENU_ITEMS } from '@/data/menu';
 import { useMenuStore } from '@/store/menuStore';
 import { FiSettings, FiGrid } from 'react-icons/fi';
-import { FileQuestion, FileQuestionIcon } from 'lucide-react';
+import Image from 'next/image';
 import { FaQuestion } from 'react-icons/fa';
 
 const Header = () => {
@@ -43,9 +43,12 @@ const Header = () => {
   }, [activeId, isRightSidePath]);
 
   return (
-    <header className="fixed w-full p-4 bg-blue_5 text-white z-[999]">
-      <div className="container mx-auto flex justify-between items-center relative">
-        <div className="flex-grow" />
+    <header className="fixed w-full py-4 px-8 bg-blue_5 text-white z-[999]">
+      <div className="mx-auto flex justify-between items-center relative">
+        <div>
+          <Image src={require('../../../public/images/GORAEBAB.svg')} alt={'logo'} width={150} />
+        </div>
+        <div className="flex-grow"></div>
         <nav
           className="flex space-x-6 relative items-center justify-center"
           ref={navRef}
