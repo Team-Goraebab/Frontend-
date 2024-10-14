@@ -221,8 +221,8 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
         </div>
 
         <div className="sticky bottom-0 bg-white py-4 pr-4 flex justify-end space-x-4 border-t">
-          <Button title="Cancel" onClick={onClose} color="grey" />
-          <Button title="Create" onClick={handleSave} />
+          <Button title="취소" onClick={onClose} color="grey" />
+          <Button title="생성" onClick={handleSave} />
         </div>
       </div>
     </Dialog>

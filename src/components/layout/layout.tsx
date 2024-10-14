@@ -17,14 +17,12 @@ import { usePathname } from 'next/navigation';
 import Splash from '@/components/splash/splash';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
-import BarOptionModal from '../modal/barOptionModal';  // 추가
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { activeId } = useMenuStore();
   const [isHandMode, setIsHandMode] = useState(false);
   const [loading, setLoading] = useState(true); // 스플래시 화면 표시 여부를 위한 상태
-  const [showOptions, setShowOptions] = useState(false);  // BarOptionModal의 상태
 
   useEffect(() => {
     // 스플래시 화면을 3초 동안 표시
@@ -91,12 +89,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <SaveButton />
               </div>
             </div>
-          )}
-          {showOptions && (
-            <BarOptionModal
-              onTopHandler={() => console.log('버전 정보')}
-              onBottomHandler={() => console.log('시스템 정보')}
-            />
           )}
         </div>
       </SnackbarProvider>

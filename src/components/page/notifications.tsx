@@ -20,7 +20,6 @@ const Notifications = () => {
 
   const fetchDockerEvents = async () => {
     try {
-      console.log('Fetching Docker events...');
       const data = await fetchData('/api/daemon/event');
 
       if (Array.isArray(data)) {
@@ -33,7 +32,6 @@ const Notifications = () => {
 
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching Docker events:', err);
       setError('Failed to fetch Docker events');
       setLoading(false);
     }

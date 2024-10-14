@@ -62,7 +62,6 @@ const CardSection = ({ hostData, isHandMode }: CardSectionProps) => {
       setSelectedNetwork(hostId, networkName); // 새로운 네트워크 선택
       setSelectedHostId(hostId); // 네트워크를 선택하면 해당 호스트도 자동 선택
     }
-    console.log(`Selected network: ${networkName} on host: ${hostId}`);
   };
 
   return (
