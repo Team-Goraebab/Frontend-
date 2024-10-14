@@ -196,7 +196,7 @@ const Sidebar = () => {
   }, [activeId]);
 
   return (
-    <div className="fixed z-[999] top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2">
+    <div className="fixed z-[999] top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2 pt-14">
       <div className="flex justify-between items-center px-6 py-4 bg-gray-100 border-b border-grey_2">
         <h2 className="text-md font-semibold font-pretendard flex items-center">
           {currentComponent?.title || '데이터'}
