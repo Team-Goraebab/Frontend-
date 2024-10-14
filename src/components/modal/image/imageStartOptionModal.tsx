@@ -172,7 +172,6 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
             margin="normal"
-            required
             sx={{
               mb: 2,
               '& .MuiInputBase-root': {
@@ -398,7 +397,6 @@ const ImageStartOptionModal: React.FC<ImageStartOptionModalProps> = ({
               borderRadius: 2,
               px: 4,
             }}
-            disabled={!name}
           >
             실행
           </Button>

@@ -17,7 +17,7 @@ const AddHostButton = () => {
   const { enqueueSnackbar } = useSnackbar();
   const addHost = useHostStore((state) => state.addHost);
   const addConnectedBridgeId = selectedHostStore(
-    (state) => state.addConnectedBridgeId
+    (state) => state.addConnectedBridgeId,
   );
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const AddHostButton = () => {
       textColor: string;
     },
     networkName: string,
-    networkIp: string
+    networkIp: string,
   ) => {
     const newHost = {
       id,
@@ -81,14 +81,15 @@ const AddHostButton = () => {
       enqueueSnackbar,
       '호스트가 성공적으로 추가되었습니다!',
       'success',
-      '#254b7a'
+      '#254b7a',
     );
     setIsModalOpen(false);
   };
 
   return (
     <>
-      <div className="fixed bottom-8 left-[320px] transform translate-x-4 h-[42px] rounded-lg flex items-center justify-between">
+      <div
+        className="fixed bottom-8 z-[100] left-[320px] transform translate-x-4 h-[42px] rounded-lg flex items-center justify-between">
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2.5 text-white bg-blue_6 hover:from-blue-600 hover:to-blue-800 text-center rounded-md transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"

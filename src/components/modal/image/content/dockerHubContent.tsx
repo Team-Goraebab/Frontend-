@@ -49,7 +49,7 @@ const DockerHubContent: React.FC<DockerHubContentProps> = ({ onSelectImage }) =>
         />
         <button
           onClick={handleSearch}
-          className="px-6 py-2 bg-blue_6 text-white rounded-r-lg hover:bg-blue-600 focus:outline-none text-nowrap font-pretendard font-medium"
+          className="px-6 py-2 bg-blue_6 text-white rounded-r-lg focus:outline-none text-nowrap font-pretendard font-medium"
         >
           검색
         </button>
@@ -65,7 +65,7 @@ const DockerHubContent: React.FC<DockerHubContentProps> = ({ onSelectImage }) =>
               className={`border rounded-lg p-4 cursor-pointer transition-all duration-300 ${
                 selectedImage === image.repo_name
                   ? 'border-blue_6 bg-blue-50'
-                  : 'border-gray-300 hover:border-blue_6 hover:bg-blue-50'
+                  : 'border-gray-300 hover:border-blue_6'
               }`}
               onClick={() => handleSelectImage(image)}
             >
@@ -75,7 +75,8 @@ const DockerHubContent: React.FC<DockerHubContentProps> = ({ onSelectImage }) =>
                     {image.repo_name}
                   </p>
                   {image.is_official && (
-                    <span className="bg-blue_6 text-white text-xs px-2 py-1 rounded-full flex items-center font-pretendard font-bold">
+                    <span
+                      className="bg-blue_6 text-white text-xs px-2 py-1 rounded-full flex items-center font-pretendard font-bold">
                         <FaCheckCircle className="mr-1" />
                         Official
                       </span>

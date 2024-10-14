@@ -6,7 +6,6 @@ import { showSnackbar } from '@/utils/toastUtils';
 import { useSnackbar } from 'notistack';
 import { FaPlay, FaPause, FaStop, FaEllipsisV, FaDocker } from 'react-icons/fa';
 import BarOptionModal from '../modal/barOptionModal';
-import { SiTruenas } from 'react-icons/si';
 import SystemInfoModal from '../modal/daemon/systemModal';
 import VersionDetailModal from '../modal/daemon/versionModal';
 
@@ -39,7 +38,7 @@ const DaemonConnectBar = () => {
         enqueueSnackbar,
         '도커 엔진이 실행되지 않았습니다.',
         'info',
-        '#7F7F7F'
+        '#7F7F7F',
       );
     }
   }
@@ -101,12 +100,12 @@ const DaemonConnectBar = () => {
   return (
     <div
       ref={barRef}
-      className={`px-4 p-1 flex items-center justify-between text-white ${
+      className={`z-50 px-4 p-1 flex items-center justify-between text-white ${
         engineStatus === 'connect'
           ? 'bg-green_6'
           : engineStatus === 'connecting'
-          ? 'bg-yellow_6'
-          : 'bg-red_6'
+            ? 'bg-yellow_6'
+            : 'bg-red_6'
       }`}
     >
       <div className="flex items-center">
@@ -115,8 +114,8 @@ const DaemonConnectBar = () => {
           {engineStatus === 'connect'
             ? 'Daemon connected'
             : engineStatus === 'connecting'
-            ? 'Connecting...'
-            : 'Daemon disconnected'}
+              ? 'Connecting...'
+              : 'Daemon disconnected'}
         </span>
       </div>
       <div className="flex items-center space-x-2">
@@ -141,10 +140,11 @@ const DaemonConnectBar = () => {
         </button>
       </div>
       {showOptions && (
-        <div ref={modalRef} className="absolute bottom-[85px] left-[264px]">
+        <div ref={modalRef} className="absolute z-50 bottom-[85px] left-[264px]">
           <BarOptionModal
             onTopHandler={handleTopOptionClick}
-            onMiddleHandler={() => {}}
+            onMiddleHandler={() => {
+            }}
             onBottomHandler={handleBottomOptionClick}
           />
         </div>

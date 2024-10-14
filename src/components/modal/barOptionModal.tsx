@@ -21,7 +21,8 @@ const BarOptionModal = ({
                           onBottomHandler,
                         }: OptionModalProps) => {
   return (
-    <div className="flex flex-col z-50 items-center rounded-xl w-32 absolute bg-white shadow-lg border border-grey_2">
+    <div
+      className="flex flex-col z-[9999] items-center rounded-xl w-32 absolute bg-white shadow-lg border border-grey_2">
       <button
         className="w-full py-2 text-black_6 text-xs font-semibold hover:bg-grey_0 rounded-t-xl transition-colors relative"
         onClick={onTopHandler}

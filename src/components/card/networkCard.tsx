@@ -10,6 +10,7 @@ import { formatDateTime } from '@/utils/formatTimestamp';
 import { fetchData } from '@/services/apiUtils';
 import NetworkDetailModal from '../modal/network/networkDetailModal';
 import { FiInfo, FiTrash, FiLink, FiCpu, FiCalendar, FiHardDrive, FiSend, FiBox } from 'react-icons/fi';
+import { FaNetworkWired } from 'react-icons/fa';
 
 interface NetworkProps {
   Id: string;
@@ -169,6 +170,10 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   return (
     <div className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
+        <div className="flex items-center space-x-2">
+          <FaNetworkWired size={16} className="text-gray-600" />
+          <span className="font-pretendard text-sm">Network</span>
+        </div>
         <div className="flex items-center space-x-2" />
         <div className="flex">
           <button

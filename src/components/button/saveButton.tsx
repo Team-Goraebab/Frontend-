@@ -19,7 +19,7 @@ const SaveButton = () => {
         enqueueSnackbar,
         '빈 설계도는 저장할 수 없습니다.',
         'error',
-        '#FF4848'
+        '#FF4848',
       );
       return;
     }
@@ -40,7 +40,7 @@ const SaveButton = () => {
           enqueueSnackbar,
           '유효하지 않은 설계도는 저장할 수 없습니다.',
           'error',
-          '#FF4848'
+          '#FF4848',
         );
         return;
       }
@@ -55,7 +55,7 @@ const SaveButton = () => {
         enqueueSnackbar,
         '설계도 이름을 입력해주세요.',
         'error',
-        '#FF4848'
+        '#FF4848',
       );
       return;
     }
@@ -80,7 +80,7 @@ const SaveButton = () => {
           enqueueSnackbar,
           '설계도가 성공적으로 저장되었습니다!',
           'success',
-          '#254b7a'
+          '#254b7a',
         );
         setIsModalOpen(false);
         setBlueprintName('');
@@ -92,14 +92,15 @@ const SaveButton = () => {
         enqueueSnackbar,
         '설계도 저장 중 오류가 발생했습니다.',
         'error',
-        '#FF4848'
+        '#FF4848',
       );
     }
   };
 
   return (
     <>
-      <div className="fixed bottom-8 right-[50px] transform translate-x-4 h-[40px] px-4 bg-white border-gray-300 border text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg flex items-center justify-center transition duration-200 ease-in-out">
+      <div
+        className="fixed bottom-8 right-[50px] transform translate-x-4 h-[40px] px-4 bg-white border-gray-300 border text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg flex items-center justify-center transition duration-200 ease-in-out">
         <button
           className="flex items-center gap-2 text-center"
           onClick={handleSave}
@@ -110,7 +111,7 @@ const SaveButton = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">설계도 저장</h2>
             <p className="text-gray-600 mb-4">설계도의 이름을 입력해주세요.</p>

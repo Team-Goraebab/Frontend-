@@ -229,27 +229,34 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
 
   return (
     <>
-      <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
-        <Box sx={{ p: 3, position: 'relative' }}>
+      <Dialog
+        open={isOpen}
+        onClose={onClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            display: 'flex',
+            flexDirection: 'column',
+            maxHeight: '90vh',
+          },
+        }}
+      >
+        <Box sx={{ p: 3, position: 'relative', flexGrow: 0 }}>
           <IconButton
             onClick={onClose}
             sx={{ position: 'absolute', top: 8, right: 8 }}
           >
             <Close />
           </IconButton>
-          <DialogTitle>
-            <Typography variant="h5" align="center">
-              <Box component="span" fontWeight="bold" className="text-blue_6 font-pretendard">이미지</Box>
-              <Box component="span" className="font-pretendard">를 불러올 방식을 선택하세요.</Box>
-            </Typography>
-          </DialogTitle>
-          <Tabs value={activeTab} onChange={handleTabChange} centered sx={{ mb: 3 }}>
+          <Tabs value={activeTab} onChange={handleTabChange}>
             <Tab icon={<Hub className="text-blue_6" />} label="Docker Hub" className="text-blue_6" />
             <Tab icon={<FolderOpen className="text-blue_6" />} label="Local Path" className="text-blue_6" />
           </Tabs>
-          <DialogContent sx={{ height: '300px', overflowY: 'auto', p: 0 }}>
-            {renderTabContent()}
-          </DialogContent>
+        </Box>
+
+        <DialogContent sx={{ flexGrow: 1, overflowY: 'auto', p: 3 }}>
+          {renderTabContent()}
           <Box sx={{ mt: 2 }}>
             <TextField
               fullWidth
@@ -271,8 +278,9 @@ const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
               }}
             />
           </Box>
-        </Box>
-        <DialogActions sx={{ px: 3, pb: 3 }}>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 3, borderTop: '1px solid', borderColor: 'divider', flexGrow: 0 }}>
           <Button onClick={onClose} color="primary">
             취소
           </Button>

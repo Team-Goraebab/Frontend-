@@ -78,7 +78,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     { label: 'Name', value: name || '<none>', icon: FiCpu },
     { label: 'Tag', value: tag || '<none>', icon: FiTag },
     { label: 'Size', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB', icon: FiSave },
-    { label: "Id", value: data.Id || '<none>', icon: TbNumber}
+    { label: 'Id', value: data.Id || '<none>', icon: TbNumber },
   ];
 
   const handleDelete = () => {
@@ -101,7 +101,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '이미지가 삭제되었습니다.',
         'success',
-        '#25BD6B'
+        '#25BD6B',
       );
 
       onDeleteSuccess();
@@ -111,7 +111,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '이미지 삭제에 실패했습니다.',
         'error',
-        '#FF0000'
+        '#FF0000',
       );
     } finally {
       setShowModal(false);
@@ -148,7 +148,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
 
   const handleStart = async () => {
     setIsRunModalOpen(true);
-  }
+  };
 
   const handleRunContainer = async (containerConfig: ContainerConfig) => {
     try {
@@ -169,7 +169,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '컨테이너가 성공적으로 실행되었습니다.',
         'success',
-        '#25BD6B'
+        '#25BD6B',
       );
     } catch (error) {
       console.error('Error running container:', error);
@@ -177,7 +177,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '컨테이너 실행에 실패했습니다.',
         'error',
-        '#FF0000'
+        '#FF0000',
       );
     }
   };
@@ -193,7 +193,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       className="relative bg-white border rounded-lg transition-all duration-300 mb-2 overflow-hidden"
     >
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 truncate">
           <span className="font-bold font-pretendard text-sm text-gray-700 truncate">
             {data.RepoTags[0] || 'Unnamed Image'}
           </span>
