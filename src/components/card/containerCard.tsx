@@ -39,17 +39,15 @@ interface StatusProps {
  */
 const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const { enqueueSnackbar } = useSnackbar();
-
   const cardRef = useRef<HTMLDivElement>(null);
   const { bg1, bg2 } = getStatusColors(data.State);
 
-  const [showOptions, setShowOptions] = useState<boolean>(false);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [detailData, setDetailData] = useState<boolean>(false);
-  const [isLogModalOpen, setIsLogModalOpen] = useState<boolean>(false);
-
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [detailData, setDetailData] = useState(null);
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
 
   const containerName = data.Names ? data.Names[0].replace(/^\//, '') : 'N/A';
   const imageName = data.Image || 'N/A';
@@ -58,7 +56,6 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     { label: 'Name', value: containerName, icon: FiCpu },
     { label: 'Created', value: formatTimestamp(data.Created) || 'N/A', icon: FiCalendar },
     { label: 'Image', value: imageName, icon: FiImage },
-    { label: 'Network', value: data?.HostConfig?.NetworkMode || 'N/A', icon: FiGlobe },
     { label: 'Status', value: data.Status || 'N/A', icon: FiActivity },
   ];
 
@@ -142,10 +139,6 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     setShowModal(false);
   };
 
-  const toggleVolumeDropdown = () => {
-    setIsVolumeOpen(!isVolumeOpen);
-  };
-
   const fetchContainerDetail = async (id: string) => {
     try {
       const data = await fetchData(`/api/container/detail?id=${id}`);
@@ -183,92 +176,61 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   }, [cardRef]);
 
   return (
-    <div ref={cardRef} className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
-      <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-        <div className="flex items-center space-x-2">
+    <div ref={cardRef} className="bg-white border rounded-lg mb-2 overflow-hidden">
+      <div
+        className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b cursor-pointer"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center space-x-2 truncate">
           <StatusIcon state={data.State} />
           <StatusText state={data.State} />
+          <span className="font-medium text-sm text-gray-700 truncate">{containerName}</span>
         </div>
-        <div className="flex">
-          <button
-            onClick={handleLogsClick}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-            title="View Logs"
-          >
-            <FiFileText className="text-gray-500" size={16} />
-          </button>
-          <button
-            onClick={handleGetInfo}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-            title="Container Info"
-          >
-            <FiInfo className="text-gray-500" size={16} />
-          </button>
-          <button
-            onClick={handleDelete}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-            title="Delete Container"
-          >
-            <FiTrash className="text-gray-500" size={16} />
-          </button>
+        <div className="flex items-center">
+          {isExpanded ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
         </div>
       </div>
 
-
-      <div className="p-4">
-        <span className="font-pretendard font-bold text-md text-gray-800 truncate flex-grow">
-          {data.Labels?.['com.docker.compose.project'] || 'Unknown Project'}
-        </span>
-        <div className="grid gap-4 mt-4">
-          {items.map((item, index) => (
-            <div key={index} className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg" style={{ backgroundColor: bg1 }}>
-                <item.icon size={16} style={{ color: bg2 }} />
+      {isExpanded && (
+        <div className="p-4">
+          <div className="grid gap-4">
+            {items.map((item, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg" style={{ backgroundColor: bg1 }}>
+                  <item.icon size={16} style={{ color: bg2 }} />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-500 font-medium">{item.label}</span>
+                  <span className="font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+                    {item.value}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium font-pretendard">{item.label}</span>
-                <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
-                  {item.value}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div className="mt-6">
-          <button
-            onClick={toggleVolumeDropdown}
-            className="flex items-center justify-between w-full text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-          >
-            <div className="flex items-center space-x-2">
-              <FiHardDrive size={16} />
-              <span>Volumes</span>
-            </div>
-            {isVolumeOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
-          </button>
-
-          {isVolumeOpen && (
-            <div
-              className="mt-3 space-y-2 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-              {data.Mounts?.length > 0 ? (
-                data.Mounts.map((mount: {
-                  Driver: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined;
-                  Destination: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined;
-                  Mode: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined;
-                }, index: React.Key | null | undefined) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                    {mount.Driver && <p className="text-xs text-gray-600">Driver: {mount.Driver}</p>}
-                    {mount.Destination && <p className="text-xs text-gray-600">Mount: {mount.Destination}</p>}
-                    {mount.Mode && <p className="text-xs text-gray-600">Mode: {mount.Mode}</p>}
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500">No volumes attached.</p>
-              )}
-            </div>
-          )}
+          <div className="mt-4 flex justify-end space-x-3">
+            <button
+              onClick={handleLogsClick}
+              className="p-1 text-blue-600 rounded hover:bg-blue-200 transition-colors text-md"
+            >
+              <FiFileText />
+            </button>
+            <button
+              onClick={handleGetInfo}
+              className="p-1 text-green-600 rounded hover:bg-green-200 transition-colors text-md"
+            >
+              <FiInfo />
+            </button>
+            <button
+              onClick={handleDelete}
+              className="p-1 text-red-600 rounded hover:bg-red-200 transition-colors text-md"
+            >
+              <FiTrash />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <Modal
         isOpen={showModal}

@@ -9,17 +9,35 @@ import AddContainerButton from '../button/addContainerButton';
 import AddImageButton from '../button/addImageButton';
 import { useMenuStore } from '@/store/menuStore';
 import ImageCard from '../card/imageCard';
-import ContainerCard from '../card/containerCard';
 import DaemonConnectBar from '../bar/daemonConnectBar';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import LargeButton from '../button/largeButton';
 import { fetchData } from '@/services/apiUtils';
 import { RxReload } from 'react-icons/rx';
+import ContainerCardGroup from '@/components/card/containerCardGroup';
 
 type DataHandlerType = {
   data: any[];
   setData: React.Dispatch<React.SetStateAction<any[]>>;
 };
+
+interface Container {
+  Id: string;
+  Name: string;
+  Labels: {
+    'com.docker.compose.project'?: string;
+  };
+
+  [key: string]: any;
+}
+
+interface ComponentMapItem {
+  title: string;
+  addButton: React.ComponentType<any>;
+  cardComponent?: React.ComponentType<any>;
+  noDataMessage: string;
+  helpType: string;
+}
 
 const apiMap: Record<number, { url: string; dataKey?: string }> = {
   1: { url: '/api/container/list' },
@@ -47,7 +65,7 @@ const Sidebar = () => {
 
   const [networkData, setNetworkData] = useState<any[]>([]);
   const [volumeData, setVolumeData] = useState<any[]>([]);
-  const [containerData, setContainerData] = useState<any[]>([]);
+  const [containerData, setContainerData] = useState<Container[]>([]);
   const [imageData, setImageData] = useState<any[]>([]);
 
   const dataHandlers: Record<1 | 2 | 3 | 4, DataHandlerType> = {
@@ -76,11 +94,10 @@ const Sidebar = () => {
     }
   };
 
-  const componentMap = {
+  const componentMap: Record<1 | 2 | 3 | 4, ComponentMapItem> = {
     1: {
       title: '컨테이너',
       addButton: AddContainerButton,
-      cardComponent: ContainerCard,
       noDataMessage: '컨테이너를 추가하세요',
       helpType: 'container',
     },
@@ -129,13 +146,39 @@ const Sidebar = () => {
     const { cardComponent: CardComponent, noDataMessage } = currentComponent;
     const data = dataHandlers[activeId as 1 | 2 | 3 | 4]?.data;
 
-    return data && data.length > 0
-      ? data.map((item, index) => (
-        <CardComponent
-          key={index}
-          data={item}
+    if (activeId === 1) {
+      const groupedContainers = containerData.reduce((acc, container) => {
+        const groupName = container.Labels['com.docker.compose.project'] || container.Names[0].replace(/^\//, '');
+        if (!acc[groupName]) {
+          acc[groupName] = {
+            containers: [],
+            networkMode: container.HostConfig?.NetworkMode || 'Unknown',
+          };
+        }
+        acc[groupName].containers.push(container);
+        return acc;
+      }, {} as Record<string, { containers: Container[], networkMode: string }>);
+
+
+      return Object.entries(groupedContainers).map(([groupName, { containers }]) => (
+        <ContainerCardGroup
+          key={groupName}
+          projectName={groupName}
+          containers={containers}
           onDeleteSuccess={handleDeleteSuccess}
         />
+      ));
+    }
+
+    return data && data.length > 0
+      ? data.map((item, index) => (
+        CardComponent && (
+          <CardComponent
+            key={index}
+            data={item}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        )
       ))
       : renderNoDataMessage(noDataMessage);
   };
