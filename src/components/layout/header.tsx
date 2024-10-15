@@ -8,6 +8,7 @@ import { useMenuStore } from '@/store/menuStore';
 import { FiSettings, FiGrid } from 'react-icons/fi';
 import Image from 'next/image';
 import { FaQuestion } from 'react-icons/fa';
+import HelpModal from '../modal/helpModal';
 
 const Header = () => {
   const router = useRouter();
@@ -15,8 +16,9 @@ const Header = () => {
   const navRef = useRef<HTMLDivElement>(null);
 
   const { activeId, setActiveId } = useMenuStore();
-  const [barWidth, setBarWidth] = useState(0);
-  const [barLeft, setBarLeft] = useState(0);
+  const [barWidth, setBarWidth] = useState<number>(0);
+  const [barLeft, setBarLeft] = useState<number>(0);
+  const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
 
   const isRightSidePath =
     pathname === '/management' || pathname === '/dashboard';
@@ -24,6 +26,10 @@ const Header = () => {
   const handleNavigation = (path: string, id: number) => {
     setActiveId(id);
     router.push(path);
+  };
+
+  const handleHelp = () => {
+    setIsHelpOpen(true);
   };
 
   useEffect(() => {
@@ -35,7 +41,7 @@ const Header = () => {
           setBarWidth(activeItem.clientWidth);
           setBarLeft(
             activeItem.getBoundingClientRect().left -
-            navRef.current.getBoundingClientRect().left,
+              navRef.current.getBoundingClientRect().left
           );
         }
       }
@@ -46,7 +52,11 @@ const Header = () => {
     <header className="fixed w-full py-4 px-8 bg-blue_5 text-white z-[999]">
       <div className="mx-auto flex justify-between items-center relative">
         <div>
-          <Image src={require('../../../public/images/GORAEBAB.svg')} alt={'logo'} width={150} />
+          <Image
+            src={require('../../../public/images/GORAEBAB.svg')}
+            alt={'logo'}
+            width={150}
+          />
         </div>
         <div className="flex-grow"></div>
         <nav
@@ -98,18 +108,20 @@ const Header = () => {
               pathname === '/management' ? 'text-blue-400' : ''
             }`}
           >
-            <FiSettings className="text-xl" data-tooltip-id="management-tooltip" />
+            <FiSettings
+              className="text-xl"
+              data-tooltip-id="management-tooltip"
+            />
             <Tooltip id="management-tooltip" content="Management" />
           </div>
           <div
-            onClick={() => {
-            }}
+            onClick={handleHelp}
             className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
               pathname === '/management' ? 'text-blue-400' : ''
             }`}
           >
-            <FaQuestion className="text-xl" data-tooltip-id="guide" />
-            <Tooltip id="guide" content="Management" />
+            <FaQuestion className="text-xl" data-tooltip-id="help" />
+            <Tooltip id="help" content="Help" />
           </div>
         </div>
         {isRightSidePath && (
@@ -123,6 +135,7 @@ const Header = () => {
           />
         )}
       </div>
+      {isHelpOpen && <HelpModal />}
     </header>
   );
 };
