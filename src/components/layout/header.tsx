@@ -1,27 +1,23 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Tooltip } from 'react-tooltip';
 import { MENU_ITEMS } from '@/data/menu';
 import { useMenuStore } from '@/store/menuStore';
-import { FiSettings, FiGrid } from 'react-icons/fi';
+import { FiSettings } from 'react-icons/fi';
 import Image from 'next/image';
 import { FaQuestion } from 'react-icons/fa';
 import HelpModal from '../modal/helpModal';
 
 const Header = () => {
   const router = useRouter();
-  const pathname = usePathname();
   const navRef = useRef<HTMLDivElement>(null);
 
   const { activeId, setActiveId } = useMenuStore();
   const [barWidth, setBarWidth] = useState<number>(0);
   const [barLeft, setBarLeft] = useState<number>(0);
   const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
-
-  const isRightSidePath =
-    pathname === '/management' || pathname === '/dashboard';
 
   const handleNavigation = (path: string, id: number) => {
     setActiveId(id);
@@ -41,12 +37,12 @@ const Header = () => {
           setBarWidth(activeItem.clientWidth);
           setBarLeft(
             activeItem.getBoundingClientRect().left -
-              navRef.current.getBoundingClientRect().left
+            navRef.current.getBoundingClientRect().left,
           );
         }
       }
     }
-  }, [activeId, isRightSidePath]);
+  }, [activeId]);
 
   return (
     <header className="fixed w-full py-4 px-8 bg-blue_5 text-white z-[999]">
@@ -68,7 +64,7 @@ const Header = () => {
               key={item.id}
               onClick={() => handleNavigation(item.path, item.id)}
               className={`flex flex-col items-center cursor-pointer font-semibold text-sm transition-colors duration-300 ${
-                activeId === item.id && !isRightSidePath
+                activeId === item.id
                   ? 'text-blue-400'
                   : 'text-white hover:text-white'
               }`}
@@ -79,33 +75,21 @@ const Header = () => {
               <Tooltip id={`tooltip-${item.name}`} />
             </div>
           ))}
-
-          {!isRightSidePath && (
-            <div
-              className="absolute bottom-0 h-1 bg-blue-400 rounded-tl rounded-tr transition-all duration-500"
-              style={{
-                width: `${barWidth}px`,
-                left: `${barLeft - 24}px`,
-                top: 36,
-              }}
-            />
-          )}
+          <div
+            className="absolute bottom-0 h-1 bg-blue-400 rounded-tl rounded-tr transition-all duration-500"
+            style={{
+              width: `${barWidth}px`,
+              left: `${barLeft - 24}px`,
+              top: 36,
+            }}
+          />
         </nav>
         <div className="flex-grow" />
         <div className="flex items-center space-x-4">
           <div
-            onClick={() => handleNavigation('/dashboard', 5)}
-            className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
-              pathname === '/dashboard' ? 'text-blue-400' : ''
-            }`}
-          >
-            <FiGrid className="text-xl" data-tooltip-id="dashboard-tooltip" />
-            <Tooltip id="dashboard-tooltip" content="Dashboard" />
-          </div>
-          <div
             onClick={() => handleNavigation('/management', 6)}
-            className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
-              pathname === '/management' ? 'text-blue-400' : ''
+            className={`cursor-pointer transition-colors duration-300 ${
+              activeId === 6 ? 'text-blue-400' : 'text-white hover:text-white'
             }`}
           >
             <FiSettings
@@ -116,24 +100,12 @@ const Header = () => {
           </div>
           <div
             onClick={handleHelp}
-            className={`cursor-pointer text-white hover:text-white transition-colors duration-300 ${
-              pathname === '/management' ? 'text-blue-400' : ''
-            }`}
+            className="cursor-pointer text-white hover:text-white transition-colors duration-300"
           >
             <FaQuestion className="text-xl" data-tooltip-id="help" />
             <Tooltip id="help" content="Help" />
           </div>
         </div>
-        {isRightSidePath && (
-          <div
-            className="absolute bottom-0 h-1 rounded-tl rounded-tr transition-all duration-500"
-            style={{
-              width: `${barWidth}px`,
-              right: pathname === '/management' ? '0px' : '40px',
-              top: 38,
-            }}
-          />
-        )}
       </div>
       {isHelpOpen && <HelpModal />}
     </header>
