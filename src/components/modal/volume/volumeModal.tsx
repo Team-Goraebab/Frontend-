@@ -14,7 +14,7 @@ interface VolumeModalProps {
     name: string,
     driver: string,
     mountPoint: string,
-    capacity: string
+    capacity: string,
   ) => void;
 }
 
@@ -31,7 +31,7 @@ const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
         enqueueSnackbar,
         '볼륨 이름을 입력해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -41,7 +41,7 @@ const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
         enqueueSnackbar,
         '마운트 경로를 입력해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -51,7 +51,7 @@ const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
         enqueueSnackbar,
         '볼륨 용량을 입력해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }
@@ -65,7 +65,7 @@ const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
     <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
       <div className="relative h-full flex flex-col">
         <div className="sticky top-0 bg-white z-10 pb-4 mt-4 border-b">
-          <h2 className="text-2xl font-bold text-center">Create Volume</h2>
+          <h2 className="text-2xl font-semibold text-center font-pretendard">Volume 생성하기</h2>
         </div>
 
         <div className="flex-grow overflow-y-auto p-4">
@@ -103,8 +103,8 @@ const VolumeModal = ({ onClose, onCreate }: VolumeModalProps) => {
         </div>
 
         <div className="sticky bottom-0 bg-white py-4 pr-4 flex justify-end space-x-4 border-t">
-          <Button title="Cancel" onClick={onClose} color="grey" />
-          <Button title="Create" onClick={handleCreate} />
+          <Button title="취소" onClick={onClose} color="red" />
+          <Button title="생성" onClick={handleCreate} />
         </div>
       </div>
     </Dialog>

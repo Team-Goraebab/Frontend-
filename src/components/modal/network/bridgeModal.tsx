@@ -92,7 +92,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
   return (
     <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
       <div className="p-4">
-        <h2 className="text-lg font-semibold mb-4">Create Custom Bridge</h2>
+        <h2 className="text-lg font-semibold mb-4">Bridge 생성하기</h2>
         <input
           type="text"
           placeholder="Bridge Name"
@@ -124,8 +124,8 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
           <option value="overlay">Overlay</option>
         </select>
         <div className="flex justify-end space-x-2 pt-8">
-          <Button title={'Cancel'} onClick={onClose} color="grey" />
-          <Button title={'Create'} onClick={handleCreate} />
+          <Button title={'취소'} onClick={onClose} color={'red'} />
+          <Button title={'생성'} onClick={handleCreate} />
         </div>
       </div>
     </Dialog>

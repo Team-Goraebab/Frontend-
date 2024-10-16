@@ -33,7 +33,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
     try {
       const volumeData = await fetchData('/api/volume/list');
       const imageData = await fetchData('/api/image/list');
-      setVolumes(volumeData.Volumes || []);
+      setVolumes(volumeData?.Volumes || []);
       setImages(imageData || []);
     } catch (error) {
       throw error;
@@ -45,14 +45,15 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
       try {
         const response = await fetch('/api/network/list');
         const data = await response.json();
-        setAvailableNetworks(data || []);
+        setAvailableNetworks(data?.networks || []); // Ensure we're setting an array
 
-        if (data && data.networks?.length > 0) {
-          setNetworkName(data.Name);
-          setNetworkIp(data.IPAM?.Config?.[0]?.Gateway);
+        if (data?.networks && data.networks.length > 0) {
+          setNetworkName(data.networks[0].Name);
+          setNetworkIp(data.networks[0].IPAM?.Config?.[0]?.Gateway || '');
         }
       } catch (error) {
-        throw error;
+        console.error('Error fetching networks:', error);
+        setAvailableNetworks([]); // Set to empty array in case of error
       }
     };
 

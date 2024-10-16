@@ -25,9 +25,9 @@ const Button = ({
   const baseStyles = 'font-semibold font-pretendard rounded-lg transition-all duration-200 flex items-center justify-center';
 
   const variantStyles = {
-    primary: 'bg-blue_6 text-white hover:bg-blue-700 active:bg-blue-800',
+    primary: 'bg-blue_6 text-white hover:bg-blue_5',
     secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400',
-    outline: 'bg-transparent border-2 border-blue-600 text-blue_6 hover:bg-blue-50 active:bg-blue-100',
+    outline: 'bg-transparent border-2 border-blue-600 text-blue_6 hover:bg-blue-50 active:bg-blue_1',
     ghost: 'bg-transparent text-blue_6 hover:bg-blue-50 active:bg-blue-100',
   };
 
