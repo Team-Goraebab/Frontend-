@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSnackbar } from 'notistack';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -43,8 +43,8 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
     { Id: number; Name: string; IPAM: any }[]
   >([]);
 
-  const [networkName, setNetworkName] = useState<string>('docker0');
-  const [networkIp, setNetworkIp] = useState<string>('173.17.0.12');
+  const [networkName, setNetworkName] = useState<string>('');
+  const [networkIp, setNetworkIp] = useState<string>('');
 
   const defaultColor = colorsOption.find((color) => !color.sub);
   const defaultSubColor = colorsOption.find(
@@ -63,38 +63,27 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
       try {
         const response = await fetch('/api/network/list');
         const data = await response.json();
-        setAvailableNetworks(data || []);
+        setAvailableNetworks(data?.networks || []);
 
-        if (data && data.networks?.length > 0) {
-          setNetworkName(data.Name);
-          setNetworkIp(data.IPAM?.Config?.[0]?.Gateway);
+        if (data?.networks && data.networks.length > 0) {
+          setNetworkName(data.networks[0].Name);
+          setNetworkIp(data.networks[0].IPAM?.Config?.[0]?.Gateway || '');
         }
       } catch (error) {
-        throw error;
+        console.error('Error fetching networks:', error);
+        setAvailableNetworks([]);
       }
     };
 
     fetchNetworks();
   }, []);
 
-  const handleSave = () => {
-    if (!hostNm) {
-      showSnackbar(
-        enqueueSnackbar,
-        'Host 이름을 입력해주세요.',
-        'error',
-        '#FF4853',
-      );
-      return;
-    }
+  const isSaveDisabled = useMemo(() => {
+    return !hostNm || !networkName || !networkIp;
+  }, [hostNm, networkName, networkIp]);
 
-    if (!networkIp) {
-      showSnackbar(
-        enqueueSnackbar,
-        '네트워크를 선택해주세요.',
-        'error',
-        '#FF4853',
-      );
+  const handleSave = () => {
+    if (isSaveDisabled) {
       return;
     }
 
@@ -178,7 +167,7 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
               label="Select Network"
               fullWidth
             >
-              {availableNetworks.map((net) => (
+              {Array.isArray(availableNetworks) && availableNetworks.map((net) => (
                 <MenuItem key={net.Name} value={net.Name}>
                   {net.Name} (IP: {net.IPAM?.Config?.[0]?.Gateway || 'IP 없음'})
                 </MenuItem>
@@ -215,11 +204,16 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
           </Box>
         </Box>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'end' }}>
+      <DialogActions sx={{ justifyContent: 'end', p: 3 }}>
         <Button onClick={onClose}>
           취소
         </Button>
-        <Button onClick={handleSave} color="primary" variant="contained">
+        <Button
+          onClick={handleSave}
+          color="primary"
+          variant="contained"
+          disabled={isSaveDisabled}
+        >
           생성
         </Button>
       </DialogActions>

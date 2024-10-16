@@ -1,79 +1,61 @@
-'use client';
-
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { AiOutlineSave } from 'react-icons/ai';
 import { BASE_URL } from '@/app/api/urlPath';
 
-const SaveButton = () => {
+interface BlueprintReqDto {
+  name: string;
+  isDockerRemote: boolean;
+  remoteUrl?: string;
+}
+
+const SaveButton: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [blueprintName, setBlueprintName] = useState('');
+  const [isDockerRemote, setIsDockerRemote] = useState(false);
+  const [remoteUrl, setRemoteUrl] = useState('');
 
-  const handleSave = async () => {
-    const mainContent = document.querySelector('main')?.innerHTML;
-
-    if (!mainContent) {
-      showSnackbar(
-        enqueueSnackbar,
-        '빈 설계도는 저장할 수 없습니다.',
-        'error',
-        '#FF4848',
-      );
-      return;
-    }
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(mainContent, 'text/html');
-
-    const wrapper = doc.querySelector('.react-transform-wrapper');
-    const component = doc.querySelector('.react-transform-component');
-
-    if (wrapper && component) {
-      const hasOtherContent =
-        wrapper.innerHTML.trim().length > 0 ||
-        component.innerHTML.trim().length > 0;
-
-      if (!hasOtherContent) {
-        showSnackbar(
-          enqueueSnackbar,
-          '유효하지 않은 설계도는 저장할 수 없습니다.',
-          'error',
-          '#FF4848',
-        );
-        return;
-      }
-    }
-
+  const handleSave = () => {
     setIsModalOpen(true);
   };
 
   const handleSubmit = async () => {
-    if (!blueprintName.trim()) {
-      showSnackbar(
-        enqueueSnackbar,
-        '설계도 이름을 입력해주세요.',
-        'error',
-        '#FF4848',
-      );
+    const mainContent = document.querySelector('main')?.innerHTML;
+    if (!mainContent) {
+      showSnackbar(enqueueSnackbar, '저장할 내용이 없습니다.', 'error', '#FF4848');
       return;
     }
 
-    const mainContent = document.querySelector('main')?.innerHTML;
-    if (!mainContent) return;
+    const formData = new FormData();
+
+    // Create blueprintReqDto object
+    const blueprintReqDto: BlueprintReqDto = {
+      name: blueprintName,
+      isDockerRemote: isDockerRemote,
+    };
+
+    if (isDockerRemote && remoteUrl) {
+      blueprintReqDto.remoteUrl = remoteUrl;
+    }
+
+    // Convert blueprintReqDto to JSON and append as a Blob
+    const jsonBlob = new Blob([JSON.stringify(blueprintReqDto)], { type: 'application/json' });
+    formData.append('blueprintReqDto', jsonBlob);
+
+    // Append the HTML content as a Blob with correct content type
+    const contentBlob = new Blob([mainContent], { type: 'multipart/form-data' });
+    formData.append('data', contentBlob, `${blueprintName}.html`);
 
     try {
-      const response = await fetch(`${BASE_URL}/storage/1/blueprint`, {
+      const response = await fetch(`${BASE_URL}/blueprints`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: blueprintName,
-          data: mainContent,
-        }),
+        body: formData,
       });
+
+      // Check if the response is in JSON format
+      const contentType = response.headers.get('Content-Type');
 
       if (response.ok) {
         showSnackbar(
@@ -84,13 +66,20 @@ const SaveButton = () => {
         );
         setIsModalOpen(false);
         setBlueprintName('');
+        setIsDockerRemote(false);
+        setRemoteUrl('');
+      } else if (contentType && contentType.includes('application/json')) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '서버 응답 오류');
       } else {
-        throw new Error('서버 응답 오류');
+        const errorText = await response.text();  // HTML이나 텍스트 응답 처리
+        throw new Error(`서버 오류: ${errorText}`);
       }
     } catch (error) {
+      console.error('Error:', error);
       showSnackbar(
         enqueueSnackbar,
-        '설계도 저장 중 오류가 발생했습니다.',
+        `설계도 저장 중 오류가 발생했습니다: ${error}`,
         'error',
         '#FF4848',
       );
@@ -114,15 +103,33 @@ const SaveButton = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">설계도 저장</h2>
-            <p className="text-gray-600 mb-4">설계도의 이름을 입력해주세요.</p>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
               placeholder="설계도 이름"
               value={blueprintName}
               onChange={(e) => setBlueprintName(e.target.value)}
               autoFocus
             />
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="isDockerRemote"
+                checked={isDockerRemote}
+                onChange={(e) => setIsDockerRemote(e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor="isDockerRemote">Docker Remote</label>
+            </div>
+            {isDockerRemote && (
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                placeholder="Remote URL"
+                value={remoteUrl}
+                onChange={(e) => setRemoteUrl(e.target.value)}
+              />
+            )}
             <div className="flex justify-end mt-6 gap-2">
               <button
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
