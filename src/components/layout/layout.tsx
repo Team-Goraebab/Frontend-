@@ -10,7 +10,6 @@ import {
 } from '@/data/mock';
 import AddHostButton from '../button/addHostButton';
 import SaveButton from '../button/saveButton';
-import { useMenuStore } from '@/store/menuStore';
 import DeleteBlueprintButton from '../button/deleteBlueprintButton';
 import { SnackbarProvider } from 'notistack';
 import { usePathname } from 'next/navigation';
@@ -20,7 +19,6 @@ import { DndProvider } from 'react-dnd';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { activeId } = useMenuStore();
   const [isHandMode, setIsHandMode] = useState(false);
   const [loading, setLoading] = useState(true); // 스플래시 화면 표시 여부를 위한 상태
 
@@ -32,7 +30,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     return () => clearTimeout(timer);
   }, []);
-
+  
   /**
    * activeId에 따른 카드 데이터 변경
    */
@@ -55,7 +53,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       cardData = [];
       break;
   }
-
   const isSimpleLayout =
     pathname.includes('management') || pathname.includes('dashboard');
 
