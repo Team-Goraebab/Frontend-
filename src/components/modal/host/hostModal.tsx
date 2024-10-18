@@ -1,60 +1,52 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSnackbar } from 'notistack';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Box,
-  Dialog, DialogActions,
+  Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
-  FormControlLabel, InputLabel, MenuItem, Radio,
-  RadioGroup, Select,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
   TextField,
   Typography,
   Button,
 } from '@mui/material';
 import { colorsOption } from '@/data/color';
-import { ThemeColor } from '@/types/type';
-
-interface Network {
-  Name: string;
-  Id: string;
-  Created: string;
-  Scope: string;
-  Driver: string;
-  IPAM?: {
-    Config?: { Gateway?: string }[];
-  };
-}
+import { Network, ThemeColor } from '@/types/type';
 
 interface HostModalProps {
   onClose: () => void;
   onSave: (
     id: string,
     hostNm: string,
-    ip: string,
+    hostIp: string | undefined,
     isRemote: boolean,
     themeColor: ThemeColor,
     networkName: string,
-    networkIp: string,
+    networkIp: string
   ) => void;
+  availableNetworks: Network[];
 }
 
-const HostModal = ({ onClose, onSave }: HostModalProps) => {
+const HostModal = ({ onClose, onSave, availableNetworks }: HostModalProps) => {
   const id = uuidv4();
-
   const [isRemote, setIsRemote] = useState<boolean>(false);
   const [hostNm, setHostNm] = useState<string>('');
-  const [availableNetworks, setAvailableNetworks] = useState<Network[]>([]);
-
+  const [hostIp, setHostIp] = useState<string | undefined>(undefined);
   const [networkName, setNetworkName] = useState<string>('');
   const [networkIp, setNetworkIp] = useState<string>('');
 
   const defaultColor = colorsOption.find((color) => !color.sub);
   const defaultSubColor = colorsOption.find(
-    (color) => color.label === defaultColor?.label && color.sub,
+    (color) => color.label === defaultColor?.label && color.sub
   );
 
   const [selectedColor, setSelectedColor] = useState<ThemeColor>({
@@ -65,29 +57,16 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
   });
 
   useEffect(() => {
-    const fetchNetworks = async () => {
-      try {
-        const response = await fetch('/api/network/list');
-        const networks: Network[] = await response.json();
-        setAvailableNetworks(networks);
-
-        if (networks.length > 0) {
-          const firstNetwork = networks[0];
-          setNetworkName(firstNetwork.Name);
-          setNetworkIp(firstNetwork.IPAM?.Config?.[0]?.Gateway || '');
-        }
-      } catch (error) {
-        console.error('Error fetching networks:', error);
-        setAvailableNetworks([]);
-      }
-    };
-
-    fetchNetworks();
-  }, []);
+    if (availableNetworks.length > 0) {
+      const firstNetwork = availableNetworks[0];
+      setNetworkName(firstNetwork.Name);
+      setNetworkIp(firstNetwork.IPAM?.Config?.[0]?.Gateway || '');
+    }
+  }, [availableNetworks]);
 
   const isSaveDisabled = useMemo(() => {
-    return !hostNm || !networkName || !networkIp;
-  }, [hostNm, networkName, networkIp]);
+    return !hostNm || !networkName || !networkIp || (isRemote && !hostIp);
+  }, [hostNm, networkName, networkIp, isRemote, hostIp]);
 
   const handleSave = () => {
     if (isSaveDisabled) {
@@ -97,18 +76,18 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
     onSave(
       id,
       hostNm,
-      networkIp,
+      isRemote ? hostIp : undefined,
       isRemote,
       selectedColor,
       networkName,
-      networkIp,
+      networkIp
     );
     onClose();
   };
 
   const handleNetworkChange = (selectedNetworkName: string) => {
     const selectedNetwork = availableNetworks.find(
-      (net) => net.Name === selectedNetworkName,
+      (net) => net.Name === selectedNetworkName
     );
     setNetworkName(selectedNetworkName);
     setNetworkIp(selectedNetwork?.IPAM?.Config?.[0]?.Gateway || '');
@@ -116,10 +95,10 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
 
   const handleColorSelection = (colorLabel: string) => {
     const mainColor = colorsOption.find(
-      (color) => color.label === colorLabel && !color.sub,
+      (color) => color.label === colorLabel && !color.sub
     );
     const subColor = colorsOption.find(
-      (color) => color.label === colorLabel && color.sub,
+      (color) => color.label === colorLabel && color.sub
     );
 
     setSelectedColor({
@@ -152,7 +131,12 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
             <RadioGroup
               row
               value={isRemote ? 'remote' : 'local'}
-              onChange={(e) => setIsRemote(e.target.value === 'remote')}
+              onChange={(e) => {
+                setIsRemote(e.target.value === 'remote');
+                if (e.target.value !== 'remote') {
+                  setHostIp(undefined); // Clear hostIp if not remote
+                }
+              }}
             >
               <FormControlLabel
                 value="local"
@@ -166,6 +150,16 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
               />
             </RadioGroup>
           </FormControl>
+          {isRemote && (
+            <TextField
+              label="Host IP"
+              fullWidth
+              value={hostIp || ''}
+              onChange={(e) => setHostIp(e.target.value)}
+              variant="outlined"
+              required
+            />
+          )}
           <FormControl fullWidth>
             <InputLabel>Select Network</InputLabel>
             <Select
@@ -176,7 +170,7 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
             >
               {availableNetworks.map((net) => (
                 <MenuItem key={net.Id} value={net.Name}>
-                  {net.Name} (IP: {net.IPAM?.Config && net.IPAM.Config[0].Gateway || 'None'})
+                  {net.Name} (IP: {net.IPAM?.Config?.[0]?.Gateway || 'None'})
                 </MenuItem>
               ))}
             </Select>
@@ -198,10 +192,11 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
                       bgcolor: color.color,
                       borderRadius: '50%',
                       cursor: 'pointer',
-                      border:
+                      outline:
                         selectedColor.label === color.label
-                          ? '2px solid #1976d2'
+                          ? '3px solid #D2D2D2'
                           : 'none',
+                      outlineOffset: '3px',
                       transition: 'transform 0.3s',
                       '&:hover': { transform: 'scale(1.1)' },
                     }}
@@ -212,16 +207,14 @@ const HostModal = ({ onClose, onSave }: HostModalProps) => {
         </Box>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'end', p: 3 }}>
-        <Button onClick={onClose}>
-          취소
-        </Button>
+        <Button onClick={onClose}>Cancel</Button>
         <Button
           onClick={handleSave}
           color="primary"
           variant="contained"
           disabled={isSaveDisabled}
         >
-          생성
+          
         </Button>
       </DialogActions>
     </Dialog>
