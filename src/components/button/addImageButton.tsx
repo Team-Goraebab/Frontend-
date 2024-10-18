@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import ImageModal from '../modal/image/imageModal';
-import { useImageStore } from '@/store/imageStore';
 import LargeButton from './largeButton';
 
 interface AddImageButtonProps {
@@ -15,7 +14,6 @@ const AddImageButton = ({ onCreate }: AddImageButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const addImage = useImageStore((state) => state.addImage);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -70,7 +68,6 @@ const AddImageButton = ({ onCreate }: AddImageButtonProps) => {
         dockerImageInfo,
       };
       onCreate(imageData);
-      addImage(imageData);
 
       showSnackbar(
         enqueueSnackbar,
@@ -92,7 +89,6 @@ const AddImageButton = ({ onCreate }: AddImageButtonProps) => {
       setIsLoading(false);
     }
   };
-
 
   return (
     <>

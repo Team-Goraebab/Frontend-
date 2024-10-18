@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { AiOutlineSave } from 'react-icons/ai';
 import { BASE_URL } from '@/app/api/urlPath';
+import { selectedHostStore } from '@/store/seletedHostStore';
 
 interface BlueprintReqDto {
   name: string;
@@ -12,6 +15,29 @@ interface BlueprintReqDto {
 
 const SaveButton: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const { connectedBridgeIds, selectedHostName } = selectedHostStore(
+    (state) => ({
+      connectedBridgeIds: state.connectedBridgeIds,
+      selectedHostName: state.selectedHostName,
+    })
+  );
+
+  useEffect(() => {
+    console.log('연결된 네트워크:', connectedBridgeIds);
+
+    // 각 호스트에 대해 연결된 네트워크를 호스트 이름으로 묶어 출력
+    Object.entries(connectedBridgeIds).forEach(([hostId, bridges]) => {
+      const hostName = selectedHostName; // 현재 선택된 호스트 이름 가져오기
+      console.log(`호스트 이름: ${hostName || hostId}`);
+
+      bridges.forEach((bridge) => {
+        console.log(
+          `  네트워크 이름: ${bridge.name}, 게이트웨이: ${bridge.gateway}, 드라이버: ${bridge.driver}, 서브넷: ${bridge.subnet}, 스코프: ${bridge.scope}`
+        );
+      });
+    });
+  }, [connectedBridgeIds, selectedHostName]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [blueprintName, setBlueprintName] = useState('');
   const [isDockerRemote, setIsDockerRemote] = useState(false);
@@ -24,7 +50,12 @@ const SaveButton: React.FC = () => {
   const handleSubmit = async () => {
     const mainContent = document.querySelector('main')?.innerHTML;
     if (!mainContent) {
-      showSnackbar(enqueueSnackbar, '저장할 내용이 없습니다.', 'error', '#FF4848');
+      showSnackbar(
+        enqueueSnackbar,
+        '저장할 내용이 없습니다.',
+        'error',
+        '#FF4848'
+      );
       return;
     }
 
@@ -40,12 +71,17 @@ const SaveButton: React.FC = () => {
       blueprintReqDto.remoteUrl = remoteUrl;
     }
 
+    console.log('JSON 데이터:', JSON.stringify(blueprintReqDto, null, 2));
     // Convert blueprintReqDto to JSON and append as a Blob
-    const jsonBlob = new Blob([JSON.stringify(blueprintReqDto)], { type: 'application/json' });
+    const jsonBlob = new Blob([JSON.stringify(blueprintReqDto)], {
+      type: 'application/json',
+    });
     formData.append('blueprintReqDto', jsonBlob);
 
     // Append the HTML content as a Blob with correct content type
-    const contentBlob = new Blob([mainContent], { type: 'multipart/form-data' });
+    const contentBlob = new Blob([mainContent], {
+      type: 'multipart/form-data',
+    });
     formData.append('data', contentBlob, `${blueprintName}.html`);
 
     try {
@@ -62,7 +98,7 @@ const SaveButton: React.FC = () => {
           enqueueSnackbar,
           '설계도가 성공적으로 저장되었습니다!',
           'success',
-          '#254b7a',
+          '#254b7a'
         );
         setIsModalOpen(false);
         setBlueprintName('');
@@ -72,7 +108,7 @@ const SaveButton: React.FC = () => {
         const errorData = await response.json();
         throw new Error(errorData.message || '서버 응답 오류');
       } else {
-        const errorText = await response.text();  // HTML이나 텍스트 응답 처리
+        const errorText = await response.text(); // HTML이나 텍스트 응답 처리
         throw new Error(`서버 오류: ${errorText}`);
       }
     } catch (error) {
@@ -81,15 +117,14 @@ const SaveButton: React.FC = () => {
         enqueueSnackbar,
         `설계도 저장 중 오류가 발생했습니다: ${error}`,
         'error',
-        '#FF4848',
+        '#FF4848'
       );
     }
   };
 
   return (
     <>
-      <div
-        className="fixed bottom-8 right-[50px] transform translate-x-4 h-[40px] px-4 bg-white border-gray-300 border text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg flex items-center justify-center transition duration-200 ease-in-out">
+      <div className="fixed bottom-8 right-[50px] transform translate-x-4 h-[40px] px-4 bg-white border-gray-300 border text-blue-600 hover:text-white hover:bg-blue-500 active:bg-blue-600 rounded-lg flex items-center justify-center transition duration-200 ease-in-out">
         <button
           className="flex items-center gap-2 text-center"
           onClick={handleSave}
