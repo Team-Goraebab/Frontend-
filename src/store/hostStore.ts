@@ -24,7 +24,7 @@ export const useHostStore = create<HostStore>((set, get) => ({
   networks: [],
 
   // 호스트 추가
-  addHost: (host) =>
+  addHost: (host: Host) =>
     set((state) => ({
       hosts: [...state.hosts, host],
     })),
