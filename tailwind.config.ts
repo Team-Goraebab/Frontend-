@@ -23,6 +23,7 @@ const config: Config = {
         grey_2: '#D2D2D2',
         grey_3: '#999999',
         grey_4: '#7F7F7F',
+        grey_5: '#5F5F5F',
         grey_6: '#4E4E4E',
         grey_7: '#3E3E3E',
         blue_0: '#e6ecf5',
