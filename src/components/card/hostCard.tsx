@@ -1,20 +1,14 @@
 import { useHostStore } from '@/store/hostStore';
 import { selectedHostStore } from '@/store/seletedHostStore';
+import { ThemeColor } from '@/types/type';
 import { FaTrash, FaHome } from 'react-icons/fa';
 
 export type HostCardProps = {
   id: string;
   hostNm: string;
-  ip: string;
-  status?: boolean;
+  hostIp: string | undefined;
   isRemote: boolean;
-  themeColor: {
-    label: string;
-    bgColor: string;
-    borderColor: string;
-    textColor: string;
-  };
-  networkIp: string;
+  themeColor: ThemeColor;
   onClick?: () => void;
   className?: string;
   isSelectedNetwork?: boolean;
@@ -24,6 +18,7 @@ export type HostCardProps = {
  *
  * @param id 호스트 id
  * @param hostNm 호스트 이름
+ * @param hostIp 호스트 아이피
  * @param isRemote local/remote
  * @param themeColor 테마 색상
  * @param className 추가 className
@@ -33,7 +28,7 @@ export type HostCardProps = {
 const HostCard = ({
   id,
   hostNm,
-  ip,
+  hostIp,
   isRemote,
   themeColor,
   className = '',
@@ -62,6 +57,7 @@ const HostCard = ({
       ? themeColor.borderColor
       : 'grey';
   const badgeText = isRemote ? 'REMOTE' : 'LOCAL';
+  const ipText = isRemote ? hostIp : 'localhost';
 
   return (
     <div
@@ -117,7 +113,7 @@ const HostCard = ({
             {hostNm || 'HOST'}
           </div>
         </div>
-        <div className="text-lg font-semibold">{`eth0 : ${ip}`}</div>
+        <div className="text-lg font-semibold">{ipText}</div>
       </div>
     </div>
   );

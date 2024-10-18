@@ -64,6 +64,8 @@ const CardSection = ({ hostData, isHandMode }: CardSectionProps) => {
     }
   };
 
+  console.log(hostData);
+
   return (
     <Draggable disabled={!isHandMode}>
       <div
@@ -80,7 +82,7 @@ const CardSection = ({ hostData, isHandMode }: CardSectionProps) => {
           const networks = connectedBridgeIds[host.id] || [];
           const isHostSelected =
             selectedNetwork?.hostId === host.id || selectedHostId === host.id;
-
+          console.log(networks);
           return (
             <div key={host.id} className="flex flex-col items-center">
               <div className="flex flex-row items-center">
@@ -109,13 +111,11 @@ const CardSection = ({ hostData, isHandMode }: CardSectionProps) => {
                 <HostCard
                   id={host.id}
                   hostNm={host.hostNm}
-                  ip={host.ip}
-                  status={host.status}
-                  onClick={() => handleHostClick(host.id, host.hostNm)}
-                  className={isHostSelected ? 'scale-105 border-blue-500' : ''}
+                  hostIp={host.hostIp}
                   isRemote={host.isRemote}
+                  onClick={() => handleHostClick(host.id, host.hostNm)}
                   themeColor={host.themeColor}
-                  networkIp={host.networkIp}
+                  className={isHostSelected ? 'scale-105 border-blue-500' : ''}
                   isSelectedNetwork={isHostSelected}
                 />
 

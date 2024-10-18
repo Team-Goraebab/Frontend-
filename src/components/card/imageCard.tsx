@@ -4,12 +4,20 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal } from '@/components';
 import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
-import { useImageStore } from '@/store/imageStore';
 import { getStatusColors } from '@/utils/statusColorsUtils';
 import { fetchData } from '@/services/apiUtils';
 import ImageDetailModal from '../modal/image/imageDetailModal';
 import ImageStartOptionModal from '@/components/modal/image/imageStartOptionModal';
-import { FiInfo, FiTrash, FiPlay, FiCpu, FiTag, FiSave, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import {
+  FiInfo,
+  FiTrash,
+  FiPlay,
+  FiCpu,
+  FiTag,
+  FiSave,
+  FiChevronDown,
+  FiChevronUp,
+} from 'react-icons/fi';
 import { TbNumber } from 'react-icons/tb';
 import { useDrag } from 'react-dnd';
 
@@ -59,7 +67,6 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   }, [ref, drag]);
 
   const { enqueueSnackbar } = useSnackbar();
-  const removeImage = useImageStore((state) => state.removeImage);
 
   const { bg1, bg2 } = getStatusColors('primary');
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -77,7 +84,11 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const items = [
     { label: 'Name', value: name || '<none>', icon: FiCpu },
     { label: 'Tag', value: tag || '<none>', icon: FiTag },
-    { label: 'Size', value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB', icon: FiSave },
+    {
+      label: 'Size',
+      value: (data.Size / (1024 * 1024)).toFixed(2) + ' MB',
+      icon: FiSave,
+    },
     { label: 'Id', value: data.Id || '<none>', icon: TbNumber },
   ];
 
@@ -87,21 +98,23 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
 
   const handleConfirmDelete = async () => {
     try {
-      const response = await fetch(`/api/image/delete?id=${data.Id}&force=true`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/image/delete?id=${data.Id}&force=true`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to delete image');
       }
 
-      removeImage(data.Id);
       showSnackbar(
         enqueueSnackbar,
         '이미지가 삭제되었습니다.',
         'success',
-        '#25BD6B',
+        '#25BD6B'
       );
 
       onDeleteSuccess();
@@ -111,7 +124,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '이미지 삭제에 실패했습니다.',
         'error',
-        '#FF0000',
+        '#FF0000'
       );
     } finally {
       setShowModal(false);
@@ -169,7 +182,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '컨테이너가 성공적으로 실행되었습니다.',
         'success',
-        '#25BD6B',
+        '#25BD6B'
       );
     } catch (error) {
       console.error('Error running container:', error);
@@ -177,7 +190,7 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         enqueueSnackbar,
         '컨테이너 실행에 실패했습니다.',
         'error',
-        '#FF0000',
+        '#FF0000'
       );
     }
   };
@@ -218,8 +231,11 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
             className="p-2 rounded-full hover:bg-gray-200 transition-colors"
             title="Toggle Details"
           >
-            {isExpanded ? <FiChevronUp size={16} className="text-gray-500" /> :
-              <FiChevronDown size={16} className="text-gray-500" />}
+            {isExpanded ? (
+              <FiChevronUp size={16} className="text-gray-500" />
+            ) : (
+              <FiChevronDown size={16} className="text-gray-500" />
+            )}
           </button>
         </div>
       </div>
@@ -229,11 +245,16 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           <div className="grid gap-4">
             {items.map((item, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg" style={{ backgroundColor: bg1 }}>
+                <div
+                  className="p-2 rounded-lg"
+                  style={{ backgroundColor: bg1 }}
+                >
                   <item.icon size={16} style={{ color: bg2 }} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-500 font-medium font-pretendard">{item.label}</span>
+                  <span className="text-xs text-gray-500 font-medium font-pretendard">
+                    {item.label}
+                  </span>
                   <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
                     {item.value}
                   </span>
