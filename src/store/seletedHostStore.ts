@@ -1,15 +1,20 @@
 import { create } from 'zustand';
 
+interface BridgeInfo {
+  name: string;
+  gateway: string;
+  driver: string;
+  subnet: string;
+  scope: string;
+}
+
 interface SelectedHostStore {
   selectedHostId: string | null;
   selectedHostName: string | null;
-  connectedBridgeIds: { [key: string]: { name: string; gateway: string }[] };
+  connectedBridgeIds: { [key: string]: BridgeInfo[] };
   setSelectedHostId: (id: string | null) => void;
   setSelectedHostName: (name: string | null) => void;
-  addConnectedBridgeId: (
-    hostId: string,
-    bridge: { name: string; gateway: string }
-  ) => void;
+  addConnectedBridgeId: (hostId: string, bridge: BridgeInfo) => void;
   deleteConnectedBridgeId: (hostId: string, networkName: string) => void;
 }
 
