@@ -2,9 +2,10 @@
 
 import React, { useRef, useState } from 'react';
 import { useDrop } from 'react-dnd';
-import { FaTimesCircle, FaInfoCircle } from 'react-icons/fa';
+import { FaTimesCircle, FaInfoCircle, FaPencilAlt } from 'react-icons/fa';
 import { Container, ThemeColor } from '@/types/type';
 import ImageDetailModal from '@/components/modal/image/imageDetailModal';
+import ContainerNameModal from '../modal/container/containerNameModal';
 
 export interface CardContainerProps {
   networkName: string;
@@ -32,7 +33,10 @@ const CardContainer = ({
 }: CardContainerProps) => {
   const [droppedImages, setDroppedImages] = useState<ImageInfo[]>([]);
   const [detailData, setDetailData] = useState<any>(null);
+  const [containerName, setContainerName] =
+    useState<string>('no container name');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const splitImageNameAndTag = (image: string): ImageInfo => {
@@ -68,7 +72,6 @@ const CardContainer = ({
   const [{ isOver }, drop] = useDrop({
     accept: 'IMAGE_CARD',
     drop: (item: { image: string }) => {
-      console.log(item.image);
       const imageInfo = splitImageNameAndTag(item.image);
       setDroppedImages((prev) => [...prev, imageInfo]);
     },
@@ -88,8 +91,44 @@ const CardContainer = ({
     ...droppedImages,
   ];
 
+  // 컨테이너 이름 수정 모달 열기
+  const handleOpenNameModal = () => {
+    setIsNameModalOpen(true);
+  };
+
+  // 컨테이너 이름 저장
+  const handleSaveName = (newName: string) => {
+    setContainerName(newName);
+    setIsNameModalOpen(false);
+  };
+
   return (
     <>
+      <div
+        className={`absolute flex items-center text-xs font-semibold border-2 h-6 px-1 rounded-t-lg content-center`}
+        style={{
+          top: '-1.4rem',
+          left: '1.25rem',
+          zIndex: '10',
+          borderColor: `${themeColor.borderColor}`,
+          color: `${themeColor.textColor}`,
+          backgroundColor: `${themeColor.bgColor}`,
+        }}
+      >
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenNameModal();
+          }}
+        >
+          <FaPencilAlt
+            className="w-3 h-3 mr-1"
+            style={{ color: themeColor.borderColor }}
+          />
+        </button>
+        {containerName}
+      </div>
+
       <div
         ref={ref}
         className={`relative flex flex-col items-center p-[10px] border bg-white rounded-lg shadow-lg w-[450px] transition-colors duration-200 cursor-pointer ${
@@ -115,6 +154,7 @@ const CardContainer = ({
             />
           </button>
         )}
+
         <div
           className="w-full text-center text-blue_6 border-2 p-2 rounded-md mb-3 text-sm font-semibold"
           style={{
@@ -176,6 +216,13 @@ const CardContainer = ({
           )}
         </div>
       </div>
+      <ContainerNameModal
+        open={isNameModalOpen}
+        containerName={containerName}
+        onClose={() => setIsNameModalOpen(false)}
+        onSave={handleSaveName}
+        onChange={(name) => setContainerName(name)}
+      />
       <ImageDetailModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
