@@ -15,12 +15,25 @@ export interface Image {
   size: string;
 }
 
+export interface ContainerInfo {
+  Name: string;
+  IPv4Address: string;
+}
 export interface Network {
-  id: string;
-  name: string;
-  subnet: string;
-  gateway: string;
-  driver: string;
+  Id: string;
+  Name: string;
+  Created: string;
+  Scope: string;
+  NetworkIp?: string;
+  Driver: string;
+  Status: string;
+  IPAM?: {
+    Config?: {
+      Gateway?: string;
+      Subnet?: string;
+    }[];
+  };
+  Containers?: { [key: string]: { Name: string; IPv4Address: string } };
 }
 
 export type ThemeColor = {
@@ -30,16 +43,16 @@ export type ThemeColor = {
   textColor: string;
 };
 
-export type Host = {
-  id: string;
-  hostNm: string;
-  ip: string;
-  isRemote: boolean;
-  themeColor: ThemeColor;
-  networkName: string;
-  networkIp: string;
-  className?: string;
-};
+// export type Host = {
+//   id: string;
+//   hostNm: string;
+//   ip: string;
+//   isRemote: boolean;
+//   themeColor: ThemeColor;
+//   networkName: string;
+//   networkIp: string;
+//   className?: string;
+// };
 
 export interface Container {
   id: string;
@@ -50,7 +63,18 @@ export interface Container {
   active: string;
   status: string;
   network: string;
-  image: Image; // Image 객체를 기대
-  volume?: Volume[]; // 전체 Volume 객체를 저장
+  image: Image;
+  volume?: Volume[];
   networkId?: string; // 연결된 네트워크 ID
+}
+
+export interface Host {
+  id: string;
+  hostNm: string;
+  hostIp?: string;
+  status: boolean;
+  isRemote: boolean;
+  themeColor: ThemeColor;
+  networkName: string;
+  networkIp: string;
 }
