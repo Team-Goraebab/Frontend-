@@ -5,7 +5,7 @@ export const BASE_URL = '/api/v1';
 
 // blueprint
 export const STORAGE = '/storage';
-export const BLUEPRINT = '/blueprint';
+export const BLUEPRINTS = '/blueprints';
 
 // remote database
 export const REMOTE_STORAGE = '/remote/storage';
