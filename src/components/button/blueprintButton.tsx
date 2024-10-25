@@ -28,11 +28,11 @@ const BlueprintButton = () => {
         <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-40 bg-white shadow-lg rounded-xl border border-grey_2 z-[9999]">
           <button className="w-full py-2 text-grey_6 text-xs font-semibold hover:bg-grey_0 rounded-t-xl transition-colors relative">
             설계도 1
-            <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-gray-300" />
+            <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-grey_2" />
           </button>
           <button className="w-full py-2 text-grey_6 text-xs font-semibold hover:bg-grey_0 transition-colors relative">
             설계도 2
-            <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-gray-300" />
+            <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-grey_2" />
           </button>
           <button className="w-full py-2 text-grey_6 text-xs font-semibold hover:bg-grey_0 rounded-b-xl transition-colors">
             설계도 3

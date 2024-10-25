@@ -207,34 +207,34 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     >
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
         <div className="flex items-center space-x-2 truncate">
-          <span className="font-bold font-pretendard text-sm text-gray-700 truncate">
+          <span className="font-bold font-pretendard text-sm text-grey_6 truncate">
             {data.RepoTags[0] || 'Unnamed Image'}
           </span>
         </div>
         <div className="flex">
           <button
             onClick={handleStart}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
             title="Run Container"
           >
-            <FiPlay className="text-gray-500" size={16} />
+            <FiPlay className="text-grey_4" size={16} />
           </button>
           <button
             onClick={handleDelete}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
             title="Delete Image"
           >
-            <FiTrash className="text-gray-500" size={16} />
+            <FiTrash className="text-grey_4" size={16} />
           </button>
           <button
             onClick={toggleAccordion}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
             title="Toggle Details"
           >
             {isExpanded ? (
-              <FiChevronUp size={16} className="text-gray-500" />
+              <FiChevronUp size={16} className="text-grey_4" />
             ) : (
-              <FiChevronDown size={16} className="text-gray-500" />
+              <FiChevronDown size={16} className="text-grey_4" />
             )}
           </button>
         </div>
@@ -253,10 +253,10 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
                     <item.icon size={16} style={{ color: bg2 }} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 font-medium font-pretendard">
+                    <span className="text-xs text-grey_4 font-medium font-pretendard">
                       {item.label}
                     </span>
-                    <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+                    <span className="font-pretendard font-semibold text-sm text-grey_7 truncate max-w-[150px]">
                       {item.value}
                     </span>
                   </div>
@@ -269,10 +269,10 @@ const ImageCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           <div className="flex justify-end mt-4">
             <button
               onClick={handleGetInfo}
-              className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+              className="p-2 rounded-full hover:bg-grey_1 transition-colors"
               title="Image Info"
             >
-              <FiInfo className="text-gray-500" size={16} />
+              <FiInfo className="text-grey_4" size={16} />
             </button>
           </div>
         </div>

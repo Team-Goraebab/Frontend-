@@ -175,7 +175,7 @@ const MountSettings: React.FC<MountSettingsProps> = ({
         <div className="flex justify-end">
           <button
             onClick={handleAddMount}
-            className="px-2 py-1 flex items-center bg-gray-200 hover:bg-blue-100 rounded text-sm"
+            className="px-2 py-1 flex items-center bg-grey_1 hover:bg-blue-100 rounded text-sm"
           >
             <Add className="mr-1" fontSize="small" />
             추가

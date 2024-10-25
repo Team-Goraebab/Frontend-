@@ -137,7 +137,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
               placeholder="Enter container name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
+              className="w-full p-3 border border-grey_2 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
             />
           </div>
 
@@ -148,7 +148,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
             <select
               value={selectedImage}
               onChange={handleImageChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
+              className="w-full p-3 border border-grey_2 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
             >
               <option value="" hidden>
                 Select an Image
@@ -168,7 +168,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
             <label className="block text-sm font-semibold mb-2">
               Select Volumes
             </label>
-            <div className="max-h-32 overflow-y-auto border border-gray-300 p-3 rounded-lg">
+            <div className="max-h-32 overflow-y-auto border border-grey_2 p-3 rounded-lg">
               {volumes.length > 0 ? (
                 volumes.map((volume) => (
                   <div key={volume.Id} className="flex items-center mb-2">
@@ -198,7 +198,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
               placeholder="80:80,443:443"
               value={ports}
               onChange={(e) => setPorts(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
+              className="w-full p-3 border border-grey_2 rounded-lg focus:outline-none focus:ring-2 focus:ring-grey_4"
             />
           </div>
 

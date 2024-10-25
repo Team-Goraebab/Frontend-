@@ -78,7 +78,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       case 'exited':
         return <FiXCircle className="text-red_6" size={16} />;
       default:
-        return <FiAlertCircle className="text-gray-500" size={16} />;
+        return <FiAlertCircle className="text-grey_4" size={16} />;
     }
   };
 
@@ -87,7 +87,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
       running: 'text-green_6',
       paused: 'text-yellow_6',
       exited: 'text-red_6',
-      default: 'text-gray-700',
+      default: 'text-grey_6',
     };
 
     const color =
@@ -203,7 +203,7 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
         <div className="flex items-center space-x-2 truncate">
           <StatusIcon state={data.State} />
           <StatusText state={data.State} />
-          <span className="font-medium text-sm text-gray-700 truncate">
+          <span className="font-medium text-sm text-grey_6 truncate">
             {containerName}
           </span>
         </div>
@@ -225,10 +225,10 @@ const ContainerCard = ({ data, onDeleteSuccess }: CardDataProps) => {
                     <item.icon size={16} style={{ color: bg2 }} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 font-medium">
+                    <span className="text-xs text-grey_4 font-medium">
                       {item.label}
                     </span>
-                    <span className="font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+                    <span className="font-semibold text-sm text-grey_7 truncate max-w-[150px]">
                       {item.value}
                     </span>
                   </div>

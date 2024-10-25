@@ -14,7 +14,7 @@ interface BridgeModalProps {
     name: string,
     subnet: string,
     gateway: string,
-    driver: string,
+    driver: string
   ) => void;
 }
 
@@ -59,7 +59,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
         enqueueSnackbar,
         '브리지 이름을 입력해주세요.',
         'error',
-        '#FF4853',
+        '#FF4853'
       );
       return;
     }
@@ -69,7 +69,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
         enqueueSnackbar,
         '올바른 서브넷 형식을 입력해주세요. (예: 192.168.1.0/24)',
         'error',
-        '#FF4853',
+        '#FF4853'
       );
       return;
     }
@@ -79,7 +79,7 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
         enqueueSnackbar,
         '올바른 게이트웨이 IP 주소를 입력해주세요. (예: 192.168.1.1)',
         'error',
-        '#FF4853',
+        '#FF4853'
       );
       return;
     }
@@ -98,26 +98,26 @@ const BridgeModal = ({ onClose, onCreate }: BridgeModalProps) => {
           placeholder="Bridge Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
+          className="mb-2 p-2 border border-grey_2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Subnet (e.g., 192.168.1.0/24)"
           value={subnet}
           onChange={(e) => setSubnet(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
+          className="mb-2 p-2 border border-grey_2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Gateway (e.g., 192.168.1.1)"
           value={gateway}
           onChange={(e) => setGateway(e.target.value)}
-          className="mb-2 p-2 border border-gray-300 rounded w-full"
+          className="mb-2 p-2 border border-grey_2 rounded w-full"
         />
         <select
           value={driver}
           onChange={(e) => setDriver(e.target.value)}
-          className="mb-8 p-2 border border-gray-300 rounded w-full"
+          className="mb-8 p-2 border border-grey_2 rounded w-full"
         >
           <option value="bridge">Bridge</option>
           <option value="host">Host</option>

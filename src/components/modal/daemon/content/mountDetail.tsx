@@ -51,10 +51,10 @@ const MountDetail = ({ mount }: { mount: MountConfigProps }) => {
             <item.icon size={16} style={{ color: item.bg2 }} />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-grey_4 font-medium">
               {item.label}
             </span>
-            <span className="font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+            <span className="font-semibold text-sm text-grey_7 truncate max-w-[150px]">
               {item.value}
             </span>
           </div>

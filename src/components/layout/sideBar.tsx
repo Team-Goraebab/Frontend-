@@ -42,7 +42,7 @@ interface ComponentMapItem {
 const loadData = async (
   apiUrl: string,
   setData: React.Dispatch<React.SetStateAction<any[]>>,
-  dataKey?: string,
+  dataKey?: string
 ) => {
   try {
     const response = await fetch(apiUrl, { cache: 'no-store' });
@@ -84,7 +84,7 @@ const Sidebar = () => {
       await loadData(
         url,
         dataHandlers[activeId as 1 | 2 | 3 | 4].setData,
-        dataKey,
+        dataKey
       );
 
       setTimeout(() => {
@@ -128,8 +128,7 @@ const Sidebar = () => {
   const currentComponent = componentMap[activeId as 1 | 2 | 3 | 4];
 
   const renderNoDataMessage = (message: string) => (
-    <div
-      className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
+    <div className="flex flex-col items-center justify-center text-center p-4 border border-dashed border-blue_3 rounded-md bg-blue_0">
       <AiOutlineInfoCircle className="text-blue_6 text-2xl mb-2" />
       <p className="font-pretendard font-medium text-blue_6">{message}</p>
     </div>
@@ -150,18 +149,18 @@ const Sidebar = () => {
     if (activeId === 1) {
       const groupedContainers = Array.isArray(containerData)
         ? containerData.reduce((acc, container) => {
-          const groupName =
-            container.Labels['com.docker.compose.project'] ||
-            container.Names[0].replace(/^\//, '');
-          if (!acc[groupName]) {
-            acc[groupName] = {
-              containers: [],
-              networkMode: container.HostConfig?.NetworkMode || 'Unknown',
-            };
-          }
-          acc[groupName].containers.push(container);
-          return acc;
-        }, {} as Record<string, { containers: Container[]; networkMode: string }>)
+            const groupName =
+              container.Labels['com.docker.compose.project'] ||
+              container.Names[0].replace(/^\//, '');
+            if (!acc[groupName]) {
+              acc[groupName] = {
+                containers: [],
+                networkMode: container.HostConfig?.NetworkMode || 'Unknown',
+              };
+            }
+            acc[groupName].containers.push(container);
+            return acc;
+          }, {} as Record<string, { containers: Container[]; networkMode: string }>)
         : {};
 
       return Object.entries(groupedContainers).map(
@@ -172,21 +171,21 @@ const Sidebar = () => {
             containers={containers}
             onDeleteSuccess={handleDeleteSuccess}
           />
-        ),
+        )
       );
     }
 
     return data && data.length > 0
       ? data.map(
-        (item) =>
-          CardComponent && (
-            <CardComponent
-              key={`${item.Id}-${selectedHostIp}`}
-              data={item}
-              onDeleteSuccess={handleDeleteSuccess}
-            />
-          ),
-      )
+          (item) =>
+            CardComponent && (
+              <CardComponent
+                key={`${item.Id}-${selectedHostIp}`}
+                data={item}
+                onDeleteSuccess={handleDeleteSuccess}
+              />
+            )
+        )
       : renderNoDataMessage(noDataMessage);
   };
 
@@ -209,7 +208,7 @@ const Sidebar = () => {
 
   return (
     <div className="fixed z-[99] top-0 left-0 w-[300px] flex flex-col h-full bg-white border-r-2 border-grey_2 pt-14">
-      <div className="flex justify-between items-center px-6 py-4 bg-gray-100 border-b border-grey_2">
+      <div className="flex justify-between items-center px-6 py-4 bg-grey_0 border-b border-grey_2">
         <h2 className="text-md font-semibold font-pretendard flex items-center">
           {currentComponent?.title || '데이터'}
           <span className="ml-2 px-2 py-1 bg-blue_4 text-white text-xs font-pretendard rounded-lg">
@@ -233,8 +232,7 @@ const Sidebar = () => {
             onCreate: handleCreate,
           })
         ) : (
-          <LargeButton title={'추가하기'} onClick={() => {
-          }} />
+          <LargeButton title={'추가하기'} onClick={() => {}} />
         )}
       </div>
       <div>

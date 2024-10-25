@@ -15,7 +15,7 @@ const ContainerCardGroup = ({
 }: ContainerGroupProps) => {
   return (
     <div className="mb-4 bg-white border rounded-lg overflow-hidden">
-      <div className="flex justify-between items-center px-4 py-2 bg-gray-100">
+      <div className="flex justify-between items-center px-4 py-2 bg-grey_0">
         <div className="flex flex-row items-center gap-2">
           <FiBox />
           <h3 className="font-[500] text-sm font-montserrat truncate">

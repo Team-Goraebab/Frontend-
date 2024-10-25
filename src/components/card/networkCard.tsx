@@ -196,31 +196,31 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     <div className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
         <div className="flex items-center space-x-2">
-          <FaNetworkWired size={16} className="text-gray-600" />
+          <FaNetworkWired size={16} className="text-grey_5" />
           <span className="font-pretendard text-sm">Network</span>
         </div>
         <div className="flex items-center space-x-2" />
         <div className="flex">
           <button
             onClick={handleConnect}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
             title="Connect Network"
           >
-            <FiLink className="text-gray-500" size={16} />
+            <FiLink className="text-grey_4" size={16} />
           </button>
           <button
             onClick={handleGetInfo}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
             title="Network Info"
           >
-            <FiInfo className="text-gray-500" size={16} />
+            <FiInfo className="text-grey_4" size={16} />
           </button>
           <button
             onClick={handleDelete}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
             title="Delete Network"
           >
-            <FiTrash className="text-gray-500" size={16} />
+            <FiTrash className="text-grey_4" size={16} />
           </button>
         </div>
       </div>
@@ -237,10 +237,10 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
                   <item.icon size={16} style={{ color: bg2 }} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-500 font-medium font-pretendard">
+                  <span className="text-xs text-grey_4 font-medium font-pretendard">
                     {item.label}
                   </span>
-                  <span className="font-pretendard font-semibold text-sm text-gray-800 truncate max-w-[150px]">
+                  <span className="font-pretendard font-semibold text-sm text-grey_7 truncate max-w-[150px]">
                     {item.value}
                   </span>
                 </div>
