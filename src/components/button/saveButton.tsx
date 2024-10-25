@@ -5,12 +5,7 @@ import { useSnackbar } from 'notistack';
 import { showSnackbar } from '@/utils/toastUtils';
 import { AiOutlineSave } from 'react-icons/ai';
 import { useBlueprintStore } from '@/store/blueprintStore';
-
-interface BlueprintReqDto {
-  name: string;
-  isDockerRemote: boolean;
-  remoteUrl?: string;
-}
+import { createBlueprint } from '@/services/blueprint/api';
 
 const SaveButton = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -84,14 +79,9 @@ const SaveButton = () => {
 
       console.log(requestBody);
 
-      const res = await fetch('/api/blueprint/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      });
+      const res = await createBlueprint(requestBody);
 
-      const result = await res.json();
-      if (res.ok) {
+      if (res.status === 200 || res.status === 201) {
         showSnackbar(
           enqueueSnackbar,
           '설계도를 성공적으로 전송했습니다!',
@@ -101,7 +91,7 @@ const SaveButton = () => {
       } else {
         showSnackbar(
           enqueueSnackbar,
-          `설계도 전송 실패: ${result.error}`,
+          `설계도 전송 실패: ${res.data.error}`,
           'error',
           '#FF4853'
         );
