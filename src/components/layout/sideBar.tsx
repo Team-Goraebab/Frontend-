@@ -198,7 +198,14 @@ const Sidebar = () => {
   useEffect(() => {
     const { url, dataKey } = apiMap[activeId] || {};
     if (!url) return;
+
     loadData(url, dataHandlers[activeId as 1 | 2 | 3 | 4].setData, dataKey);
+
+    Object.keys(dataHandlers).forEach((key) => {
+      if (Number(key) !== activeId) {
+        dataHandlers[Number(key) as 1 | 2 | 3 | 4].setData([]);
+      }
+    });
   }, [activeId]);
 
   useEffect(() => {
