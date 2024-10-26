@@ -19,6 +19,8 @@ import {
   FiHardDrive,
   FiSend,
   FiBox,
+  FiChevronDown,
+  FiChevronUp,
 } from 'react-icons/fi';
 import { FaNetworkWired } from 'react-icons/fa';
 import { Network } from '@/types/type';
@@ -41,6 +43,7 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const connectedContainers = Object.values(data.Containers || {}).map(
     (container) => `${container.Name} (${container.IPv4Address})`
@@ -192,8 +195,12 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
     }
   };
 
+  const toggleAccordion = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="relative bg-white border rounded-lg transition-all duration-300 mb-6 overflow-hidden">
+    <div className="relative bg-white border rounded-lg transition-all duration-300 mb-2 overflow-hidden">
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
         <div className="flex items-center space-x-2">
           <FaNetworkWired size={16} className="text-grey_5" />
@@ -222,35 +229,47 @@ const NetworkCard = ({ data, onDeleteSuccess }: CardDataProps) => {
           >
             <FiTrash className="text-grey_4" size={16} />
           </button>
+          <button
+            onClick={toggleAccordion}
+            className="p-2 rounded-full hover:bg-grey_1 transition-colors"
+            title="Toggle Details"
+          >
+            {isExpanded ? (
+              <FiChevronUp size={16} className="text-grey_4" />
+            ) : (
+              <FiChevronDown size={16} className="text-grey_4" />
+            )}
+          </button>
         </div>
       </div>
-
-      <div className="p-4">
-        <div className="grid gap-4">
-          {networkItems && networkItems.length > 0 ? (
-            networkItems.map((item, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <div
-                  className="p-2 rounded-lg"
-                  style={{ backgroundColor: bg1 }}
-                >
-                  <item.icon size={16} style={{ color: bg2 }} />
+      {isExpanded && (
+        <div className="p-4">
+          <div className="grid gap-4">
+            {networkItems && networkItems.length > 0 ? (
+              networkItems.map((item, index) => (
+                <div key={index} className="flex items-center space-x-3">
+                  <div
+                    className="p-2 rounded-lg"
+                    style={{ backgroundColor: bg1 }}
+                  >
+                    <item.icon size={16} style={{ color: bg2 }} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-grey_4 font-medium font-pretendard">
+                      {item.label}
+                    </span>
+                    <span className="font-pretendard font-semibold text-sm text-grey_7 truncate max-w-[150px]">
+                      {item.value}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs text-grey_4 font-medium font-pretendard">
-                    {item.label}
-                  </span>
-                  <span className="font-pretendard font-semibold text-sm text-grey_7 truncate max-w-[150px]">
-                    {item.value}
-                  </span>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center">네트워크 항목이 없습니다.</div>
-          )}
+              ))
+            ) : (
+              <div className="text-center">네트워크 항목이 없습니다.</div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
