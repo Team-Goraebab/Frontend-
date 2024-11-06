@@ -9,7 +9,7 @@ Welcome to the **Goraebab Frontend** project!
 ### ⚙️ Prerequisites
 
 - **Node.js** - version **v20.10.0** or higher
-- **npm** or **yarn** - for package management
+- **npm** - for package management
 
 ---
 
