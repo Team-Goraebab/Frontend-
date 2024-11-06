@@ -24,14 +24,21 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: '고래밥 | 도커를 쉽게',
   description: '도커 사용을 도와주는 GUI 오픈소스',
+  icons: {
+    icon: '/goraebab-logo.svg',
+  },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ko" className={`${montserrat.variable} ${pretendard.variable}`}>
-    <body>
-    <Layout>{children}</Layout>
-    </body>
+      <body>
+        <Layout>{children}</Layout>
+      </body>
     </html>
   );
 }
