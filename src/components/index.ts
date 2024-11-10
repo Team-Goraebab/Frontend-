@@ -3,10 +3,6 @@ export { default as Layout } from './layout/layout';
 export { default as Header } from './layout/header';
 export { default as Sidebar } from './layout/sideBar';
 
-// bar
-export { default as ConnectBar } from './bar/connectBar';
-export { default as ProgressBar } from './bar/progressBar';
-
 // button
 export { default as Button } from './button/button';
 export { default as ZoomButtons } from './button/zoomButtons';

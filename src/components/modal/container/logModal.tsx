@@ -34,7 +34,7 @@ const LogModal = ({
 
   const handleCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('Copied Successfully!');
+    alert('복사가 완료되었습니다.');
   };
 
   const fetchLogs = async () => {

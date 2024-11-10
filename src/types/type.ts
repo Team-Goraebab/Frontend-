@@ -22,11 +22,6 @@ export interface Image {
   size: string;
 }
 
-// export interface ContainerInfo {
-//   Name: string;
-//   IPv4Address: string;
-// }
-
 export interface Network {
   Id: string;
   Name: string;
@@ -166,7 +161,7 @@ export interface HostStore {
   addVolumeToImage: (
     hostId: string,
     imageId: string,
-    volume: VolumeData
+    volume: VolumeData,
   ) => void;
 }
 

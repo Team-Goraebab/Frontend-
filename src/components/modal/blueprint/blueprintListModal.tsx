@@ -16,9 +16,7 @@ import {
 } from '@nextui-org/react';
 import axios from 'axios';
 import { showSnackbar } from '@/utils/toastUtils';
-import { useBlueprintStore } from '@/store/blueprintStore';
 import { useHostStore } from '@/store/hostStore';
-import { selectedHostStore } from '@/store/seletedHostStore';
 import { useSnackbar } from 'notistack';
 import { deleteBlueprint } from '@/services/blueprint/api';
 import { useBlueprintAllStore } from '@/store/blueprintAllStore';
@@ -47,7 +45,6 @@ const BlueprintListModal = ({ isOpen, onClose }: BlueprintListModalProps) => {
     setIsLoading(true);
     try {
       const response = await axios.get(`/api/blueprint/list`);
-      // setBlueprints(TEST_DATA);
       setBlueprints(response.data || []);
     } catch (error) {
       console.error('Error fetching blueprints:', error);
@@ -58,7 +55,7 @@ const BlueprintListModal = ({ isOpen, onClose }: BlueprintListModalProps) => {
 
   const handleDeleteBlueprint = async (
     blueprintId: string,
-    blueprintName: string
+    blueprintName: string,
   ) => {
     try {
       await deleteBlueprint(blueprintId);
@@ -66,13 +63,12 @@ const BlueprintListModal = ({ isOpen, onClose }: BlueprintListModalProps) => {
         enqueueSnackbar,
         `${blueprintName} 설계도를 삭제했습니다.`,
         'success',
-        '#4CAF50'
+        '#4CAF50',
       );
       setBlueprints((prev) =>
-        prev.filter((bp) => bp.blueprintId !== blueprintId)
+        prev.filter((bp) => bp.blueprintId !== blueprintId),
       );
     } catch (error) {
-      // console.error('Error deleting blueprint:', error);
       showSnackbar(enqueueSnackbar, '삭제 실패했습니다.', 'error', '#d32f2f');
     }
   };
@@ -89,13 +85,13 @@ const BlueprintListModal = ({ isOpen, onClose }: BlueprintListModalProps) => {
         enqueueSnackbar,
         '호스트는 최대 5개까지만 추가할 수 있습니다.',
         'error',
-        '#d32f2f'
+        '#d32f2f',
       );
       return;
     }
 
     const isDuplicate = blueprint.data.host.some((hostData: any) =>
-      isHostExist(hostData.id)
+      isHostExist(hostData.id),
     );
 
     if (isDuplicate) {
@@ -103,7 +99,7 @@ const BlueprintListModal = ({ isOpen, onClose }: BlueprintListModalProps) => {
         enqueueSnackbar,
         '이미 불러온 설계도입니다.',
         'error',
-        '#d32f2f'
+        '#d32f2f',
       );
       return;
     }
@@ -165,7 +161,7 @@ const BlueprintListModal = ({ isOpen, onClose }: BlueprintListModalProps) => {
                         onClick={() =>
                           handleDeleteBlueprint(
                             blueprint.blueprintId,
-                            blueprint.name
+                            blueprint.name,
                           )
                         }
                       >

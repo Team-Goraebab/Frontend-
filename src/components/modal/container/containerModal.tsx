@@ -52,7 +52,6 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
           setNetworkIp(data.networks[0].IPAM?.Config?.[0]?.Gateway || '');
         }
       } catch (error) {
-        console.error('Error fetching networks:', error);
         setAvailableNetworks([]);
       }
     };
@@ -68,12 +67,12 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
     setSelectedVolumes((prevSelected) =>
       prevSelected.includes(volumeName)
         ? prevSelected.filter((name) => name !== volumeName)
-        : [...prevSelected, volumeName]
+        : [...prevSelected, volumeName],
     );
     setSelectedVolumeInfo((prevSelected: any) =>
       prevSelected.some((vol: any) => vol.id === volume.id)
         ? prevSelected.filter((vol: any) => vol.id !== volume.id)
-        : [...prevSelected, volume]
+        : [...prevSelected, volume],
     );
   };
 
@@ -81,14 +80,14 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
     const selectedImageName = event.target.value;
     setSelectedImage(selectedImageName);
     const selectedImageData = images.find(
-      (img) => img.Id === selectedImageName
+      (img) => img.Id === selectedImageName,
     );
     setSelectedImageInfo(selectedImageData || null);
   };
 
   const handleNetworkChange = (selectedNetworkName: string) => {
     const selectedNetwork = availableNetworks.find(
-      (net) => net.Name === selectedNetworkName
+      (net) => net.Name === selectedNetworkName,
     );
     setNetworkName(selectedNetworkName);
     setNetworkIp(selectedNetwork?.IPAM?.Config?.[0]?.Gateway || '');
@@ -101,7 +100,7 @@ const ContainerModal = ({ onClose, onCreate }: ContainerModalProps) => {
         enqueueSnackbar,
         '이미지를 선택해주세요.',
         'error',
-        '#FF4853'
+        '#FF4853',
       );
       return;
     }

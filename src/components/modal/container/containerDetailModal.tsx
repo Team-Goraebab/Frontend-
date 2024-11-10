@@ -29,19 +29,19 @@ interface ContainerDetailModalProps {
 }
 
 const ContainerDetailModal = ({
-  open,
-  onClose,
-  data,
-}: ContainerDetailModalProps) => {
+                                open,
+                                onClose,
+                                data,
+                              }: ContainerDetailModalProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     showSnackbar(
       enqueueSnackbar,
-      'Container ID copied to clipboard!',
+      'Container ID가 복사되었습니다!',
       'info',
-      '#4CAF50'
+      '#4CAF50',
     );
   };
 
@@ -53,20 +53,20 @@ const ContainerDetailModal = ({
   const handleAction = async (action: string) => {
     try {
       const response = await axios.post(
-        `/api/container/${action}?id=${data?.Id}`
+        `/api/container/${action}?id=${data?.Id}`,
       );
       showSnackbar(
         enqueueSnackbar,
         `Container ${action} successfully!`,
         'success',
-        '#4CAF50'
+        '#4CAF50',
       );
     } catch (error) {
       showSnackbar(
         enqueueSnackbar,
         `Failed to ${action} container`,
         'error',
-        '#d32f2f'
+        '#d32f2f',
       );
     }
   };
